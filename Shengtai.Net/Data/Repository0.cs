@@ -1,0 +1,40 @@
+﻿using CommonServiceLocator;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Threading.Tasks;
+
+namespace Shengtai.Data
+{
+    public abstract class Repository : IClient
+    {
+        private readonly IClient client;
+
+        protected Repository()
+        {
+            if (ServiceLocator.IsLocationProviderSet)
+                this.client = ServiceLocator.Current.GetInstance<IClient>();
+        }
+
+        public DateTime? DbToDateTime(object value)
+        {
+            return this.client.DbToDateTime(value);
+        }
+
+        public int? DbToInt(object value)
+        {
+            return this.client.DbToInt(value);
+        }
+
+        public string DbToString(object value)
+        {
+            return this.client.DbToString(value);
+        }
+
+        public TParameter GetParameter<TParameter>(string parameterName, string value) where TParameter : DbParameter, new()
+        {
+            return this.client.GetParameter<TParameter>(parameterName, value);
+        }
+    }
+}
