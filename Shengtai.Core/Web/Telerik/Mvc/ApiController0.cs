@@ -35,6 +35,9 @@ namespace Shengtai.Web.Telerik.Mvc
 
         protected virtual bool IsKeyNull(TKey key)
         {
+            if (key == null)
+                return true;
+
             return default(TKey).Equals(key);
         }
 
