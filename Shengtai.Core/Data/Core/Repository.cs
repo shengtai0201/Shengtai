@@ -4,7 +4,7 @@ using System.Security.Principal;
 
 namespace Shengtai.Data.Core
 {
-    public abstract class Repository<TDbContext, TAppSettings, TDefaultConnection> : 
+    public abstract class Repository<TDbContext, TAppSettings, TDefaultConnection> :
         Repository<TDbContext, TAppSettings, TDefaultConnection, IPrincipal>
         where TDbContext : class
         where TAppSettings : AppSettings<TDefaultConnection>, new()

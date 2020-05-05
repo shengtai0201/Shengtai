@@ -1,6 +1,5 @@
 ﻿using Shengtai.Options;
 using System;
-using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace Shengtai.Data

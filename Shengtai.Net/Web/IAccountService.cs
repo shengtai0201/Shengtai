@@ -7,7 +7,7 @@ namespace Shengtai.Web
     {
         //void SetConnectionString(string connectionString);
         //string GetConnectionString();
-        
+
         Task<string> FindIdByAccountAsync(string account);
         //Task<string> FindIdByAccountAsync(string connectionString, string account);
 

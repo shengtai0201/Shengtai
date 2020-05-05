@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Shengtai.Web.Telerik
+﻿namespace Shengtai.Web.Telerik
 {
     public class ServerSortInfo
     {

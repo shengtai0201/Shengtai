@@ -12,7 +12,7 @@ namespace Shengtai.Web.Telerik.Mvc
             if (bindingContext == null)
                 throw new ArgumentNullException(nameof(bindingContext));
 
-            if(bindingContext.ModelType == typeof(DataSourceRequest))
+            if (bindingContext.ModelType == typeof(DataSourceRequest))
             {
                 DataSourceRequest request = new DataSourceRequest
                 {

@@ -1,5 +1,4 @@
-﻿using CommonServiceLocator;
-using System;
+﻿using System;
 
 namespace Shengtai.Data
 {

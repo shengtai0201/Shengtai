@@ -92,7 +92,7 @@ namespace Shengtai.Web.Telerik.Mvc
             var field = bindingContext.ValueProvider.GetValue(baseKey + "[field]");
             var dir = bindingContext.ValueProvider.GetValue(baseKey + "[dir]");
 
-            if(field != null)
+            if (field != null)
             {
                 if (sortInfoCollection == null)
                     sortInfoCollection = new List<ServerSortInfo>();

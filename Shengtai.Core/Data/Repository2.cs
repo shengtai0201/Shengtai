@@ -1,5 +1,4 @@
-﻿using CommonServiceLocator;
-using Shengtai.Options;
+﻿using Shengtai.Options;
 using System;
 using System.Threading.Tasks;
 

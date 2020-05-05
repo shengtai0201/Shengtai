@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Shengtai.Data
+﻿namespace Shengtai.Data
 {
     public interface IData
     {

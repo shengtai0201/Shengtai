@@ -30,7 +30,7 @@ namespace Shengtai.Net
         {
             if (userManager == null || authenticationManager == null)
                 return SignInStatus.Failure;
-            
+
             var user = await FindByAccountAsync(service, userManager, account);
             if (user == null)
                 return SignInStatus.Failure;
