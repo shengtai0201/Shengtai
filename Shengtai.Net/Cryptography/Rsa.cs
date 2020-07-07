@@ -58,20 +58,40 @@ namespace Shengtai.Cryptography
             setPrivateKey(Encoding.UTF8.GetBytes(this.provider.ToXmlString(true)));
         }
 
-        public string Encrypt(string s, string publicKey)
-        {
-            this.SetProvider(this.provider == null);
-            this.provider.FromXmlString(Encoding.UTF8.GetString(Convert.FromBase64String(publicKey)));
+        //public string Encrypt(string s, string publicKey)
+        //{
+        //    this.SetProvider(this.provider == null);
+        //    this.provider.FromXmlString(Encoding.UTF8.GetString(Convert.FromBase64String(publicKey)));
 
-            return Convert.ToBase64String(this.provider.Encrypt(Encoding.UTF8.GetBytes(s), false));
+        //    return Convert.ToBase64String(this.provider.Encrypt(Encoding.UTF8.GetBytes(s), false));
+        //}
+
+        public static string Encrypt(string s, string publicKey)
+        {
+            var provider = new RSACryptoServiceProvider();
+            provider.FromXmlString(publicKey);
+            byte[] rgb = Encoding.UTF8.GetBytes(s);
+
+            var inArray = provider.Encrypt(rgb, false);
+            return Convert.ToBase64String(inArray);
         }
 
-        public string Decrypt(string s, string privateKey)
-        {
-            this.SetProvider(this.provider == null);
-            this.provider.FromXmlString(Encoding.UTF8.GetString(Convert.FromBase64String(privateKey)));
+        //public string Decrypt(string s, string privateKey)
+        //{
+        //    this.SetProvider(this.provider == null);
+        //    this.provider.FromXmlString(Encoding.UTF8.GetString(Convert.FromBase64String(privateKey)));
 
-            return Encoding.UTF8.GetString(this.provider.Decrypt(Convert.FromBase64String(s), false));
+        //    return Encoding.UTF8.GetString(this.provider.Decrypt(Convert.FromBase64String(s), false));
+        //}
+
+        public static string Decrypt(string s, string privateKey)
+        {
+            var provider = new RSACryptoServiceProvider();
+            provider.FromXmlString(privateKey);
+            byte[] rgb = Convert.FromBase64String(s);
+
+            byte[] bytes = provider.Decrypt(rgb, false);
+            return Encoding.UTF8.GetString(bytes);
         }
 
         public string SignData(string s, string privateKey)
@@ -90,15 +110,15 @@ namespace Shengtai.Cryptography
             return this.provider.SignData(buffer, this.halg);
         }
 
-        public bool VerifyData(string s, string privateKey, string publicKey, string signature, out string data)
-        {
-            this.SetProvider(this.provider == null);
-            this.provider.FromXmlString(Encoding.UTF8.GetString(Convert.FromBase64String(publicKey)));
+        //public bool VerifyData(string s, string privateKey, string publicKey, string signature, out string data)
+        //{
+        //    this.SetProvider(this.provider == null);
+        //    this.provider.FromXmlString(Encoding.UTF8.GetString(Convert.FromBase64String(publicKey)));
 
-            data = this.Decrypt(s, privateKey);
-            return this.provider.VerifyData(Encoding.UTF8.GetBytes(data), this.halg,
-                Convert.FromBase64String(signature));
-        }
+        //    data = this.Decrypt(s, privateKey);
+        //    return this.provider.VerifyData(Encoding.UTF8.GetBytes(data), this.halg,
+        //        Convert.FromBase64String(signature));
+        //}
 
         public bool VerifyData(byte[] buffer, byte[] publicKey, byte[] signature)
         {

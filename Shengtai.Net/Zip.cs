@@ -23,6 +23,13 @@ namespace Shengtai
             return this;
         }
 
+        public Zip AddDirectoryByName(string directoryNameInArchive)
+        {
+            this.zip.AddDirectoryByName(directoryNameInArchive);
+
+            return this;
+        }
+
         public byte[] Save()
         {
             MemoryStream outputStream = new MemoryStream();
