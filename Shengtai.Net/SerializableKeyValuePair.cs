@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -52,6 +53,20 @@ namespace Shengtai
         public SerializableKeyValuePair(KeyValuePair<TKey, TValue> pair)
         {
             this.keyValuePair = pair;
+        }
+
+        public static SerializableKeyValuePair<TKey, TValue> NewInstance(JToken token)
+        {
+            SerializableKeyValuePair<TKey, TValue> pair = null;
+
+            if (token != null)
+                pair = new SerializableKeyValuePair<TKey, TValue>
+                {
+                    Key = token["Key"].Value<TKey>(),
+                    Value = token["Value"].Value<TValue>()
+                };
+
+            return pair;
         }
     }
 }
