@@ -35,6 +35,27 @@ namespace Shengtai.Tests
             }
         }
 
+        private class Sdd
+        {
+            public string Name { get; set; }
+            public int Money { get; set; }
+            public int Size { get; set; }
+            public int Read { get; set; }
+            public int Write { get; set; }
+            public int Year { get; set; }
+            //public int Cache { get; set; }
+
+            public double GetWeight()
+            {
+                var weight = this.Size * 1.0 / this.Money;
+                //weight *= (this.Rpm * 1.0 / 7200);
+                //weight *= (this.Year * 1.0 / 5);
+                //weight *= (this.Cache * 1.0 / 512);
+
+                return weight;
+            }
+        }
+
         [Test]
         public void AAA()
         {
@@ -49,7 +70,7 @@ namespace Shengtai.Tests
                 new Hdd{ Name ="WD", Money=2950, Size=4, Rpm=5400, Year=3, Cache=64 },
 
                 new Hdd{ Name ="WD", Money=3850, Size=6, Rpm=5400, Year=3, Cache=256 },
-                
+
                 new Hdd{ Name ="WD", Money=5888, Size=4, Rpm=7200, Year=5, Cache=256 },
                 new Hdd{ Name ="WD", Money=7750, Size=6, Rpm=7200, Year=5, Cache=256 },
                 new Hdd{ Name ="Seagate", Money=3090, Size=4, Rpm=7200, Year=3, Cache=64 },
@@ -119,10 +140,31 @@ namespace Shengtai.Tests
             };
 
             Hdd h = hdds.First();
-            foreach(var hdd in hdds)
+            foreach (var hdd in hdds)
             {
                 if (hdd.GetWeight() > h.GetWeight())
                     h = hdd;
+            }
+
+            string test = string.Empty;
+        }
+
+        [Test]
+        public void BBB()
+        {
+            var sdds = new List<Sdd> {
+                new Sdd { Name = "十銓", Money = 1850, Size = 500, Read = 560, Write = 510, Year = 3 },
+                new Sdd { Name = "十銓", Money = 3390, Size = 1000, Read = 560, Write = 510, Year = 3 },
+                new Sdd { Name = "十銓", Money = 1590, Size = 250, Read = 560, Write = 500, Year = 3 },
+                new Sdd { Name = "十銓", Money = 4190, Size = 1000, Read = 560, Write = 510, Year = 3 },
+                new Sdd { Name = "十銓", Money = 1890, Size = 250, Read = 560, Write = 500, Year = 3 },
+            };
+
+            Sdd s = sdds.First();
+            foreach (var sdd in sdds)
+            {
+                if (sdd.GetWeight() > s.GetWeight())
+                    s = sdd;
             }
 
             string test = string.Empty;
