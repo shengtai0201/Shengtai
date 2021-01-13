@@ -75,6 +75,7 @@
     <Compile Include="Exchange\Rate.cs" />
     <Compile Include="Exchange\RateCollection.cs" />
     <Compile Include="HDDTests.cs" />
+    <Compile Include="MiscellaneousTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

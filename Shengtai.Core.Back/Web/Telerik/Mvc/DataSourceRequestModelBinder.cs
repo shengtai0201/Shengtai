@@ -20,7 +20,7 @@ namespace Shengtai.Web.Telerik.Mvc
                 };
 
                 var logic = bindingContext.ValueProvider.GetValue("filter[logic]");
-                if (logic != ValueProviderResult.None && !string.IsNullOrEmpty(logic.FirstValue))
+                if (logic != null && !string.IsNullOrEmpty(logic.FirstValue))
                 {
                     var filterInfoCollection = new ServerFilterInfo { Logic = this.ParseLogic(logic.FirstValue) };
                     this.SetServerFiltering(bindingContext, filterInfoCollection, "filter[filters][{0}]", 0);
@@ -41,7 +41,7 @@ namespace Shengtai.Web.Telerik.Mvc
         {
             var skip = bindingContext.ValueProvider.GetValue("skip");
             var take = bindingContext.ValueProvider.GetValue("take");
-            if (skip != ValueProviderResult.None && !string.IsNullOrEmpty(skip.FirstValue) && take != ValueProviderResult.None && !string.IsNullOrEmpty(take.FirstValue))
+            if (skip != null && !string.IsNullOrEmpty(skip.FirstValue) && take != null && !string.IsNullOrEmpty(take.FirstValue))
             {
                 var pageInfo = new ServerPageInfo
                 {
@@ -67,23 +67,23 @@ namespace Shengtai.Web.Telerik.Mvc
             var field = bindingContext.ValueProvider.GetValue(baseKey + "[field]"); // 用以判別單一 filter
             var subLogic = bindingContext.ValueProvider.GetValue(baseKey + "[logic]");  // 用以判別 filter 集合
 
-            if (field != ValueProviderResult.None && !string.IsNullOrEmpty(field.FirstValue))
+            if (field != null && !string.IsNullOrEmpty(field.FirstValue))
             {
                 var value = bindingContext.ValueProvider.GetValue(baseKey + "[value]");
                 var @operator = bindingContext.ValueProvider.GetValue(baseKey + "[operator]");
-                if (@operator != ValueProviderResult.None && !string.IsNullOrEmpty(@operator.FirstValue))
+                if (@operator != null && !string.IsNullOrEmpty(@operator.FirstValue))
                 {
                     filterInfoCollection.FilterCollection.Add(new ServerFilterInfo
                     {
                         Operator = this.ParseOperator(@operator.FirstValue),
                         Field = field.FirstValue,
-                        Value = value == ValueProviderResult.None ? string.Empty : value.FirstValue
+                        Value = value == null ? string.Empty : value.FirstValue
                     });
 
                     this.SetServerFiltering(bindingContext, filterInfoCollection, format, index);
                 }
             }
-            else if (subLogic != ValueProviderResult.None && !string.IsNullOrEmpty(subLogic.FirstValue))
+            else if (subLogic != null && !string.IsNullOrEmpty(subLogic.FirstValue))
             {
                 var subFilterInfoCollection = new ServerFilterInfo { Logic = this.ParseLogic(subLogic.FirstValue) };
                 filterInfoCollection.FilterCollection.Add(this.SetServerFiltering(bindingContext, subFilterInfoCollection, baseKey + "[filters][{0}]", 0));
@@ -98,7 +98,7 @@ namespace Shengtai.Web.Telerik.Mvc
             var field = bindingContext.ValueProvider.GetValue(baseKey + "[field]");
             var dir = bindingContext.ValueProvider.GetValue(baseKey + "[dir]");
 
-            if (field != ValueProviderResult.None && !string.IsNullOrEmpty(field.FirstValue))
+            if (field != null && !string.IsNullOrEmpty(field.FirstValue))
             {
                 if (sortInfoCollection == null)
                     sortInfoCollection = new List<ServerSortInfo>();

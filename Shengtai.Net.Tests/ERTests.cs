@@ -60,22 +60,24 @@ namespace Shengtai.Tests
         public void BBB()
         {
             // 賣紀錄最高(30.16)，買紀錄最低(29.94)
-            var full = 30.16;
+            //var full = 30.16;
+            var full = 29.46;
 
             double fraction = 0;
             double denominator = 0;
             double capital = 0;
-            var profit = this.GetProfit(full, 29.915, 1100, ref fraction, ref denominator, ref capital);
-            profit += this.GetProfit(full, 29.925, 900, ref fraction, ref denominator, ref capital);
-            profit += this.GetProfit(full, 29.905, 1000, ref fraction, ref denominator, ref capital);
-            profit += this.GetProfit(full, 29.875, 1000, ref fraction, ref denominator, ref capital);
-            profit += this.GetProfit(full, 29.895, 500, ref fraction, ref denominator, ref capital);
-            profit += this.GetProfit(full, 29.885, 500, ref fraction, ref denominator, ref capital);
-            profit += this.GetProfit(full, 29.835, 1000, ref fraction, ref denominator, ref capital);
-            profit += this.GetProfit(full, 29.795, 1000, ref fraction, ref denominator, ref capital);
+            //var profit = this.GetProfit(full, 29.915, 1100, ref fraction, ref denominator, ref capital);
+            //profit += this.GetProfit(full, 29.925, 900, ref fraction, ref denominator, ref capital);
+            //profit += this.GetProfit(full, 29.905, 1000, ref fraction, ref denominator, ref capital);
+            //profit += this.GetProfit(full, 29.875, 1000, ref fraction, ref denominator, ref capital);
+            //profit += this.GetProfit(full, 29.895, 500, ref fraction, ref denominator, ref capital);
+            //profit += this.GetProfit(full, 29.885, 500, ref fraction, ref denominator, ref capital);
+            //profit += this.GetProfit(full, 29.835, 1000, ref fraction, ref denominator, ref capital);
+            //profit += this.GetProfit(full, 29.795, 1000, ref fraction, ref denominator, ref capital);
 
-            profit += this.GetProfit(full, 29.685, 1000, ref fraction, ref denominator, ref capital);
-            profit += this.GetProfit(full, 29.665, 1000, ref fraction, ref denominator, ref capital);
+            //profit += this.GetProfit(full, 29.685, 1000, ref fraction, ref denominator, ref capital);
+            //profit += this.GetProfit(full, 29.665, 1000, ref fraction, ref denominator, ref capital);
+            var profit = this.GetProfit(full, 29.665, 1000, ref fraction, ref denominator, ref capital);
 
             var rate = Math.Round(fraction / denominator, 6);
 
