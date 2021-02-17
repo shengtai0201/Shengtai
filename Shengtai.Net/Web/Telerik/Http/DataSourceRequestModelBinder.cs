@@ -95,8 +95,8 @@ namespace Shengtai.Web.Telerik.Http
         private ICollection<ServerSortInfo> SetServerSorting(ModelBindingContext bindingContext, ICollection<ServerSortInfo> sortInfoCollection, int index)
         {
             string baseKey = string.Format("sort[{0}]", index++);
-            var field = bindingContext.ValueProvider.GetValue(baseKey + "[field]");
-            var dir = bindingContext.ValueProvider.GetValue(baseKey + "[dir]");
+            var field = bindingContext.ValueProvider.GetValue(baseKey + ".field");
+            var dir = bindingContext.ValueProvider.GetValue(baseKey + ".dir");
 
             if (field != null)
             {
