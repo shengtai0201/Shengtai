@@ -31,7 +31,7 @@ namespace Shengtai.Web.Telerik
         where TModel : ViewModel<TKey>
         //where TDbContext : class
         where TAppSettings : AppSettings<TDefaultConnection>, new()
-        where TDefaultConnection : IDefaultConnection
+        where TDefaultConnection : IConnectionStrings
     {
     }
 
@@ -54,7 +54,7 @@ namespace Shengtai.Web.Telerik
         where TModel : ViewModel<TKey>, IViewModel<TModel, TEntity>
         //where TDbContext : class
         where TAppSettings : AppSettings<TDefaultConnection>, new()
-        where TDefaultConnection : IDefaultConnection
+        where TDefaultConnection : IConnectionStrings
     {
     }
 }

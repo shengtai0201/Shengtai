@@ -7,7 +7,7 @@ namespace Shengtai.Data
          Repository<TDbContext, TAppSettings, TDefaultConnection>, ICurrentUser<TPrincipal>
          where TDbContext : class
          where TAppSettings : AppSettings<TDefaultConnection>, new()
-         where TDefaultConnection : IDefaultConnection
+         where TDefaultConnection : IConnectionStrings
     {
         public TPrincipal CurrentUser { protected get; set; }
 

@@ -1,6 +1,6 @@
 ﻿namespace Shengtai.Options
 {
-    public interface IDefaultConnection
+    public interface IConnectionStrings
     {
         string DefaultConnection { get; }
     }

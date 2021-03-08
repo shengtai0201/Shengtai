@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 namespace Shengtai.Web.Telerik.Mvc
 {
+    [Produces("application/json")]
     public abstract class ApiReadController<TKey, TModel> : ControllerBase where TModel : class
     {
         private readonly IApiReadService<TKey, TModel> _service;
@@ -49,6 +50,7 @@ namespace Shengtai.Web.Telerik.Mvc
         }
     }
 
+    [Produces("application/json")]
     public abstract class ApiUpdateController<TKey, TModel> : ApiReadController<TKey, TModel> where TModel : class
     {
         private readonly IApiUpdateService<TKey, TModel> _service;
@@ -78,6 +80,7 @@ namespace Shengtai.Web.Telerik.Mvc
         }
     }
 
+    [Produces("application/json")]
     public abstract class ApiDestroyController<TKey, TModel> : ApiReadController<TKey, TModel> where TModel : class
     {
         private readonly IApiDestroyService<TKey, TModel> _service;
@@ -122,6 +125,7 @@ namespace Shengtai.Web.Telerik.Mvc
         }
     }
 
+    [Produces("application/json")]
     public abstract class ApiController<TKey, TModel> : ApiReadController<TKey, TModel> where TModel : class
     {
         private readonly IApiService<TKey, TModel> _service;

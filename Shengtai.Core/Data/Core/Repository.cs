@@ -8,7 +8,7 @@ namespace Shengtai.Data.Core
         Repository<TDbContext, TAppSettings, TDefaultConnection, IPrincipal>
         where TDbContext : class
         where TAppSettings : AppSettings<TDefaultConnection>, new()
-        where TDefaultConnection : IDefaultConnection
+        where TDefaultConnection : IConnectionStrings
     {
         protected Repository(IOptions<TAppSettings> options) : base(options?.Value)
         {

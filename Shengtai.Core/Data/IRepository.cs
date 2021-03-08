@@ -6,7 +6,7 @@ namespace Shengtai.Data
 {
     public interface IRepository<out TAppSettings, out TDefaultConnection> : IClient
         where TAppSettings : AppSettings<TDefaultConnection>, new()
-        where TDefaultConnection : IDefaultConnection
+        where TDefaultConnection : IConnectionStrings
     {
         TAppSettings AppSettings { get; }
 

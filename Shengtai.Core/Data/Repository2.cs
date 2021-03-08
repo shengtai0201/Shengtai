@@ -9,7 +9,7 @@ namespace Shengtai.Data
          IRepository<TAppSettings, TDefaultConnection>
          where TDbContext : class
          where TAppSettings : AppSettings<TDefaultConnection>, new()
-         where TDefaultConnection : IDefaultConnection
+         where TDefaultConnection : IConnectionStrings
     {
         public TAppSettings AppSettings { get; private set; }
 
