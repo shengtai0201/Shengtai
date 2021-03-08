@@ -81,10 +81,56 @@ namespace Shengtai.Web.Telerik.Mvc
     }
 
     [Produces("application/json")]
-    public abstract class ApiDestroyController<TKey, TModel> : ApiReadController<TKey, TModel> where TModel : class
+    public abstract class ApiCreateUpdateController<TKey, TModel> : ApiReadController<TKey, TModel> where TModel : class
     {
-        private readonly IApiDestroyService<TKey, TModel> _service;
-        protected ApiDestroyController(IApiDestroyService<TKey, TModel> service) : base(service)
+        private readonly IApiCreateUpdateService<TKey, TModel> _service;
+        protected ApiCreateUpdateController(IApiCreateUpdateService<TKey, TModel> service) : base(service)
+        {
+            _service = service;
+        }
+
+        [HttpPost]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> PostAsync([FromForm] TModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var response = new DataSourceResponse<TModel> { DataCollection = new List<TModel> { model }, TotalRowCount = 1 };
+            bool result = await _service.CreateAsync(model, response);
+
+            if (result)
+                return Ok(response);
+            else
+                return this.StatusCode(500, response);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> PutAsync([FromQuery] TKey key, [FromForm] TModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var response = new DataSourceResponse<TModel> { DataCollection = new List<TModel> { model }, TotalRowCount = 1 };
+            bool? result = await _service.UpdateAsync(key, model, response);
+
+            if (result == null)
+                return NotFound(response);
+            else
+            {
+                if (result.Value)
+                    return this.Ok(response);
+                else
+                    return this.StatusCode(500, response);
+            }
+        }
+    }
+
+    [Produces("application/json")]
+    public abstract class ApiCreateDestroyController<TKey, TModel> : ApiReadController<TKey, TModel> where TModel : class
+    {
+        private readonly IApiCreateDestroyService<TKey, TModel> _service;
+        protected ApiCreateDestroyController(IApiCreateDestroyService<TKey, TModel> service) : base(service)
         {
             _service = service;
         }
