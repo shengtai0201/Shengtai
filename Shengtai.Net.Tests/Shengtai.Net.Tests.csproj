@@ -79,7 +79,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="Signature\04A0C6E61CE9EED59ADB7650A0CDF466.cer" />
     <None Include="Signature\1234.pfx" />
