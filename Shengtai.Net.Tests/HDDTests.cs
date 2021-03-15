@@ -225,5 +225,43 @@ namespace Shengtai.Tests
             foreach(var sdd in sdds1)
                 Console.WriteLine($"{sdd.Name}, {sdd.Money}");
         }
+
+        private class MicroSD
+        {
+            public string Name { get; set; }
+            public int Money { get; set; }
+            public int Size { get; set; }
+
+            public double GetWeight()
+            {
+                var weight = this.Size * 1.0 / this.Money;
+
+                return weight;
+            }
+        }
+
+        [Test]
+        public void CCC()
+        {
+            var sdds = new List<MicroSD> {
+                new MicroSD { Name = "三星", Money = 199, Size = 64 },    // .3216
+                new MicroSD { Name = "三星", Money = 399, Size = 128 },   // .3208
+                new MicroSD { Name = "三星", Money = 888, Size = 256 },   // .2882
+
+                new MicroSD { Name = "創見", Money = 112, Size = 16 },    // .1428
+                new MicroSD { Name = "創見", Money = 138, Size = 32 },    // .2318
+                new MicroSD { Name = "創見", Money = 208, Size = 64 },    // .3076
+
+                new MicroSD { Name = "威剛", Money = 105, Size = 16 },    // .1523
+                new MicroSD { Name = "威剛", Money = 108, Size = 32 },    // .2962
+                new MicroSD { Name = "威剛", Money = 178, Size = 64 },    // .3595    1
+                new MicroSD { Name = "威剛", Money = 360, Size = 128 },   // .3555    3
+                new MicroSD { Name = "威剛", Money = 720, Size = 256 }    // .3555    2
+            };
+
+            var sdds1 = sdds.OrderByDescending(s => s.GetWeight());
+            foreach (var sdd in sdds1)
+                Console.WriteLine($"{sdd.Name}, {sdd.Money}");
+        }
     }
 }

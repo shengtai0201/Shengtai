@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shengtai.Net", "Shengtai.Net\Shengtai.Net.csproj", "{F47FE9DF-80F5-4D88-9E90-A02F00C8EA07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shengtai.Net.Tests", "Shengtai.Net.Tests\Shengtai.Net.Tests.csproj", "{CDE03596-7923-4C0D-98F4-2F308A54D138}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F47FE9DF-80F5-4D88-9E90-A02F00C8EA07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F47FE9DF-80F5-4D88-9E90-A02F00C8EA07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F47FE9DF-80F5-4D88-9E90-A02F00C8EA07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F47FE9DF-80F5-4D88-9E90-A02F00C8EA07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDE03596-7923-4C0D-98F4-2F308A54D138}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDE03596-7923-4C0D-98F4-2F308A54D138}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDE03596-7923-4C0D-98F4-2F308A54D138}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDE03596-7923-4C0D-98F4-2F308A54D138}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {00D43C75-B540-4A10-9C2A-FC15112035D1}
+	EndGlobalSection
+EndGlobal
