@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Shengtai";
+
+package grpc;
+
+message BoolReply {
+	bool result = 1;
+	string message = 2;
+	google.protobuf.Timestamp time = 3;
+}
+
+message StringReply {
+	string result = 1;
+	string message = 2;
+	google.protobuf.Timestamp time = 3;
+}
+
+message ByteStringReply {
+	bytes result = 1;
+	string message = 2;
+	google.protobuf.Timestamp time = 3;
+}
