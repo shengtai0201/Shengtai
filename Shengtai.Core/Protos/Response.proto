@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 
 option csharp_namespace = "Shengtai";
 
@@ -18,8 +19,20 @@ message StringReply {
 	google.protobuf.Timestamp time = 3;
 }
 
-message ByteStringReply {
+message BytesReply {
 	bytes result = 1;
+	string message = 2;
+	google.protobuf.Timestamp time = 3;
+}
+
+message Int32ValueReply {
+	google.protobuf.Int32Value result = 1;
+	string message = 2;
+	google.protobuf.Timestamp time = 3;
+}
+
+message BoolValueReply {
+	google.protobuf.BoolValue result = 1;
 	string message = 2;
 	google.protobuf.Timestamp time = 3;
 }
