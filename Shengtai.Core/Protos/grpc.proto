@@ -7,6 +7,18 @@ option csharp_namespace = "Shengtai";
 
 package grpc;
 
+message BytesRequest {
+	bytes value = 1;
+}
+
+message RepeatedInt32Request {
+	repeated int32 values = 1;
+}
+
+message StringRequest {
+	string value = 1;
+}
+
 message BoolReply {
 	bool result = 1;
 	string message = 2;
