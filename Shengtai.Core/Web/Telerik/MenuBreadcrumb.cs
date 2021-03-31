@@ -101,7 +101,7 @@ namespace Shengtai.Web.Telerik
         public string Type { get; private set; } = "rootitem";
 
         [JsonProperty("href")]
-        public string Url { get; set; }
+        public string Url { get; set; } = "#";
 
         private string _name;
         [JsonProperty("text")]
@@ -133,20 +133,27 @@ namespace Shengtai.Web.Telerik
         [JsonProperty("showIcon")]
         public bool ShowIcon { get; private set; } = false;
 
-        public static void SetBreadcrumbItems(MenuBreadcrumb<TKey, TRole> menuBreadcrumb, IList<MenuBreadcrumb<TKey, TRole>> value)
+        private static void SetBreadcrumbItems(MenuBreadcrumb<TKey, TRole> menuBreadcrumb, IList<MenuBreadcrumb<TKey, TRole>> values)
         {
             if (menuBreadcrumb.Parent != null)
-                SetBreadcrumbItems(menuBreadcrumb.Parent, value);
+                SetBreadcrumbItems(menuBreadcrumb.Parent, values);
 
-            value.Add(menuBreadcrumb);
+            values.Add(menuBreadcrumb);
+        }
+
+        public IList<MenuBreadcrumb<TKey, TRole>> GetBreadcrumbItems()
+        {
+            var values = new List<MenuBreadcrumb<TKey, TRole>>();
+            SetBreadcrumbItems(this, values);
+
+            return values;
         }
 
         public string ToBreadcrumbItemsJson()
         {
-            var value = new List<MenuBreadcrumb<TKey, TRole>>();
-            SetBreadcrumbItems(this, value);
+            var values = GetBreadcrumbItems();
 
-            return JsonConvert.SerializeObject(value, Formatting.None, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            return JsonConvert.SerializeObject(values, Formatting.None, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
         }
     }
 }
