@@ -51,6 +51,9 @@
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Google.Protobuf, Version=3.15.7.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.15.7\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.3\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
@@ -102,6 +105,9 @@
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="protobuf-net, Version=2.4.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\packages\protobuf-net.2.4.6\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -224,6 +230,14 @@
     <Compile Include="Options\Logging.cs" />
     <Compile Include="Performances.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protos\BoolReply.cs" />
+    <Compile Include="Protos\BoolValueReply.cs" />
+    <Compile Include="Protos\BytesReply.cs" />
+    <Compile Include="Protos\BytesRequest.cs" />
+    <Compile Include="Protos\Int32ValueReply.cs" />
+    <Compile Include="Protos\RepeatedInt32Request.cs" />
+    <Compile Include="Protos\StringReply.cs" />
+    <Compile Include="Protos\StringRequest.cs" />
     <Compile Include="SerializableKeyValuePair.cs" />
     <Compile Include="SystemExtensions.cs" />
     <Compile Include="ViewModel.cs" />
