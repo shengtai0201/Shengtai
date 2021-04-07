@@ -22,7 +22,7 @@ namespace Shengtai.Protos
         public string Message { get; set; } = "";
 
         [ProtoMember(3, Name = @"time", DataFormat = DataFormat.WellKnown)]
-        public DateTime? Time { get; set; }
+        public DateTime Time { get; set; }
 
     }
 }
