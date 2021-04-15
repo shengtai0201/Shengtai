@@ -6,8 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Protobuf Include="..\Proto\grpc.proto" Link="Protos\grpc.proto" />
+
     <PackageReference Include="CommonServiceLocator" Version="2.0.6" />
     <PackageReference Include="DotNetZip" Version="1.15.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.15.5" />
+    <PackageReference Include="Grpc.Tools" Version="2.36.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
