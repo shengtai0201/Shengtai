@@ -9,7 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shengtai.Net.Tests", "Sheng
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shengtai.Core", "Shengtai.Core\Shengtai.Core.csproj", "{418DC350-BA68-43CB-BD5B-E128DA06DFF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shengtai.Core.Tests", "Shengtai.Core.Tests\Shengtai.Core.Tests.csproj", "{CBD4109D-CB01-4A12-AC42-5B2F2AAB5521}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shengtai.Core.Tests", "Shengtai.Core.Tests\Shengtai.Core.Tests.csproj", "{CBD4109D-CB01-4A12-AC42-5B2F2AAB5521}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shengtai.IdentityServer4", "Shengtai.IdentityServer4\Shengtai.IdentityServer4.csproj", "{DC3F323D-392B-4B7F-8F58-0CD2234EA32B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{CBD4109D-CB01-4A12-AC42-5B2F2AAB5521}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBD4109D-CB01-4A12-AC42-5B2F2AAB5521}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBD4109D-CB01-4A12-AC42-5B2F2AAB5521}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC3F323D-392B-4B7F-8F58-0CD2234EA32B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC3F323D-392B-4B7F-8F58-0CD2234EA32B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC3F323D-392B-4B7F-8F58-0CD2234EA32B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC3F323D-392B-4B7F-8F58-0CD2234EA32B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
