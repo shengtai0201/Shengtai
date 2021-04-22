@@ -38,7 +38,8 @@ namespace Shengtai.Core.Tests
             buy += this.Buy(15.65, 100).Buy;
             for (double i = 0; i < 0.1; i += 0.01)
             {
-                var price = 15.74 + i;
+                //var price = 15.74 + i;
+                var price = 15.88 + i;
                 var sell = this.Sell(price, 101);
                 Console.WriteLine($"{buy}, {sell}, {price}, {sell - buy}");
             }

@@ -1,0 +1,40 @@
+﻿@model Shengtai.IdentityServer4.Models.INavTreeView
+@{
+    var active = Model.Active ? "active" : "";
+    var f = Model.Parent.Header != null ? "fas" : "far";
+}
+@if (string.IsNullOrEmpty(Model.Url))
+{
+    <a href="#" class='nav-link @active'>
+        <i class='nav-icon @f @Model.Icon'></i>
+        <p>
+            @Model.Paragraph.Text
+            <i class='right fas fa-angle-left'></i>
+            @if (Model.Paragraph.Badge != null)
+            {
+                <span class='right badge @Model.Paragraph.Badge.Class'>@Model.Paragraph.Badge.Text</span>
+            }
+        </p>
+    </a>
+    <ul class="nav nav-treeview">
+        @foreach (var n in Model.Menus)
+        {
+            <li class="nav-item">
+                @await Html.PartialAsync("~/Views/Shared/AdminLTE/_Menu.cshtml", n)
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <a href='@Model.Url' class='nav-link @active'>
+        <i class='nav-icon @f @Model.Icon'></i>
+        <p>
+            @Model.Paragraph.Text
+            @if (Model.Paragraph.Badge != null)
+            {
+                <span class='right badge @Model.Paragraph.Badge.Class'>@Model.Paragraph.Badge.Text</span>
+            }
+        </p>
+    </a>
+}

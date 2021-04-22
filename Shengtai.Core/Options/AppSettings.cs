@@ -22,13 +22,15 @@ namespace Shengtai.Options
 
         public TConnectionStrings ConnectionStrings { get; set; }
 
-        public static TAppSettings AddSingleton(IServiceCollection services, IConfiguration configuration)
+        public static TAppSettings AddSingleton(IServiceCollection services, IConfiguration configuration, Action<TAppSettings> action = null)
         {
             var appSettings = Activator.CreateInstance<TAppSettings>();
             configuration.Bind(appSettings);
 
             services.AddSingleton(appSettings);
             services.AddSingleton<IConnectionStrings>(appSettings.ConnectionStrings);
+
+            action?.Invoke(appSettings);
 
             return appSettings;
         }
