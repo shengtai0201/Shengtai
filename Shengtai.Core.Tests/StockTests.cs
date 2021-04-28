@@ -36,7 +36,7 @@ namespace Shengtai.Core.Tests
         {
             var buy = this.Buy(15.65, 1).Buy;
             buy += this.Buy(15.65, 100).Buy;
-            var sell = this.Sell(18.04, 101);
+            var sell = this.Sell(16.54, 101);
             Console.WriteLine($"{buy}, {sell}, {sell - buy}");
         }
 

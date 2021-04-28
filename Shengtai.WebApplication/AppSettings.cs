@@ -1,4 +1,4 @@
-﻿using Shengtai.IdentityServer4;
+﻿using Shengtai.IdentityServer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ namespace Shengtai.WebApplication
 {
     public class AppSettings : Options.AppSettings<AppSettings, AppSettings._ConnectionStrings>, IAppSettings
     {
-        public IAppSettings._IdentityServer4 IdentityServer4 { get; set; }
+        public IAppSettings._IdentityServer IdentityServer { get; set; }
 
         public class _ConnectionStrings : Options.IConnectionStrings
         {

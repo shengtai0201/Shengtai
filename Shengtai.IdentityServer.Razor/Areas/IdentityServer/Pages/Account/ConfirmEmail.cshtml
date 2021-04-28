@@ -1,0 +1,20 @@
+﻿@page
+@inject Shengtai.IdentityServer.IAppSettings AppSettings
+@model ConfirmEmailModel
+@{
+    Layout = "_BlankLayout";
+    ViewData["Title"] = "Confirm email";
+}
+<body class="hold-transition register-page">
+    <div class="register-box">
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href='@Url.Content("~/")' class="h1"><b>@AppSettings.IdentityServer.ApplicationName</b></a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">@ViewData["Title"]</p>
+            </div>
+        </div>
+    </div>
+    @await Html.PartialAsync("~/Views/Shared/_BlankLayoutScriptsPartial.cshtml")
+</body>

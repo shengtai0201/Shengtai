@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Shengtai.IdentityServer4;
+using Shengtai.IdentityServer;
 using Shengtai.WebApplication.Data;
 using System;
 using System.Collections.Generic;
@@ -32,14 +32,26 @@ namespace Shengtai.WebApplication
             var appSettings = AppSettings.AddSingleton(services, Configuration, settings => services.AddSingleton<IAppSettings>(settings));
             var assemblyName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            // Identity Server 4 (­n­×§ï ApplicationDbContext)
+            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<Models.ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<IdentityServer.Models.Account.ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.SignIn.RequireConfirmedEmail = true;
+
+                options.Password.RequiredLength = 3;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireUppercase = false;
+
+                options.User.AllowedUserNameCharacters = null;
+            }).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
 
             // Identity Server 4
-            services.AddIdentityServer<Models.ApplicationUser>(appSettings.ConnectionStrings.DefaultConnection, assemblyName);
+            services.AddIdentityServer<IdentityServer.Models.Account.ApplicationUser>(appSettings.ConnectionStrings.DefaultConnection, assemblyName);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,9 +80,10 @@ namespace Shengtai.WebApplication
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                // Identity Server 4
+                endpoints.MapControllerRoute(name: "IdentityServer", pattern: "{area}/{controller}/{action}/{id?}");
+
+                endpoints.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
         }
