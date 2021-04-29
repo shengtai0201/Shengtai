@@ -6,9 +6,19 @@ using System.Threading.Tasks;
 
 namespace Shengtai.IdentityServer.Controllers
 {
-    public class Test1Controller : Controller
+    public class TestController : Controller
     {
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult LayoutNull()
+        {
+            return View();
+        }
+
+        public IActionResult Layout()
         {
             return View();
         }
