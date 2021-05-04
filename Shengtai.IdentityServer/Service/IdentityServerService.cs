@@ -67,6 +67,16 @@ namespace Shengtai.IdentityServer.Service
             return _signInManager.GetExternalAuthenticationSchemesAsync();
         }
 
+        public async Task<IList<string>> GetRolesAsync(ClaimsPrincipal principal)
+        {
+            var user = await _userManager.GetUserAsync(principal);
+            IList<string> roles = null;
+            if (user != null)
+                roles = await _userManager.GetRolesAsync(user);
+
+            return roles;
+        }
+
         public Task<string> GetUserIdAsync(ApplicationUser user)
         {
             return _userManager.GetUserIdAsync(user as TUser);

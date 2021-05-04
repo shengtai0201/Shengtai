@@ -1,7 +1,7 @@
 ﻿@inject Shengtai.IdentityServer.IAppSettings AppSettings
 @inject Shengtai.IdentityServer.ISignInService Service
 @{
-    var menus = Shengtai.IdentityServer.IdentityServerExtensions.GetMenus();
+//var menus = Shengtai.IdentityServer.IdentityServerExtensions.GetMenus();
 }
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href='@Url.Content("~/")' class="brand-link">
@@ -52,7 +52,7 @@
 
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                @foreach (var header in menus)
+                @*@foreach (var header in menus)
                 {
                     if (!string.IsNullOrEmpty(header.Text))
                     {
@@ -65,7 +65,8 @@
                             @await Html.PartialAsync("~/Views/Shared/AdminLTE/_Menu.cshtml", nav)
                         </li>
                     }
-                }
+                }*@
+                @await Component.InvokeAsync("Navigation")
             </ul>
         </nav>
     </div>

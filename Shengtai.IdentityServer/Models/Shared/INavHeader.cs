@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Shengtai.IdentityServer.Models.Shared
 {
-    public interface INavHeader
+    // 作為區分的標題
+    public interface INavHeader : IMenu
     {
         // 可為空
         string Text { get; }

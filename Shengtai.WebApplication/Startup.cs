@@ -51,7 +51,7 @@ namespace Shengtai.WebApplication
             services.AddControllersWithViews();
 
             // Identity Server 4
-            services.AddIdentityServer<IdentityServer.Models.Account.ApplicationUser>(appSettings.ConnectionStrings.DefaultConnection, assemblyName);
+            services.AddIdentityServer<IdentityServer.Models.Account.ApplicationUser, CustomMenuBuilder>(appSettings.ConnectionStrings.DefaultConnection, assemblyName);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

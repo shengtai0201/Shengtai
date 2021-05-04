@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace Shengtai.IdentityServer.Models.Shared
 {
-    public interface INavItem
+    // 可點選的連結
+    public interface INavItem : IMenu
     {
+        dynamic Key { get; set; }
+
+        // 不設定權限，表示公開
+        dynamic Role { get; set; }
+
         bool Active { get; set; }
 
         // 不可為空

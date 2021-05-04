@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Shengtai.IdentityServer.Models.Shared
 {
-    public interface INavTreeView : INavItem
+    // 含樹狀結構的集合
+    public interface INavTreeView : INavItem, IMenu
     {
         ICollection<INavTreeView> Menus { get; }
+
+        //bool Show(dynamic role);
     }
 }
