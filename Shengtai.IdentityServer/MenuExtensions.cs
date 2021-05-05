@@ -11,8 +11,8 @@ namespace Shengtai.IdentityServer
         // 回傳所新增之物件
         public static Models.Shared.INavHeader AddHeader(this MenuBuilder builder)
         {
-            var header = new Models.Shared.Menu { Builder = builder, Menus = new List<Models.Shared.INavTreeView>() };
-            builder.Add(header);
+            var header = new Models.Shared.Menu { Builder = builder, Type = Models.Shared.MenuTypes.Header, Menus = new List<Models.Shared.INavTreeView>() };
+            builder.AddHeader(header);
 
             return header;
         }
@@ -20,8 +20,8 @@ namespace Shengtai.IdentityServer
         // 回傳所新增之物件
         public static Models.Shared.INavHeader AddHeader(this MenuBuilder builder, string text)
         {
-            var header = new Models.Shared.Menu { Builder = builder, Menus = new List<Models.Shared.INavTreeView>(), Text = text };
-            builder.Add(header);
+            var header = new Models.Shared.Menu { Builder = builder, Type = Models.Shared.MenuTypes.Header, Menus = new List<Models.Shared.INavTreeView>(), Text = text };
+            builder.AddHeader(header);
 
             return header;
         }
@@ -29,7 +29,15 @@ namespace Shengtai.IdentityServer
         // 回傳所新增之物件
         public static Models.Shared.INavTreeView AddTreeView(this Models.Shared.INavHeader header, string text, string icon)
         {
-            var tv = new Models.Shared.Menu { Builder = header.Builder, Paragraph = new Models.Shared.Paragraph { Text = text }, Icon = icon, Menus = new List<Models.Shared.INavTreeView>(), Parent = (header, null) };
+            var tv = new Models.Shared.Menu
+            {
+                Builder = header.Builder,
+                Type = Models.Shared.MenuTypes.TreeView,
+                Paragraph = new Models.Shared.Paragraph { Text = text },
+                Icon = icon,
+                Menus = new List<Models.Shared.INavTreeView>(),
+                Parent = (header, null)
+            };
             header.Menus.Add(tv);
 
             return tv;
@@ -38,7 +46,15 @@ namespace Shengtai.IdentityServer
         // 回傳所新增之物件
         public static Models.Shared.INavTreeView AddTreeView(this Models.Shared.INavHeader header, string text, string icon, string badgeClass, string badgeText)
         {
-            var tv = new Models.Shared.Menu { Builder = header.Builder, Paragraph = new Models.Shared.Paragraph { Text = text, Badge = new Models.Shared.Badge { Class = badgeClass, Text = badgeText } }, Icon = icon, Menus = new List<Models.Shared.INavTreeView>(), Parent = (header, null) };
+            var tv = new Models.Shared.Menu
+            {
+                Builder = header.Builder,
+                Type = Models.Shared.MenuTypes.TreeView,
+                Paragraph = new Models.Shared.Paragraph { Text = text, Badge = new Models.Shared.Badge { Class = badgeClass, Text = badgeText } },
+                Icon = icon,
+                Menus = new List<Models.Shared.INavTreeView>(),
+                Parent = (header, null)
+            };
             header.Menus.Add(tv);
 
             return tv;
@@ -47,7 +63,15 @@ namespace Shengtai.IdentityServer
         // 回傳所新增之物件
         public static Models.Shared.INavTreeView AddTreeView(this Models.Shared.INavTreeView treeView, string text, string icon)
         {
-            var tv = new Models.Shared.Menu { Builder = treeView.Builder, Paragraph = new Models.Shared.Paragraph { Text = text }, Menus = new List<Models.Shared.INavTreeView>(), Parent = (null, treeView), Icon = icon };
+            var tv = new Models.Shared.Menu
+            {
+                Builder = treeView.Builder,
+                Type = Models.Shared.MenuTypes.TreeView,
+                Paragraph = new Models.Shared.Paragraph { Text = text },
+                Menus = new List<Models.Shared.INavTreeView>(),
+                Parent = (null, treeView),
+                Icon = icon
+            };
             treeView.Menus.Add(tv);
 
             return tv;
@@ -67,6 +91,7 @@ namespace Shengtai.IdentityServer
             var item = new Models.Shared.Menu
             {
                 Builder = treeView.Builder,
+                Type = Models.Shared.MenuTypes.Item,
                 Key = key,
                 Role = role,
                 Paragraph = new Models.Shared.Paragraph { Text = text },
@@ -89,6 +114,7 @@ namespace Shengtai.IdentityServer
             var item = new Models.Shared.Menu
             {
                 Builder = header.Builder,
+                Type = Models.Shared.MenuTypes.Item,
                 Key = key,
                 Role = role,
                 Paragraph = new Models.Shared.Paragraph { Text = text, Badge = new Models.Shared.Badge { Class = badgeClass, Text = badgeText } },
@@ -108,6 +134,7 @@ namespace Shengtai.IdentityServer
             var item = new Models.Shared.Menu
             {
                 Builder = treeView.Builder,
+                Type = Models.Shared.MenuTypes.Item,
                 Key = key,
                 Role = role,
                 Paragraph = new Models.Shared.Paragraph { Text = text, Small = small },
@@ -130,6 +157,7 @@ namespace Shengtai.IdentityServer
             var item = new Models.Shared.Menu
             {
                 Builder = header.Builder,
+                Type = Models.Shared.MenuTypes.Item,
                 Key = key,
                 Role = role,
                 Paragraph = new Models.Shared.Paragraph { Text = text },

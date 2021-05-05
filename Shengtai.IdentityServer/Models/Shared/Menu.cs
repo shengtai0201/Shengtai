@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -45,14 +46,14 @@ namespace Shengtai.IdentityServer.Models.Shared
             }
         }
 
+        public MenuTypes Type { get; set; }
+
         public event IMenu.ShowEventHandler ShowEvent;
 
         public bool Show(IList<string> roles)
         {
-            var isItem = this is INavItem;
-
             bool result = false;
-            if (!isItem)
+            if (this.Type != MenuTypes.Item)
                 foreach (var menu in this.Menus)
                     result |= menu.Show(roles);
 

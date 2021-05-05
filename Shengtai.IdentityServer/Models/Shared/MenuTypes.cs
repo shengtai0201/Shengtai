@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Shengtai.IdentityServer.Models.Shared
 {
-    // 含樹狀結構的集合
-    public interface INavTreeView : INavItem, IMenu
+    public enum MenuTypes
     {
-        ICollection<INavTreeView> Menus { get; }
+        Header,
+        TreeView,
+        Item
     }
 }

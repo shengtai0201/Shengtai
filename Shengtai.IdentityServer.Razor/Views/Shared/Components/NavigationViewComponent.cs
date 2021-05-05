@@ -12,18 +12,20 @@ namespace Shengtai.IdentityServer.Views.Shared.Components
     public class NavigationViewComponent : ViewComponent
     {
         private readonly IUserService _userService;
-        private readonly IList<Models.Shared.INavHeader> _headers;
+        private readonly MenuBuilder _builder;
 
         public NavigationViewComponent(IUserService userService, MenuBuilder builder)
         {
             _userService = userService;
-            _headers = builder;
+            _builder = builder;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
+            var headers = _builder.GetHeaders();
             IList<string> roles = await _userService.GetRolesAsync(this.UserClaimsPrincipal);
-            return View((_headers, roles));
+
+            return View((headers, roles));
         }
     }
 }

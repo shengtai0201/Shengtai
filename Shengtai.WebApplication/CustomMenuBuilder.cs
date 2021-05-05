@@ -118,9 +118,40 @@ namespace Shengtai.WebApplication
             header5.AddItem(Key, Roles.Anonymous | Roles.Enterprise, "Informational", "fa-circle text-info", "#");
         }
 
+        private Roles GetHierarchicalRole(ICollection<IdentityServer.Models.Shared.INavTreeView> menus)
+        {
+            Roles? r = null;
+
+            foreach (var menu in menus)
+            {
+                if (menu.Type == IdentityServer.Models.Shared.MenuTypes.TreeView)
+                {
+                    if (r.HasValue)
+                        r |= GetHierarchicalRole(menu.Menus);
+                    else
+                        r = GetHierarchicalRole(menu.Menus);
+                }
+                else
+                {
+                    if(r.HasValue)
+                        r |= (Roles)menu.Role;
+                    else
+                        r = (Roles)menu.Role;
+                }
+            }
+
+            if (!r.HasValue)
+                throw new ArgumentException("請檢查選單設定");
+            return r.Value;
+        }
+
         public override bool ShowStrategy(IdentityServer.Models.Shared.Menu sender, IList<string> roles)
         {
-            var role = (Roles)sender.Role;
+            Roles role;
+            if (sender.Type == IdentityServer.Models.Shared.MenuTypes.Item)
+                role = (Roles)sender.Role;
+            else
+                role = this.GetHierarchicalRole(sender.Menus);
 
             if(roles == null || roles.Count == 0)
                 return (role & Roles.Anonymous) == Roles.Anonymous;
