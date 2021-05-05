@@ -77,6 +77,6 @@ namespace Shengtai.IdentityServer
 
         public abstract void Initialize();
 
-        public abstract bool Show(Menu sender, IList<string> args);
+        public abstract bool ShowStrategy(Menu sender, IList<string> roles);
     }
 }

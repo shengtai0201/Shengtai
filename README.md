@@ -1,0 +1,2 @@
+模組 Shengtai.IdentityServer
+參考網站之appsettings.json必須用"具有BOM的UTF-8"的編碼儲存

@@ -8,11 +8,6 @@ namespace Shengtai.IdentityServer.Models.Shared
 {
     public class Menu : INavHeader, INavTreeView, INavItem
     {
-        //public Menu()
-        //{
-        //    this.ShowEvent += Builder.Show;
-        //}
-
         public dynamic Key { get; set; }
 
         // 不設定權限，表示公開
@@ -46,7 +41,7 @@ namespace Shengtai.IdentityServer.Models.Shared
                 if (ShowEvent != null)
                     ShowEvent = null;
 
-                ShowEvent += _builder.Show;
+                ShowEvent += _builder.ShowStrategy;
             }
         }
 
@@ -54,43 +49,16 @@ namespace Shengtai.IdentityServer.Models.Shared
 
         public bool Show(IList<string> roles)
         {
-            if (this.Role == null && (roles == null || roles.Count == 0))
-                return true;
+            var isItem = this is INavItem;
 
             bool result = false;
-            if (this.Menus != null)
+            if (!isItem)
                 foreach (var menu in this.Menus)
                     result |= menu.Show(roles);
 
-            if (result && ShowEvent == null)
-                return result;
-            else if (ShowEvent != null)
-                result |= ShowEvent(this, roles);
-            else
-                result = false;
+            result |= ShowEvent(this, roles);
 
             return result;
         }
-
-        //public bool Show(dynamic role)
-        //{
-        //    if (!role.HasValue)
-        //        return true;
-
-        //    bool result = false;
-
-        //    // 次目錄是否要顯示
-        //    foreach (var menu in this.Menus)
-        //        result |= menu.Show(role.Value);
-
-        //    if (result && ShowEvent == null)
-        //        return result;
-        //    else if (ShowEvent != null)
-        //        result |= ShowEvent(this, role.Value);
-        //    else
-        //        result = false;
-
-        //    return result;
-        //}
     }
 }

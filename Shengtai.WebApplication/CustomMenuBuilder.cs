@@ -118,18 +118,16 @@ namespace Shengtai.WebApplication
             header5.AddItem(Key, Roles.Anonymous | Roles.Enterprise, "Informational", "fa-circle text-info", "#");
         }
 
-        public override bool Show(IdentityServer.Models.Shared.Menu sender, IList<string> args)
+        public override bool ShowStrategy(IdentityServer.Models.Shared.Menu sender, IList<string> roles)
         {
             var role = (Roles)sender.Role;
 
-            if(args == null)
-            {
+            if(roles == null || roles.Count == 0)
                 return (role & Roles.Anonymous) == Roles.Anonymous;
-            }
             else
             {
                 var r = Roles.Anonymous;
-                foreach(var value in args)
+                foreach(var value in roles)
                 {
                     if (Enum.TryParse(value, out Roles result))
                         r |= result;
