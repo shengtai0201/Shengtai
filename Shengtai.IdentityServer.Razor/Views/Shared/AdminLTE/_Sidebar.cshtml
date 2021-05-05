@@ -1,8 +1,5 @@
 ﻿@inject Shengtai.IdentityServer.IAppSettings AppSettings
 @inject Shengtai.IdentityServer.ISignInService Service
-@{
-//var menus = Shengtai.IdentityServer.IdentityServerExtensions.GetMenus();
-}
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href='@Url.Content("~/")' class="brand-link">
         <img src='@Url.Content(AppSettings.IdentityServer.BrandLogo)' alt='@AppSettings.IdentityServer.ApplicationName Logo' class="brand-image img-circle elevation-3" style="opacity: .8">
@@ -52,20 +49,6 @@
 
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                @*@foreach (var header in menus)
-                {
-                    if (!string.IsNullOrEmpty(header.Text))
-                    {
-                        <li class="nav-header">@header.Text</li>
-                    }
-                    foreach (var nav in header.Menus)
-                    {
-                        var itemClass = nav.Active ? "menu-open" : "";
-                        <li class='nav-item @itemClass'>
-                            @await Html.PartialAsync("~/Views/Shared/AdminLTE/_Menu.cshtml", nav)
-                        </li>
-                    }
-                }*@
                 @await Component.InvokeAsync("Navigation")
             </ul>
         </nav>

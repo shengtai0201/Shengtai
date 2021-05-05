@@ -7,13 +7,13 @@
         {
             <li class="nav-header">@header.Text</li>
         }
-        foreach (var nav in header.Menus)
+        foreach (var menu in header.Menus)
         {
-            if (nav.Show(Model.Roles))
+            if (menu.Show(Model.Roles))
             {
-                var itemClass = nav.Active ? "menu-open" : "";
+                var itemClass = menu.Active ? "menu-open" : "";
                 <li class='nav-item @itemClass'>
-                    @await Html.PartialAsync("~/Views/Shared/AdminLTE/_Menu.cshtml", nav)
+                    @await Html.PartialAsync("~/Views/Shared/AdminLTE/_Menu.cshtml", (menu, Model.Roles))
                 </li>
             }
         }
