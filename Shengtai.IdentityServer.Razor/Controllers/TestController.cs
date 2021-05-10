@@ -18,6 +18,7 @@ namespace Shengtai.IdentityServer.Controllers
             return View();
         }
 
+        [Models.Shared.Menu(typeof(int), Key = -1)]
         public IActionResult Layout()
         {
             return View();

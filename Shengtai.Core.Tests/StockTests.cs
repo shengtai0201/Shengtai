@@ -34,9 +34,12 @@ namespace Shengtai.Core.Tests
         [Test]
         public void AAA()
         {
-            var buy = this.Buy(16.60, 100).Buy;
+            var buy = this.Buy(15.68, 1).Buy;
+            buy += this.Buy(15.68, 100).Buy;
             buy += this.Buy(16.68, 100).Buy;
-            var sell = this.Sell(20.00, 200);
+            buy += this.Buy(16.6, 100).Buy;
+            buy += this.Buy(15.65, 100).Buy;
+            var sell = this.Sell(16.25, 401);   // 15.84
             Console.WriteLine($"{buy}, {sell}, {sell - buy}");
         }
 

@@ -9,9 +9,14 @@ namespace Shengtai.IdentityServer.Models.Shared
 {
     public class Menu : INavHeader, INavTreeView, INavItem
     {
+        public Menu()
+        {
+            this.Menus = new List<INavTreeView>();
+        }
+
         public dynamic Key { get; set; }
 
-        public dynamic Role { get; set; }
+        public IList<string> Roles { get; set; }
 
         public bool Active { get; set; }
 
@@ -23,36 +28,18 @@ namespace Shengtai.IdentityServer.Models.Shared
 
         public (INavHeader Header, INavTreeView TreeView) Parent { get; set; }
 
-        public ICollection<INavTreeView> Menus { get; set; }
+        public IList<INavTreeView> Menus { get; set; }
 
         public string Text { get; set; }
 
-        private MenuBuilder _builder;
-        public MenuBuilder Builder
-        {
-            get
-            {
-                return _builder;
-            }
-            set
-            {
-                _builder = value;
-
-                if (ShowEvent != null)
-                    ShowEvent = null;
-
-                ShowEvent += _builder.ShowStrategy;
-            }
-        }
-
-        public MenuTypes Type { get; set; }
+        public Data.MenuTypes Type { get; set; }
 
         public event IMenu.ShowEventHandler ShowEvent;
 
         public bool Show(IList<string> roles)
         {
             bool result = false;
-            if (this.Type != MenuTypes.Item)
+            if (this.Type != Data.MenuTypes.Item)
                 foreach (var menu in this.Menus)
                     result |= menu.Show(roles);
 

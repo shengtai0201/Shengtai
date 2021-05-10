@@ -22,7 +22,7 @@ namespace Shengtai.IdentityServer.Views.Shared.Components
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var headers = _builder.GetHeaders();
+            var headers = await _builder.GetHeadersAsync();
             var roles = await _userService.GetRolesAsync(this.UserClaimsPrincipal);
 
             return View((headers, roles));

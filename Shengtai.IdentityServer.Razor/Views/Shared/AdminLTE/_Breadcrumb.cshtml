@@ -1,0 +1,25 @@
+﻿@inject Shengtai.IdentityServer.MenuBuilder Builder
+@{
+    var breadcrumbs = ViewData.ReadBreadcrumbs(Builder);
+}
+@for (int i = 0; i < breadcrumbs.Count; i++)
+{
+    var breadcrumb = breadcrumbs[i];
+    var active = i == breadcrumbs.Count - 1 ? "active" : "";
+
+    switch (breadcrumb.Type)
+    {
+        case Shengtai.IdentityServer.Data.MenuTypes.Header:
+            var header = breadcrumb as Shengtai.IdentityServer.Models.Shared.INavHeader;
+            <li class='breadcrumb-item @active'>@header.Text</li>
+            break;
+        case Shengtai.IdentityServer.Data.MenuTypes.TreeView:
+            var treeView = breadcrumb as Shengtai.IdentityServer.Models.Shared.INavTreeView;
+            <li class='breadcrumb-item @active'>@treeView.Paragraph.Text</li>
+            break;
+        case Shengtai.IdentityServer.Data.MenuTypes.Item:
+            var item = breadcrumb as Shengtai.IdentityServer.Models.Shared.INavItem;
+            <li class='breadcrumb-item @active'><a href='@Url.Content(item.Url)'>@item.Paragraph.Text</a></li>
+            break;
+    }
+}

@@ -1,12 +1,11 @@
 ﻿@model (Shengtai.IdentityServer.Models.Shared.INavTreeView Nav, IList<string> Roles)
 @{
     var active = Model.Nav.Active ? "active" : "";
-    var f = Model.Nav.Parent.Header != null ? "fas" : "far";
 }
-@if (Model.Nav.Type == Shengtai.IdentityServer.Models.Shared.MenuTypes.TreeView)
+@if (Model.Nav.Type == Shengtai.IdentityServer.Data.MenuTypes.TreeView)
 {
     <a href="#" class='nav-link @active'>
-        <i class='nav-icon @f @Model.Nav.Icon'></i>
+        <i class='nav-icon @Model.Nav.Icon'></i>
         <p>
             @Model.Nav.Paragraph.Text
             <i class='right fas fa-angle-left'></i>
@@ -31,8 +30,8 @@
 }
 else
 {
-    <a href='@Model.Nav.Url' class='nav-link @active'>
-        <i class='nav-icon @f @Model.Nav.Icon'></i>
+    <a href='@Url.Content(Model.Nav.Url)' class='nav-link @active'>
+        <i class='nav-icon @Model.Nav.Icon'></i>
         <p>
             @Model.Nav.Paragraph.Text
             @if (Model.Nav.Paragraph.Badge != null)

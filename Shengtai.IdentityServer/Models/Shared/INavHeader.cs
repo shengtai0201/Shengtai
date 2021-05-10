@@ -13,6 +13,6 @@ namespace Shengtai.IdentityServer.Models.Shared
         string Text { get; }
 
         // 不可為空
-        ICollection<INavTreeView> Menus { get; }
+        IList<INavTreeView> Menus { get; }
     }
 }

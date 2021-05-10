@@ -1,4 +1,4 @@
-﻿@model (IList<Shengtai.IdentityServer.Models.Shared.INavHeader> Headers, IList<string> Roles)
+﻿@model (IList<Shengtai.IdentityServer.Models.Shared.Menu> Headers, IList<string> Roles)
 @foreach (var header in Model.Headers)
 {
     if (header.Show(Model.Roles))

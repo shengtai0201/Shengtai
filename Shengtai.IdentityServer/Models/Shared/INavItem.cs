@@ -12,7 +12,7 @@ namespace Shengtai.IdentityServer.Models.Shared
         dynamic Key { get; set; }
 
         // 不設定權限，表示公開
-        dynamic Role { get; set; }
+        IList<string> Roles { get; set; }
 
         bool Active { get; set; }
 

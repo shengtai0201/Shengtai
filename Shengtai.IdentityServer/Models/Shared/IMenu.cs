@@ -12,10 +12,8 @@ namespace Shengtai.IdentityServer.Models.Shared
 
         event ShowEventHandler ShowEvent;
 
-        MenuBuilder Builder { get; }
-
         bool Show(IList<string> roles);
 
-        MenuTypes Type { get; }
+        Data.MenuTypes Type { get; }
     }
 }

@@ -19,6 +19,7 @@ namespace Shengtai.IdentityServer
             services.AddScoped<Service.IdentityServerService<TUser>>();
             services.AddScoped<ISignInService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
             services.AddScoped<IUserService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
+            services.AddScoped<IRoleService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
             services.AddScoped<IEmailService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
             #endregion
 
@@ -46,16 +47,19 @@ namespace Shengtai.IdentityServer
             builder.AddDeveloperSigningCredential();
         }
 
-        public static void AddIdentityServer<TUser, TMenuBuilder>(this IServiceCollection services, string connectionString, string assemblyName) 
+        public static void AddIdentityServer<TUser, TDataStrategy, TMenuBuilder>(this IServiceCollection services, string connectionString, string assemblyName) 
             where TUser : Models.Account.ApplicationUser
+            where TDataStrategy : class, Data.IDataStrategy
             where TMenuBuilder : MenuBuilder
         {
             #region default service
             services.AddScoped<Service.IdentityServerService<TUser>>();
             services.AddScoped<ISignInService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
             services.AddScoped<IUserService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
+            services.AddScoped<IRoleService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
             services.AddScoped<IEmailService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
-            services.AddSingleton<MenuBuilder, TMenuBuilder>();
+            services.AddScoped<Data.IDataStrategy, TDataStrategy>();
+            services.AddScoped<MenuBuilder, TMenuBuilder>();
             #endregion
 
             var builder = services.AddIdentityServer(options =>

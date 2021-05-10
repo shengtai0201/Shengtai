@@ -10,27 +10,41 @@ namespace Shengtai.IdentityServer
 {
     public abstract class MenuBuilder
     {
-        private readonly IList<INavHeader> _headers;
+        private readonly INavTreeView _firstPage;
+        public INavTreeView FirstPage { get => _firstPage; }
 
-        protected MenuBuilder()
+        private readonly Data.IDataStrategy _dataStrategy;
+        private readonly Task<IList<Menu>> _headers;
+
+        protected MenuBuilder(IAppSettings appSettings, Data.IDataStrategy dataStrategy)
         {
-            _headers = new List<INavHeader>();
+            _firstPage = new Menu
+            {
+                Type = Data.MenuTypes.Item,
+                Paragraph = new Paragraph { Text = appSettings.IdentityServer.Text },
+                Url = "~/",
+                Icon = appSettings.IdentityServer.Icon,
+                Active = true
+            };
+            _firstPage.ShowEvent += ShowStrategy;
 
-            this.Initialize();
+            _dataStrategy = dataStrategy;
+            _headers = _dataStrategy.ReadAllAsync(ShowStrategy);
         }
 
-        public void AddHeader(INavHeader header)
-        {
-            _headers.Add(header);
-        }
-
-        public IList<INavHeader> GetHeaders()
+        public Task<IList<Menu>> GetHeadersAsync()
         {
             return _headers;
         }
 
-        public abstract void Initialize();
-
         public abstract bool ShowStrategy(Menu sender, IList<string> roles);
+
+        public IList<IMenu> ReadBreadcrumbs(string key)
+        {
+            IList<IMenu> menus = new List<IMenu> { this.FirstPage };
+            _dataStrategy.ReadBreadcrumbs(menus, key);
+
+            return menus;
+        }
     }
 }

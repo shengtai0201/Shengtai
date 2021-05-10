@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shengtai.IdentityServer.Models.Shared
+namespace Shengtai.IdentityServer.Data
 {
     public enum MenuTypes
     {

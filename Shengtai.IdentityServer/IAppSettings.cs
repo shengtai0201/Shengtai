@@ -13,6 +13,9 @@ namespace Shengtai.IdentityServer
             public string ApplicationName { get; set; } = "AdminLTE";
             public string BrandLogo { get; set; } = "~/_content/Shengtai.IdentityServer/lib/admin-lte/img/AdminLTELogo.png";
 
+            public string Text { get; set; }
+            public string Icon { get; set; }
+
             public class _Email
             {
                 public string Host { get; set; }

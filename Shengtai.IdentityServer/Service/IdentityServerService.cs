@@ -15,19 +15,21 @@ using System.Threading.Tasks;
 
 namespace Shengtai.IdentityServer.Service
 {
-    public class IdentityServerService<TUser> : ISignInService, IUserService, IEmailService where TUser : ApplicationUser
+    public class IdentityServerService<TUser> : ISignInService, IUserService, IRoleService, IEmailService where TUser : ApplicationUser
     {
         private readonly ILogger<IdentityServerService<TUser>> _logger;
         private readonly IAppSettings _appSettings;
         private readonly SignInManager<TUser> _signInManager;
         private readonly UserManager<TUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public IdentityServerService(ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings, SignInManager<TUser> signInManager, UserManager<TUser> userManager)
+        public IdentityServerService(ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings, SignInManager<TUser> signInManager, UserManager<TUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _logger = logger;
             _appSettings = appSettings;
             _signInManager = signInManager;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public bool RequireConfirmedAccount => _userManager.Options.SignIn.RequireConfirmedAccount;
@@ -75,6 +77,31 @@ namespace Shengtai.IdentityServer.Service
                 roles = await _userManager.GetRolesAsync(user);
 
             return roles;
+        }
+
+        public async Task<IList<string>> GetRolesAsync(int menuId)
+        {
+            IList<string> result = new List<string>();
+
+            var roles = await _roleManager.Roles.ToListAsync();
+            foreach (var role in roles)
+            {
+                var claims = await _roleManager.GetClaimsAsync(role);
+                foreach (var claim in claims)
+                {
+                    if (claim.Type == "Menu.Id")
+                    {
+                        var id = Convert.ToInt32(claim.Value);
+                        if (menuId == id)
+                        {
+                            result.Add(role.Name);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
 
         public Task<string> GetUserIdAsync(ApplicationUser user)
