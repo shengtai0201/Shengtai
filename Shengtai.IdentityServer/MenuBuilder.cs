@@ -10,15 +10,15 @@ namespace Shengtai.IdentityServer
 {
     public abstract class MenuBuilder
     {
-        private readonly INavTreeView _firstPage;
-        public INavTreeView FirstPage { get => _firstPage; }
+        private readonly INavTreeView _homePage;
+        public INavTreeView HomePage { get => _homePage; }
 
         private readonly Data.IDataStrategy _dataStrategy;
         private readonly Task<IList<Menu>> _headers;
 
         protected MenuBuilder(IAppSettings appSettings, Data.IDataStrategy dataStrategy)
         {
-            _firstPage = new Menu
+            _homePage = new Menu
             {
                 Type = Data.MenuTypes.Item,
                 Paragraph = new Paragraph { Text = appSettings.IdentityServer.Text },
@@ -26,7 +26,7 @@ namespace Shengtai.IdentityServer
                 Icon = appSettings.IdentityServer.Icon,
                 Active = true
             };
-            _firstPage.ShowEvent += ShowStrategy;
+            _homePage.ShowEvent += ShowStrategy;
 
             _dataStrategy = dataStrategy;
             _headers = _dataStrategy.ReadAllAsync(ShowStrategy);
@@ -39,11 +39,16 @@ namespace Shengtai.IdentityServer
 
         public abstract bool ShowStrategy(Menu sender, IList<string> roles);
 
+        public abstract bool IsHomePage(string key);
+
         public IList<IMenu> ReadBreadcrumbs(string key)
         {
-            IList<IMenu> menus = new List<IMenu> { this.FirstPage };
-            _dataStrategy.ReadBreadcrumbs(menus, key);
+            IList<IMenu> menus = new List<IMenu> { this.HomePage };
 
+            if (this.IsHomePage(key))
+                return menus;
+
+            _dataStrategy.ReadBreadcrumbs(menus, key);
             return menus;
         }
     }

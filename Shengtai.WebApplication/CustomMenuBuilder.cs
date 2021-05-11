@@ -11,8 +11,8 @@ namespace Shengtai.WebApplication
     {
         public CustomMenuBuilder(IAppSettings appSettings, IdentityServer.Data.IDataStrategy dataStrategy) : base(appSettings, dataStrategy)
         {
-            this.FirstPage.Key = 0;
-            this.FirstPage.Roles = new[] { "Anonymous" };
+            this.HomePage.Key = 0;
+            this.HomePage.Roles = new[] { "Anonymous" };
         }
 
         private Roles ConvertToRole(IList<string> roles)
@@ -84,5 +84,7 @@ namespace Shengtai.WebApplication
                 return (role & r) == r;
             }
         }
+
+        public override bool IsHomePage(string key) => Convert.ToInt32(key) == 0;
     }
 }
