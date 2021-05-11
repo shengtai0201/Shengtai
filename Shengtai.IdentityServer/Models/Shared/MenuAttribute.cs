@@ -9,22 +9,21 @@ namespace Shengtai.IdentityServer.Models.Shared
 {
     public class MenuAttribute : ActionFilterAttribute
     {
-        public const string NAME = "MENU_AUTH";
+        public const string NAME = "IMenu.Key";
 
-        private readonly Type _type;
-        public MenuAttribute(Type type)
+        private int _key;
+
+        public MenuAttribute(int key)
         {
-            _type = type;
+            _key = key;
         }
-
-        public object Key { get; set; }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             await base.OnActionExecutionAsync(context, next);
 
-            if (context.Controller is Microsoft.AspNetCore.Mvc.Controller controller && Key.GetType() == _type)
-                controller.ViewData[NAME] = Convert.ChangeType(Key, _type);
+            if (context.Controller is Microsoft.AspNetCore.Mvc.Controller controller)
+                controller.ViewData[NAME] = _key;
 
             await next();
         }

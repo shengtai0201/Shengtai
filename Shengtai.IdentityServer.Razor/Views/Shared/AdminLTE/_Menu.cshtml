@@ -1,6 +1,7 @@
 ﻿@model (Shengtai.IdentityServer.Models.Shared.INavTreeView Nav, IList<string> Roles)
+@inject Shengtai.IdentityServer.MenuBuilder Builder
 @{
-    var active = Model.Nav.Active ? "active" : "";
+    var active = ViewData.IsActived(Builder, Model.Nav.Key) ? "active" : "";
 }
 @if (Model.Nav.Type == Shengtai.IdentityServer.Data.MenuTypes.TreeView)
 {
@@ -20,7 +21,7 @@
         {
             if (menu.Show(Model.Roles))
             {
-                var itemClass = menu.Active ? "menu-open" : "";
+                var itemClass = ViewData.IsActived(Builder, menu.Key) ? "menu-open" : "";
                 <li class='nav-item @itemClass'>
                     @await Html.PartialAsync("~/Views/Shared/AdminLTE/_Menu.cshtml", (menu, Model.Roles))
                 </li>

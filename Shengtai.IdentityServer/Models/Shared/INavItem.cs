@@ -9,12 +9,8 @@ namespace Shengtai.IdentityServer.Models.Shared
     // 可點選的連結
     public interface INavItem : IMenu
     {
-        dynamic Key { get; set; }
-
         // 不設定權限，表示公開
         IList<string> Roles { get; set; }
-
-        bool Active { get; set; }
 
         // 不可為空
         Paragraph Paragraph { get; }

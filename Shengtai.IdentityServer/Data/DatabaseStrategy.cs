@@ -29,11 +29,12 @@ namespace Shengtai.IdentityServer.Data
                 var headers = entities.Where(m => m.Type == MenuTypes.Header).OrderBy(m => m.Id).ToList();
                 foreach (var header in headers)
                 {
-                    var menu = new Models.Shared.Menu();
-
-                    menu.Type = MenuTypes.Header;
-                    menu.Key = header.Id;
-                    menu.Text = header.Text;
+                    var menu = new Models.Shared.Menu
+                    {
+                        Key = header.Id,
+                        Type = MenuTypes.Header,
+                        Text = header.Text
+                    };
                     menu.ShowEvent += showStrategy;
 
                     await this.ReadAllAsync(showStrategy, (header, menu), entities);
@@ -52,8 +53,8 @@ namespace Shengtai.IdentityServer.Data
 
                     if (entity.Type == MenuTypes.TreeView)
                     {
-                        menu.Type = MenuTypes.TreeView;
                         menu.Key = entity.Id;
+                        menu.Type = MenuTypes.TreeView;
                         menu.Paragraph = new Paragraph { Small = entity.Small, Text = entity.Text };
                         menu.Url = entity.Url;
                         menu.Icon = entity.Icon;
@@ -63,8 +64,8 @@ namespace Shengtai.IdentityServer.Data
                     }
                     else if (entity.Type == MenuTypes.Item)
                     {
-                        menu.Type = MenuTypes.Item;
                         menu.Key = entity.Id;
+                        menu.Type = MenuTypes.Item;
                         menu.Paragraph = new Paragraph { Small = entity.Small, Text = entity.Text };
                         menu.Url = entity.Url;
                         menu.Icon = entity.Icon;
@@ -104,12 +105,15 @@ namespace Shengtai.IdentityServer.Data
                 switch (entity.Type)
                 {
                     case MenuTypes.Header:
+                        menu.Key = entity.Id;
                         menu.Text = entity.Text;
                         break;
                     case MenuTypes.TreeView:
+                        menu.Key = entity.Id;
                         menu.Paragraph = new Paragraph { Text = entity.Text };
                         break;
                     case MenuTypes.Item:
+                        menu.Key = entity.Id;
                         menu.Url = entity.Url;
                         menu.Paragraph = new Paragraph { Text = entity.Text };
                         break;
@@ -118,11 +122,10 @@ namespace Shengtai.IdentityServer.Data
             }
         }
 
-        public void ReadBreadcrumbs(IList<IMenu> menus, string key)
+        public void ReadBreadcrumbs(IList<IMenu> menus, int key)
         {
             var dbContext = new NavDbContext(_connectionStrings.DefaultConnection);
-            var id = Convert.ToInt32(key);
-            var entity = dbContext.Menus.SingleOrDefault(m => m.Id == id);
+            var entity = dbContext.Menus.SingleOrDefault(m => m.Id == key);
 
             this.ReadBreadcrumbs(menus, entity);
         }

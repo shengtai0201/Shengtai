@@ -11,8 +11,16 @@ namespace Shengtai.IdentityServer
     {
         public static IList<Models.Shared.IMenu> ReadBreadcrumbs(this ViewDataDictionary viewData, MenuBuilder builder)
         {
-            var key = viewData[Models.Shared.MenuAttribute.NAME].ToString();
+            var key = Convert.ToInt32(viewData[Models.Shared.MenuAttribute.NAME]);
+
             return builder.ReadBreadcrumbs(key);
+        }
+
+        public static bool IsActived(this ViewDataDictionary viewData, MenuBuilder builder, int targetKey)
+        {
+            var key = Convert.ToInt32(viewData[Models.Shared.MenuAttribute.NAME]);
+
+            return builder.IsActived(key, targetKey);
         }
     }
 }

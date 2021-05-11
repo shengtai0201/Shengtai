@@ -1,4 +1,8 @@
 ﻿@model (IList<Shengtai.IdentityServer.Models.Shared.Menu> Headers, IList<string> Roles)
+@inject Shengtai.IdentityServer.MenuBuilder Builder
+@{ 
+    
+}
 @foreach (var header in Model.Headers)
 {
     if (header.Show(Model.Roles))
@@ -11,7 +15,7 @@
         {
             if (menu.Show(Model.Roles))
             {
-                var itemClass = menu.Active ? "menu-open" : "";
+                var itemClass = ViewData.IsActived(Builder, menu.Key) ? "menu-open" : "";
                 <li class='nav-item @itemClass'>
                     @await Html.PartialAsync("~/Views/Shared/AdminLTE/_Menu.cshtml", (menu, Model.Roles))
                 </li>

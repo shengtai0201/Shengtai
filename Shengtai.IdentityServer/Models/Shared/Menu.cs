@@ -14,11 +14,9 @@ namespace Shengtai.IdentityServer.Models.Shared
             this.Menus = new List<INavTreeView>();
         }
 
-        public dynamic Key { get; set; }
+        public int Key { get; set; }
 
         public IList<string> Roles { get; set; }
-
-        public bool Active { get; set; }
 
         public Paragraph Paragraph { get; set; }
 
