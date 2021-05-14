@@ -58,6 +58,7 @@ namespace Shengtai.IdentityServer
             services.AddScoped<IUserService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
             services.AddScoped<IRoleService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
             services.AddScoped<IEmailService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
+            services.AddScoped<IIdentityServerService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
             services.AddScoped<Data.IDataStrategy, TDataStrategy>();
             services.AddScoped<MenuBuilder, TMenuBuilder>();
             #endregion

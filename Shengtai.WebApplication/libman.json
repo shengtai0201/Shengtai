@@ -42,6 +42,11 @@
     {
       "library": "icheck-bootstrap@3.0.1",
       "destination": "wwwroot/lib/icheck-bootstrap/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "@microsoft/signalr@5.0.6",
+      "destination": "wwwroot/lib/microsoft/signalr/"
     }
   ]
 }

@@ -16,6 +16,8 @@ namespace Shengtai.IdentityServer
             public string Text { get; set; }
             public string Icon { get; set; }
 
+            public ICollection<string> Roles { get; set; }
+
             public class _Email
             {
                 public string Host { get; set; }

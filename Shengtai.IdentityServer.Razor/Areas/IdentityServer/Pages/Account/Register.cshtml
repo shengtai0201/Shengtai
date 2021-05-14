@@ -3,7 +3,7 @@
 @model RegisterModel
 @{
     Layout = "_BlankLayout";
-    ViewData["Title"] = "Register";
+    ViewBag.Title = "Register";
 }
 <body class="hold-transition register-page">
     <div class="register-box">
@@ -81,7 +81,7 @@
                     </a>
                 </div>
 
-                <a href="login.html" class="text-center">I already have a membership</a>
+                <a href='@Url.Content("~/IdentityServer/Account/Login")' class="text-center">I already have a membership</a>
             </div>
         </div>
     </div>

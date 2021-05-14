@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using IdentityServer4.EntityFramework.Mappers;
+using IdentityServer4.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -15,24 +17,58 @@ using System.Threading.Tasks;
 
 namespace Shengtai.IdentityServer.Service
 {
-    public class IdentityServerService<TUser> : ISignInService, IUserService, IRoleService, IEmailService where TUser : ApplicationUser
+    public class IdentityServerService<TUser> : ISignInService, IUserService, IRoleService, IEmailService, IIdentityServerService where TUser : ApplicationUser
     {
         private readonly ILogger<IdentityServerService<TUser>> _logger;
         private readonly IAppSettings _appSettings;
         private readonly SignInManager<TUser> _signInManager;
         private readonly UserManager<TUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IdentityServer4.EntityFramework.DbContexts.ConfigurationDbContext _configurationDbContext;
 
-        public IdentityServerService(ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings, SignInManager<TUser> signInManager, UserManager<TUser> userManager, RoleManager<IdentityRole> roleManager)
+        public IdentityServerService(ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings, SignInManager<TUser> signInManager, UserManager<TUser> userManager, RoleManager<IdentityRole> roleManager, IdentityServer4.EntityFramework.DbContexts.ConfigurationDbContext configurationDbContext)
         {
             _logger = logger;
             _appSettings = appSettings;
             _signInManager = signInManager;
             _userManager = userManager;
             _roleManager = roleManager;
+            _configurationDbContext = configurationDbContext;
         }
 
         public bool RequireConfirmedAccount => _userManager.Options.SignIn.RequireConfirmedAccount;
+
+        public async Task<(string ClientId, string ClientSecret, string Scope)> AddClientAsync(ApplicationUser user)
+        {
+            (string ClientId, string ClientSecret, string Scope) result = (user.Account + "-" + Security.Membership.GeneratePassword(4, 4), 
+                Security.Membership.GeneratePassword(8, 1), _appSettings.IdentityServer.Configuration.ApiScopeName);
+
+            var client = new Client
+            {
+                ClientId = result.ClientId,
+                ClientSecrets = { new Secret(result.ClientSecret.Sha256()) },
+                AllowedGrantTypes = GrantTypes.ClientCredentials,
+                AllowedScopes = { result.Scope }
+            }.ToEntity();
+
+            await _configurationDbContext.Clients.AddAsync(client);
+            try
+            {
+                await _userManager.AddToRolesAsync(user as TUser, _appSettings.IdentityServer.Roles);
+
+                await _configurationDbContext.SaveChangesAsync();
+
+                await this.SendEmailAsync(user.Email, "API 帳密", $"<p>Your ClientId:{result.ClientId}</p><br /><p>Your ClientSecret:{result.ClientSecret}</p><br /><p>Your Scope:{result.Scope}</p>");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+
+                result = (null, null, null);
+            }
+
+            return result;
+        }
 
         public Task<IdentityResult> ConfirmEmailAsync(ApplicationUser user, string token)
         {

@@ -16,17 +16,18 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
     public class RegisterConfirmationModel : PageModel
     {
         private readonly IUserService _userService;
+        private readonly IIdentityServerService _identityServerService;
 
-        public RegisterConfirmationModel(IUserService userService)
+        public RegisterConfirmationModel(IUserService userService, IIdentityServerService identityServerService)
         {
             _userService = userService;
+            _identityServerService = identityServerService;
         }
 
         public string Email { get; set; }
-
-        public bool DisplayConfirmAccountLink { get; set; }
-
-        public string EmailConfirmationUrl { get; set; }
+        public string ClientId { get; set; }
+        public string ClientSecret { get; set; }
+        public string Scope { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string email, string returnUrl = null)
         {
@@ -42,15 +43,12 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
             }
 
             Email = email;
-            // Once you add a real email sender, you should remove this code that lets you confirm the account
-            DisplayConfirmAccountLink = true;
-            if (DisplayConfirmAccountLink)
-            {
-                var userId = await _userService.GetUserIdAsync(user);
-                var code = await _userService.GenerateEmailConfirmationTokenAsync(user);
-                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                EmailConfirmationUrl = Url.Page("/Account/ConfirmEmail", pageHandler: null, values: new { area = "IdentityServer", userId, code, returnUrl }, protocol: Request.Scheme);
-            }
+
+            // machine to machine client(api)
+            var result = await _identityServerService.AddClientAsync(user);
+            ClientId = result.ClientId;
+            ClientSecret = result.ClientSecret;
+            Scope = result.Scope;
 
             return Page();
         }

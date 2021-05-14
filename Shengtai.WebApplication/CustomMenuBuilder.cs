@@ -63,24 +63,24 @@ namespace Shengtai.WebApplication
 
         public override bool ShowStrategy(Menu sender, IList<string> roles)
         {
-            Roles role;
-            if (sender.Type == IdentityServer.Data.MenuTypes.Item)
-                role = this.ConvertToRole(sender.Roles);
+            Roles menuRoles;
+            if (sender.Type == Shengtai.IdentityServer.Data.MenuTypes.Item)
+                menuRoles = this.ConvertToRole(sender.Roles);
             else
-                role = this.GetHierarchicalRole(sender.Menus);
+                menuRoles = this.GetHierarchicalRole(sender.Menus);
 
             if (roles == null || roles.Count == 0)
-                return (role & Roles.Anonymous) == Roles.Anonymous;
+                return (menuRoles & Roles.Anonymous) != 0;
             else
             {
-                var r = Roles.Anonymous;
+                var userRoles = Roles.Anonymous;
                 foreach (var value in roles)
                 {
                     if (Enum.TryParse(value, out Roles result))
-                        r |= result;
+                        userRoles |= result;
                 }
 
-                return (role & r) == r;
+                return (menuRoles & userRoles) != 0;
             }
         }
     }

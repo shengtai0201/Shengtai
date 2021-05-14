@@ -51,7 +51,6 @@ namespace Shengtai.IdentityServer
             return menus;
         }
 
-        // todo: database 有 id, in memory just item 有 key
         public bool IsActived(int activeKey, int targetKey)
         {
             if (activeKey == targetKey)

@@ -45,55 +45,52 @@ namespace Shengtai.IdentityServer.Builder
             services.AddIdentityServer<Models.Account.ApplicationUser>(appSettings.ConnectionStrings.DefaultConnection, assemblyName);
             #endregion
 
-            using (var provider = services.BuildServiceProvider())
+            using var provider = services.BuildServiceProvider();
+            using var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            var logger = provider.GetService<ILoggerFactory>().CreateLogger<Program>();
+            logger.LogInformation("Starting application");
+
+            var dbContext = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+
+            bool anyChanges = AddIdentityResource(dbContext, new IdentityResources.OpenId());
+            anyChanges |= AddIdentityResource(dbContext, new IdentityResources.Profile());
+            anyChanges |= AddIdentityResource(dbContext, new IdentityResources.Email());
+            anyChanges |= AddIdentityResource(dbContext, new IdentityResources.Phone());
+            anyChanges |= AddIdentityResource(dbContext, new IdentityResources.Address());
+            if (anyChanges)
+                dbContext.SaveChanges();
+
+            var apiScope = new ApiScope(appSettings.IdentityServer.Configuration.ApiScopeName, appSettings.IdentityServer.Configuration.ApiScopeDisplayName).ToEntity();
+            var apiScopeEntity = dbContext.ApiScopes.FromSqlRaw($"SELECT * FROM \"ApiScopes\" a WHERE a.\"Name\" = '{apiScope.Name}'").Count();
+            if (apiScopeEntity == 0)
             {
-                using (var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                {
-                    var logger = provider.GetService<ILoggerFactory>().CreateLogger<Program>();
-                    logger.LogInformation("Starting application");
+                dbContext.ApiScopes.Add(apiScope);
+                dbContext.SaveChanges();
+            }
 
-                    var dbContext = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-
-                    bool anyChanges = AddIdentityResource(dbContext, new IdentityResources.OpenId());
-                    anyChanges |= AddIdentityResource(dbContext, new IdentityResources.Profile());
-                    anyChanges |= AddIdentityResource(dbContext, new IdentityResources.Email());
-                    anyChanges |= AddIdentityResource(dbContext, new IdentityResources.Phone());
-                    anyChanges |= AddIdentityResource(dbContext, new IdentityResources.Address());
-                    if (anyChanges)
-                        dbContext.SaveChanges();
-
-                    var apiScope = new ApiScope(appSettings.IdentityServer.Configuration.ApiScopeName, appSettings.IdentityServer.Configuration.ApiScopeDisplayName).ToEntity();
-                    var apiScopeEntity = dbContext.ApiScopes.FromSqlRaw($"SELECT * FROM \"ApiScopes\" a WHERE a.\"Name\" = '{apiScope.Name}'").Count();
-                    if (apiScopeEntity == 0)
-                    {
-                        dbContext.ApiScopes.Add(apiScope);
-                        dbContext.SaveChanges();
-                    }
-
-                    var client = new Client
-                    {
-                        ClientId = appSettings.IdentityServer.Configuration.ClientId,
-                        ClientSecrets = { new Secret(appSettings.IdentityServer.Configuration.SecretValue.Sha256()) },
-                        AllowedGrantTypes = GrantTypes.Code,
-                        RedirectUris = { $"{appSettings.IdentityServer.Configuration.Uri}/signin-oidc" },
-                        PostLogoutRedirectUris = { $"{appSettings.IdentityServer.Configuration.Uri}/signout-callback-oidc" },
-                        AllowedScopes = new List<string>
+            // web server
+            var client = new Client
+            {
+                ClientId = appSettings.IdentityServer.Configuration.ClientId,
+                ClientSecrets = { new Secret(appSettings.IdentityServer.Configuration.SecretValue.Sha256()) },
+                AllowedGrantTypes = GrantTypes.Code,
+                RedirectUris = { $"{appSettings.IdentityServer.Configuration.Uri}/signin-oidc" },
+                PostLogoutRedirectUris = { $"{appSettings.IdentityServer.Configuration.Uri}/signout-callback-oidc" },
+                AllowedScopes = new List<string>
                         {
                             IdentityServerConstants.StandardScopes.OpenId,
                             IdentityServerConstants.StandardScopes.Profile,
                             appSettings.IdentityServer.Configuration.ApiScopeName
                         }
-                    }.ToEntity();
-                    var clientEntity = dbContext.Clients.FromSqlRaw($"SELECT * FROM \"Clients\" c WHERE c.\"ClientId\" = '{client.ClientId}'").Count();
-                    if (clientEntity == 0)
-                    {
-                        dbContext.Clients.Add(client);
-                        dbContext.SaveChanges();
-                    }
-
-                    logger.LogInformation("All done!");
-                }
+            }.ToEntity();
+            var clientEntity = dbContext.Clients.FromSqlRaw($"SELECT * FROM \"Clients\" c WHERE c.\"ClientId\" = '{client.ClientId}'").Count();
+            if (clientEntity == 0)
+            {
+                dbContext.Clients.Add(client);
+                dbContext.SaveChanges();
             }
+
+            logger.LogInformation("All done!");
         }
     }
 }

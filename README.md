@@ -14,3 +14,8 @@ Shengtai.IdentityServer.Razor => Razor 類別庫(.NET 5.0)<br/>
 其他注意事項：<br/>
 1. 參考網站之appsettings.json必須用"具有BOM的UTF-8"的編碼儲存
 已知缺陷：<br/>
+待辦事項：<br/>
+1. 使用者管理
+2. 選單目錄設定
+3. 權限設定
+4. 選單之 Badge 功能
