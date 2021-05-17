@@ -107,15 +107,18 @@ namespace Shengtai.IdentityServer.Data
                     case MenuTypes.Header:
                         menu.Key = entity.Id;
                         menu.Text = entity.Text;
+                        menu.Type = MenuTypes.Header;
                         break;
                     case MenuTypes.TreeView:
                         menu.Key = entity.Id;
                         menu.Paragraph = new Paragraph { Text = entity.Text };
+                        menu.Type = MenuTypes.TreeView;
                         break;
                     case MenuTypes.Item:
                         menu.Key = entity.Id;
                         menu.Url = entity.Url;
                         menu.Paragraph = new Paragraph { Text = entity.Text };
+                        menu.Type = MenuTypes.Item;
                         break;
                 }
                 menus.Add(menu);
@@ -128,6 +131,18 @@ namespace Shengtai.IdentityServer.Data
             var entity = dbContext.Menus.SingleOrDefault(m => m.Id == key);
 
             this.ReadBreadcrumbs(menus, entity);
+        }
+
+        public IDictionary<Paragraph, int> Read()
+        {
+            IDictionary<Paragraph, int> result = new Dictionary<Paragraph, int>();
+            var dbContext = new NavDbContext(_connectionStrings.DefaultConnection);
+
+            var menus = dbContext.Menus.Include("Parent").Where(m => m.Type == MenuTypes.Item).ToList();
+            foreach (var menu in menus)
+                result.Add(new Paragraph { Text = menu.Text, Small = menu.Small, Parent = new Paragraph { Text = menu.Parent.Text, Small = menu.Parent.Small } }, menu.Id);
+
+            return result;
         }
     }
 }

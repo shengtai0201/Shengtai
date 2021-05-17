@@ -55,12 +55,12 @@ namespace Shengtai.IdentityServer
 
             public class _Consent
             {
-                public bool EnableOfflineAccess = true;
-                public string OfflineAccessDisplayName = "Offline Access";
-                public string OfflineAccessDescription = "Access to your applications and resources, even when you are offline";
+                public bool EnableOfflineAccess { get; set; } = true;
+                public string OfflineAccessDisplayName { get; set; } = "Offline Access";
+                public string OfflineAccessDescription { get; set; } = "Access to your applications and resources, even when you are offline";
 
-                public string MustChooseOneErrorMessage = "You must pick at least one permission";
-                public string InvalidSelectionErrorMessage = "Invalid selection";
+                public string MustChooseOneErrorMessage { get; set; } = "You must pick at least one permission";
+                public string InvalidSelectionErrorMessage { get; set; } = "Invalid selection";
             }
             public _Consent Consent { get; set; }
         }

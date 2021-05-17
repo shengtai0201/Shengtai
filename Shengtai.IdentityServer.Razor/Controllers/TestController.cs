@@ -23,5 +23,10 @@ namespace Shengtai.IdentityServer.Controllers
         {
             return View();
         }
+
+        public IActionResult SignalR()
+        {
+            return View();
+        }
     }
 }

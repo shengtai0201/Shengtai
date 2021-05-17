@@ -55,7 +55,7 @@ namespace Shengtai.WebApplication
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, MenuBuilder builder)
         {
             if (env.IsDevelopment())
             {
@@ -78,6 +78,9 @@ namespace Shengtai.WebApplication
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // todo:
+            builder.Initialization();
+
             app.UseEndpoints(endpoints =>
             {
                 // Identity Server 4
@@ -85,6 +88,9 @@ namespace Shengtai.WebApplication
 
                 endpoints.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+
+                // Shengtai.IdentityServer.Razor
+                endpoints.MapHub<IdentityServer.Hubs.ChatHub>("/chatHub");
             });
         }
     }

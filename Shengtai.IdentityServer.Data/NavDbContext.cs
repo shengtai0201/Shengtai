@@ -27,6 +27,9 @@ namespace Shengtai.IdentityServer.Data
             {
                 entity.ToTable("Menu");
 
+                entity.HasIndex(e => new { e.ParentId, e.Text, e.Small }, "Menu_ParentId_Text_Small_key")
+                    .IsUnique();
+
                 entity.Property(e => e.BadgeClass).HasMaxLength(16);
 
                 entity.Property(e => e.BadgeText).HasMaxLength(4);
@@ -43,7 +46,7 @@ namespace Shengtai.IdentityServer.Data
                     .WithMany(p => p.InverseParent)
                     .HasForeignKey(d => d.ParentId)
                     .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("Menu_ParentId_fkey1");
+                    .HasConstraintName("Menu_ParentId_fkey");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
 using Shengtai.IdentityServer.Models.Grants;
+using Shengtai.IdentityServer.Models.Shared;
 
 namespace Shengtai.IdentityServer.Controllers
 {
@@ -38,6 +39,7 @@ namespace Shengtai.IdentityServer.Controllers
         /// Show list of grants
         /// </summary>
         [HttpGet]
+        [Menu("System", null, "Grants")]
         public async Task<IActionResult> Index()
         {
             return View("Index", await BuildViewModelAsync());

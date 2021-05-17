@@ -11,7 +11,10 @@
     {
         case Shengtai.IdentityServer.Data.MenuTypes.Header:
             var header = breadcrumb as Shengtai.IdentityServer.Models.Shared.INavHeader;
-            <li class='breadcrumb-item @active'>@header.Text</li>
+            if (!string.IsNullOrEmpty(header.Text))
+            {
+                <li class='breadcrumb-item @active'>@header.Text</li>
+            }
             break;
         case Shengtai.IdentityServer.Data.MenuTypes.TreeView:
             var treeView = breadcrumb as Shengtai.IdentityServer.Models.Shared.INavTreeView;

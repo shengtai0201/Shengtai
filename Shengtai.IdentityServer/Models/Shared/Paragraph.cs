@@ -15,6 +15,43 @@ namespace Shengtai.IdentityServer.Models.Shared
         public string Small { get; set; }
 
         // 可為空
-        public Badge Badge { get; set; }
+        //public Badge Badge { get; set; }
+
+        public Paragraph Parent { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Paragraph another)
+            {
+                if (another.Parent == null && this.Parent == null)
+                {
+                    if (another.Text == this.Text && another.Small == this.Small)
+                        return true;
+                }
+                else if (another.Parent != null && this.Parent != null)
+                {
+                    if (another.Parent.Equals(this.Parent) && another.Text == this.Text && another.Small == this.Small)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 0;
+
+            if (this.Parent != null)
+                hashCode += this.Parent.GetHashCode();
+
+            if (!string.IsNullOrEmpty(this.Text))
+                hashCode += this.Text.GetHashCode();
+
+            if (!string.IsNullOrEmpty(this.Small))
+                hashCode += this.Small.GetHashCode();
+
+            return hashCode;
+        }
     }
 }

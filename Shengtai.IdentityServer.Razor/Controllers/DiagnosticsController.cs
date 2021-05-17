@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shengtai.IdentityServer.Models.Diagnostics;
+using Shengtai.IdentityServer.Models.Shared;
 
 namespace Shengtai.IdentityServer.Controllers
 {
@@ -11,6 +12,7 @@ namespace Shengtai.IdentityServer.Controllers
     [Authorize]
     public class DiagnosticsController : Controller
     {
+        [Menu("System", null, "Diagnostics")]
         public async Task<IActionResult> Index()
         {
             var localAddresses = new string[] { "127.0.0.1", "::1", HttpContext.Connection.LocalIpAddress.ToString() };

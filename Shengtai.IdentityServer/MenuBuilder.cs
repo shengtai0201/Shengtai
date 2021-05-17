@@ -10,6 +10,8 @@ namespace Shengtai.IdentityServer
 {
     public abstract class MenuBuilder
     {
+        public static IDictionary<Paragraph, int> Menus { get; set; }
+
         public const int HOME_PAGE_KEY = -1;
         private readonly INavTreeView _homePage;
         public INavTreeView HomePage { get => _homePage; }
@@ -31,6 +33,15 @@ namespace Shengtai.IdentityServer
 
             _dataStrategy = dataStrategy;
             _headers = _dataStrategy.ReadAllAsync(ShowStrategy);
+        }
+
+        public void Initialization()
+        {
+            if (Menus == null)
+            {
+                Menus = _dataStrategy.Read();
+                Menus.Add(_homePage.Paragraph, _homePage.Key);
+            }
         }
 
         public Task<IList<Menu>> GetHeadersAsync()

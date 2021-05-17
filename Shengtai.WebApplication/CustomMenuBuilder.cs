@@ -64,7 +64,7 @@ namespace Shengtai.WebApplication
         public override bool ShowStrategy(Menu sender, IList<string> roles)
         {
             Roles menuRoles;
-            if (sender.Type == Shengtai.IdentityServer.Data.MenuTypes.Item)
+            if (sender.Type == IdentityServer.Data.MenuTypes.Item)
                 menuRoles = this.ConvertToRole(sender.Roles);
             else
                 menuRoles = this.GetHierarchicalRole(sender.Menus);

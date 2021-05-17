@@ -11,5 +11,7 @@ namespace Shengtai.IdentityServer.Data
         Task<IList<Models.Shared.Menu>> ReadAllAsync(Models.Shared.IMenu.ShowEventHandler showStrategy);
 
         void ReadBreadcrumbs(IList<Models.Shared.IMenu> menus, int key);
+
+        IDictionary<Models.Shared.Paragraph, int> Read();
     }
 }
