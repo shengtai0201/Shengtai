@@ -19,5 +19,8 @@ namespace Shengtai.IdentityServer
         Task<Models.Account.ApplicationUser> FindByEmailAsync(string email);
         Task<string> GetUserIdAsync(Models.Account.ApplicationUser user);
         Task<IList<string>> GetRolesAsync(ClaimsPrincipal principal);
+        Task<bool> IsEmailConfirmedAsync(Models.Account.ApplicationUser user);
+        Task<string> GeneratePasswordResetTokenAsync(Models.Account.ApplicationUser user);
+        Task<IdentityResult> ResetPasswordAsync(Models.Account.ApplicationUser user, string token, string newPassword);
     }
 }

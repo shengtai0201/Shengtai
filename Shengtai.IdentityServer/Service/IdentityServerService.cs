@@ -40,7 +40,7 @@ namespace Shengtai.IdentityServer.Service
 
         public async Task<(string ClientId, string ClientSecret, string Scope)> AddClientAsync(ApplicationUser user)
         {
-            (string ClientId, string ClientSecret, string Scope) result = (user.Account + "-" + Security.Membership.GeneratePassword(4, 4), 
+            (string ClientId, string ClientSecret, string Scope) result = (user.Account + "-" + Security.Membership.GeneratePassword(4, 4),
                 Security.Membership.GeneratePassword(8, 1), _appSettings.IdentityServer.Configuration.ApiScopeName);
 
             var client = new Client
@@ -100,6 +100,11 @@ namespace Shengtai.IdentityServer.Service
             return _userManager.GenerateEmailConfirmationTokenAsync(user as TUser);
         }
 
+        public Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user)
+        {
+            return _userManager.GeneratePasswordResetTokenAsync(user as TUser);
+        }
+
         public Task<IEnumerable<AuthenticationScheme>> GetExternalAuthenticationSchemesAsync()
         {
             return _signInManager.GetExternalAuthenticationSchemesAsync();
@@ -145,6 +150,11 @@ namespace Shengtai.IdentityServer.Service
             return _userManager.GetUserIdAsync(user as TUser);
         }
 
+        public Task<bool> IsEmailConfirmedAsync(ApplicationUser user)
+        {
+            return _userManager.IsEmailConfirmedAsync(user as TUser);
+        }
+
         public bool IsSignedIn(ClaimsPrincipal principal)
         {
             return _signInManager.IsSignedIn(principal);
@@ -153,6 +163,11 @@ namespace Shengtai.IdentityServer.Service
         public Task<SignInResult> PasswordSignInAsync(ApplicationUser user, string password, bool isPersistent, bool lockoutOnFailure)
         {
             return _signInManager.PasswordSignInAsync(user as TUser, password, isPersistent, lockoutOnFailure);
+        }
+
+        public Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string token, string newPassword)
+        {
+            return _userManager.ResetPasswordAsync(user as TUser, token, newPassword);
         }
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
