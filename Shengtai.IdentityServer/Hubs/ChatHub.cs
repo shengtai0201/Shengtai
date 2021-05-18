@@ -9,9 +9,9 @@ namespace Shengtai.IdentityServer.Hubs
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessage(string text, string @class)
+        public async Task SendMessage(string user, string message)
         {
-            await Clients.All.SendAsync("ReceiveMessage", text, @class);
+            await Clients.All.SendAsync("ReceiveMessage", user, message);
         }
     }
 }

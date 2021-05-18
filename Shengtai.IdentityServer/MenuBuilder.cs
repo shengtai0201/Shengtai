@@ -44,10 +44,7 @@ namespace Shengtai.IdentityServer
             }
         }
 
-        public Task<IList<Menu>> GetHeadersAsync()
-        {
-            return _headers;
-        }
+        public Task<IList<Menu>> GetHeadersAsync() => _headers;
 
         public abstract bool ShowStrategy(Menu sender, IList<string> roles);
 

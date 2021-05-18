@@ -51,6 +51,27 @@
     <script src="~/_content/Shengtai.IdentityServer.Razor/lib/overlayscrollbars/js/jquery.overlayScrollbars.min.js"></script>
     <script src="~/_content/Shengtai.IdentityServer.Razor/lib/admin-lte/js/adminlte.min.js"></script>
     <script src="~/_content/Shengtai.IdentityServer.Razor/lib/admin-lte/js/demo.js"></script>
+    <script src="~/_content/Shengtai.IdentityServer.Razor/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script>
+        $(function () {
+            var badgeConnection = new signalR.HubConnectionBuilder().withUrl("/badgeHub").build();
+
+            badgeConnection.on("ReceiveMessage", function (id, text, appearance) {
+                var container = document.getElementById(id);
+                container.innerHTML = null;
+
+                var badge = document.createElement("span");
+                badge.setAttribute("class", "right badge " + appearance);
+                badge.innerHTML = text;
+
+                container.appendChild(badge);
+            });
+
+            badgeConnection.start().catch(function (err) {
+                return console.error(err.toString());
+            });
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

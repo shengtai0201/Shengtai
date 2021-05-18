@@ -28,5 +28,10 @@ namespace Shengtai.IdentityServer.Controllers
         {
             return View();
         }
+
+        public IActionResult Badge()
+        {
+            return View();
+        }
     }
 }

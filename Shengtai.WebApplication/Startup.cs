@@ -80,7 +80,7 @@ namespace Shengtai.WebApplication
 
             // todo:
             builder.Initialization();
-
+            // todo:
             app.UseEndpoints(endpoints =>
             {
                 // Identity Server 4
@@ -91,6 +91,7 @@ namespace Shengtai.WebApplication
 
                 // Shengtai.IdentityServer.Razor
                 endpoints.MapHub<IdentityServer.Hubs.ChatHub>("/chatHub");
+                endpoints.MapHub<IdentityServer.Hubs.BadgeHub>("/badgeHub");
             });
         }
     }
