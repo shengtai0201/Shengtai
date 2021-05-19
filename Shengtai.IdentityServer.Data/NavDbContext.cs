@@ -18,6 +18,7 @@ namespace Shengtai.IdentityServer.Data
         }
 
         public virtual DbSet<Menu> Menus { get; set; }
+        public virtual DbSet<MenuItem> MenuItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,10 +30,6 @@ namespace Shengtai.IdentityServer.Data
 
                 entity.HasIndex(e => new { e.ParentId, e.Text, e.Small }, "Menu_ParentId_Text_Small_key")
                     .IsUnique();
-
-                entity.Property(e => e.BadgeClass).HasMaxLength(16);
-
-                entity.Property(e => e.BadgeText).HasMaxLength(4);
 
                 entity.Property(e => e.Icon).HasMaxLength(32);
 
@@ -47,6 +44,21 @@ namespace Shengtai.IdentityServer.Data
                     .HasForeignKey(d => d.ParentId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("Menu_ParentId_fkey");
+            });
+
+            modelBuilder.Entity<MenuItem>(entity =>
+            {
+                entity.HasKey(e => new { e.MenuId, e.UserId })
+                    .HasName("MenuItem_pkey");
+
+                entity.ToTable("MenuItem");
+
+                entity.Property(e => e.UserId).HasMaxLength(36);
+
+                entity.HasOne(d => d.Menu)
+                    .WithMany(p => p.MenuItems)
+                    .HasForeignKey(d => d.MenuId)
+                    .HasConstraintName("MenuItem_MenuId_fkey1");
             });
 
             OnModelCreatingPartial(modelBuilder);

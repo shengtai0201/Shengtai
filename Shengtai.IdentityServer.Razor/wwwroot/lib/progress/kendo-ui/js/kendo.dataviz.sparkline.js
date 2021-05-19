@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1157);
+	module.exports = __webpack_require__(1158);
 
 
 /***/ }),
@@ -59,11 +59,11 @@ module.exports =
 
 /***/ }),
 
-/***/ 1157:
+/***/ 1158:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1158), __webpack_require__(1159) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1159), __webpack_require__(1160) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -79,14 +79,14 @@ module.exports =
 
 /***/ }),
 
-/***/ 1158:
+/***/ 1159:
 /***/ (function(module, exports) {
 
 	module.exports = require("./dataviz/sparkline/kendo-sparkline");
 
 /***/ }),
 
-/***/ 1159:
+/***/ 1160:
 /***/ (function(module, exports) {
 
 	module.exports = require("./dataviz/sparkline/sparkline");

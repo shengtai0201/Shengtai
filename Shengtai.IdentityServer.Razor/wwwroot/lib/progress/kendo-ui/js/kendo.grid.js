@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1273);
+	module.exports = __webpack_require__(1274);
 
 
 /***/ }),
@@ -59,101 +59,101 @@ module.exports =
 
 /***/ }),
 
-/***/ 1048:
+/***/ 1051:
 /***/ (function(module, exports) {
 
 	module.exports = require("jquery");
 
 /***/ }),
 
-/***/ 1059:
+/***/ 1061:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.data");
 
 /***/ }),
 
-/***/ 1079:
+/***/ 1081:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.selectable");
 
 /***/ }),
 
-/***/ 1094:
+/***/ 1095:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.filtermenu");
 
 /***/ }),
 
-/***/ 1194:
+/***/ 1195:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.resizable");
 
 /***/ }),
 
-/***/ 1195:
+/***/ 1196:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.window");
 
 /***/ }),
 
-/***/ 1246:
+/***/ 1247:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dialog");
 
 /***/ }),
 
-/***/ 1255:
+/***/ 1256:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.editable");
 
 /***/ }),
 
-/***/ 1258:
+/***/ 1259:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.switch");
 
 /***/ }),
 
-/***/ 1263:
+/***/ 1264:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.pdf");
 
 /***/ }),
 
-/***/ 1273:
+/***/ 1274:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(jQuery) {(function(f, define){
 	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(1059),
-	        __webpack_require__(1275),
-	        __webpack_require__(1255),
-	        __webpack_require__(1195),
-	        __webpack_require__(1094),
+	        __webpack_require__(1061),
 	        __webpack_require__(1276),
+	        __webpack_require__(1256),
+	        __webpack_require__(1196),
+	        __webpack_require__(1095),
 	        __webpack_require__(1277),
 	        __webpack_require__(1278),
-	        __webpack_require__(1079),
 	        __webpack_require__(1279),
-	        __webpack_require__(1274),
-	        __webpack_require__(1194),
+	        __webpack_require__(1081),
 	        __webpack_require__(1280),
+	        __webpack_require__(1275),
+	        __webpack_require__(1195),
 	        __webpack_require__(1281),
 	        __webpack_require__(1282),
 	        __webpack_require__(1283),
-	        __webpack_require__(1263),
-	        __webpack_require__(1246),
-	        __webpack_require__(1282),
-	        __webpack_require__(1258)
+	        __webpack_require__(1284),
+	        __webpack_require__(1264),
+	        __webpack_require__(1247),
+	        __webpack_require__(1283),
+	        __webpack_require__(1259)
 	    ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
@@ -291,6 +291,8 @@ module.exports =
 	        PAGING = "paging",
 	        SCROLL = "scroll",
 	        SYNC = "sync",
+	        LOAD_START = "loadStart",
+	        LOAD_END = "loadEnd",
 
 	        FOCUSED = "k-state-focused",
 	        FOCUSABLE = ":kendoFocusable",
@@ -420,7 +422,9 @@ module.exports =
 	        events: [
 	            PAGING,
 	            PAGE,
-	            SCROLL
+	            SCROLL,
+	            LOAD_START,
+	            LOAD_END
 	        ],
 
 	        destroy: function() {
@@ -731,27 +735,27 @@ module.exports =
 	            that._rangeStart = skip;
 
 	            if ((isGroupPaged && dataSource._groupRangeExists(skip, skip + take)) || (!isGroupPaged && dataSource.inRange(skip, take))) {
-	                kendo.ui.progress($(that.wrapper).parent(), true);
+	                that.trigger(LOAD_START);
 
 	                dataSource.range(skip, take, function() {
-	                    kendo.ui.progress($(that.wrapper).parent(), false);
+	                    that.trigger(LOAD_END);
 	                    callback();
 	                    that.trigger(PAGE);
 	                }, "page");
 	            } else {
 	                if (!delayLoading) {
-	                    kendo.ui.progress(that.wrapper.parent(), true);
+	                    that.trigger(LOAD_START);
 	                }
 
 	                that._timeout = setTimeout(function() {
 	                    if (!that._scrolling) {
 
 	                        if (delayLoading) {
-	                            kendo.ui.progress(that.wrapper.parent(), true);
+	                            that.trigger(LOAD_START);
 	                        }
 
 	                        dataSource.range(skip, take, function() {
-	                            kendo.ui.progress(that.wrapper.parent(), false);
+	                            that.trigger(LOAD_END);
 	                            callback();
 	                            that.trigger(PAGE);
 	                        });
@@ -805,7 +809,7 @@ module.exports =
 	            var action = (e || {}).action;
 	            var shouldScrollWrapper = that._isScrolledToBottom() || !action || (action !== ITEM_CHANGE && action !== REMOVE && action !== SYNC);
 
-	            kendo.ui.progress(that.wrapper.parent(), false);
+	            that.trigger(LOAD_END);
 	            clearTimeout(that._timeout);
 
 	            that.repaintScrollbar(shouldScrollWrapper);
@@ -1113,6 +1117,14 @@ module.exports =
 	    function findColumnByUID(columns, uid) {
 	        for (var i = 0; i < columns.length; i++) {
 	            if (columns[i].uid == uid) {
+	                return columns[i];
+	            }
+	        }
+	    }
+
+	    function findColumnByField(columns, field) {
+	        for (var i = 0; i < columns.length; i++) {
+	            if (columns[i].field == field) {
 	                return columns[i];
 	            }
 	        }
@@ -2137,6 +2149,7 @@ module.exports =
 	            detailTemplate: null,
 	            columnResizeHandleWidth: 3,
 	            mobile: "",
+	            loaderType: "loadingPanel",
 	            messages: {
 	                editable: {
 	                    cancelDelete: CANCELDELETE,
@@ -5151,7 +5164,8 @@ module.exports =
 	                    continuousItems: function() {
 	                        return that._continuousItems(filter, cell);
 	                    },
-	                    ignoreOverlapped: that.options.selectable &&  that.options.selectable.ignoreOverlapped
+	                    ignoreOverlapped: that.options.selectable &&  that.options.selectable.ignoreOverlapped,
+	                    addIdToRanges: true
 	                });
 
 	                if (that.options.navigatable) {
@@ -5246,6 +5260,12 @@ module.exports =
 	            }
 	        },
 
+	        copySelectionToClipboard: function (includeHeaders) {
+	            this._createAreaClipBoard();
+	            this.areaClipBoard.val(this.getTSV(includeHeaders)).focus().select();
+	            document.execCommand('copy');
+	        },
+
 	        copySelection: function(e) {
 	            if ((e instanceof jQuery.Event && !(e.ctrlKey || e.metaKey)) ||
 	                $(e.target).is("input:visible,textarea:visible") ||
@@ -5254,7 +5274,12 @@ module.exports =
 	                return;
 	            }
 
+	            this._createAreaClipBoard();
+	            this.areaClipBoard.val(this.getTSV()).focus().select();
 
+	        },
+
+	        _createAreaClipBoard: function () {
 	            if (!this.areaClipBoard) {
 	                this.areaClipBoard =
 	                    $("<textarea />")
@@ -5268,17 +5293,15 @@ module.exports =
 	                    })
 	                    .appendTo(this.wrapper);
 	            }
-
-	            this.areaClipBoard.val(this.getTSV()).focus().select();
-
 	        },
 
-	        getTSV: function() {
+	        getTSV: function(includeHeaders) {
 	            var grid = this;
 	            var selected = grid.select();
 	            var delimeter = "\t";
 	            var allowCopy = grid.options.allowCopy;
 	            var onlyVisible = true;
+	            var hasLockedCols = grid._isLocked() && lockedColumns(grid.columns).length;
 
 	            if ($.isPlainObject(allowCopy) && allowCopy.delimeter) {
 	                delimeter = allowCopy.delimeter;
@@ -5296,9 +5319,14 @@ module.exports =
 	                var cellsOffset = this.columns.length;
 	                var lockedCols = grid._isLocked() && lockedColumns(grid.columns).length;
 	                var inLockedArea = true;
+	                var fields = [];
+	                var field;
+	                var columns = visibleLeafColumns(this.columns);
 
 	                $.each(selected, function (idx, cell) {
 	                    cell = $(cell);
+	                    field = grid._getCellField(cell, hasLockedCols);
+
 	                    var tr = cell.closest("tr");
 	                    var rowIndex = tr.index();
 	                    var cellIndex = cell.index();
@@ -5312,6 +5340,9 @@ module.exports =
 	                        cellIndex -= grid._groups();
 	                    }
 	                    cellIndex = inLockedArea ? cellIndex : (cellIndex + lockedCols );
+	                    if (field) {
+	                        fields[cellIndex] = field;
+	                    }
 	                    if (cellsOffset > cellIndex) {
 	                        cellsOffset = cellIndex;
 	                    }
@@ -5332,6 +5363,12 @@ module.exports =
 	                        }
 	                    }
 	                });
+
+	                if (includeHeaders && fields.length) {
+	                    result.splice(rowsOffset, 0, fields.map(function (field) {
+	                        return getTitle(field, columns);
+	                    }));
+	                }
 
 	                $.each(result.slice(rowsOffset), function (idx, val) {
 	                    if (val) {
@@ -5899,6 +5936,187 @@ module.exports =
 	            }
 
 	            return width;
+	        },
+
+	        getSelectedData: function () {
+	            var that = this;
+	            var selectedRanges = that.selectable.selectedRanges();
+	            var selectedRangeNames = Object.keys(selectedRanges);
+	            var selectedSingleItems = that.selectable.selectedSingleItems();
+	            var result = [];
+	            var visibleColumns = visibleLeafColumns(that.columns);
+
+	            for (var idx = 0; idx < selectedRangeNames.length; idx++) {
+	                result = result.concat(that._mapSelectionToData(selectedRanges[selectedRangeNames[idx]], visibleColumns));
+	            }
+
+	            if (selectedSingleItems.length) {
+	                result = result.concat(that._mapSelectionToData(selectedSingleItems, visibleColumns));
+	            }
+
+	            return result;
+	        },
+
+	        exportSelectedToExcel: function (includeHeaders) {
+	            if (!kendo.excel || !kendo.ooxml) {
+	                throw new Error("The excel export functionality depends on both kendo.excel.js and kendo.ooxml.js scripts, please make sure they are included.");
+	            }
+
+	            var that = this;
+	            var excel = this.options.excel || {};
+	            var visibleColumns = visibleLeafColumns(that.columns);
+	            var exporter = new kendo.excel.ExcelExporter({});
+	            var columnHandler = function(){return { autoWidth: true };};
+	            var book = {
+	                sheets: [{
+	                    columns: Array.apply(0, Array(visibleColumns.length)).map(columnHandler),
+	                    rows: [],
+	                    freezePane: {},
+	                    filter: false
+	                }]
+	            };
+	            var selectedRanges = that.selectable.selectedRanges();
+	            var selectedRangeNames = Object.keys(selectedRanges);
+	            var selectedSingleItems = that.selectable.selectedSingleItems();
+	            var idx;
+	            var exportData = [];
+	            var hasLockedCols = that._isLocked() && lockedColumns(that.columns).length;
+	            var sortHandler = exportDataSort.bind(that);
+
+	            for (idx = 0; idx < selectedRangeNames.length; idx++) {
+	                exportData = exportData.concat(that._mapSelectionToData(selectedRanges[selectedRangeNames[idx]], visibleColumns, isExcelExportableColumn));
+	            }
+
+	            if (exportData.length) {
+	                that._addRangeSelectionRows(book, exporter, exportData, includeHeaders);
+
+	            }
+	            exportData = selectedSingleItems.length ? that._mapSelectionToData(selectedSingleItems, visibleColumns, isExcelExportableColumn) : [];
+
+	            if (exportData.length) {
+	                if (hasLockedCols) {
+	                    exportData = exportData.sort(sortHandler);
+	                }
+	                that._addSingleSelectionRows(book, exporter, exportData, includeHeaders);
+	            }
+
+	            if (book.sheets[0].rows.length) {
+	                var workbook = new kendo.ooxml.Workbook(book);
+
+	                if(!workbook.options) {
+	                    workbook.options = {};
+	                }
+	                workbook.options.skipCustomHeight = true;
+
+	                workbook.toDataURLAsync().then(function(dataURI) {
+	                    kendo.saveAs({
+	                        dataURI: dataURI,
+	                        fileName: book.fileName || excel.fileName,
+	                        proxyURL: excel.proxyURL,
+	                        forceProxy: excel.forceProxy
+	                    });
+	                });
+	            }
+	        },
+
+	        _addSingleSelectionRows: function (book, exporter, data, includeHeaders) {
+	            var idx = 0;
+	            var visibleColumns = visibleLeafColumns(this.columns);
+	            var item;
+
+	            for (idx = 0; idx < data.length; idx++) {
+	                item = data[idx];
+	                exporter.data = [item];
+	                this._setExporterColumns(exporter, visibleColumns, item);
+	                this._createExportRows(book, exporter, includeHeaders);
+	            }
+	        },
+
+	        _addRangeSelectionRows: function (book, exporter, data, includeHeaders) {
+	            var visibleColumns = visibleLeafColumns(this.columns);
+
+	            exporter.data = data;
+	            this._setExporterColumns(exporter, visibleColumns, data[0]);
+	            this._createExportRows(book, exporter, includeHeaders);
+	        },
+
+	        _createExportRows: function (book, exporter, includeHeaders) {
+	            book.sheets[0].rows = book.sheets[0].rows.concat(includeHeaders ? exporter._rows() : exporter._dataRows(exporter.data, 0));
+	        },
+
+	        _setExporterColumns: function (exporter, columns, item) {
+	            exporter.columns = exporter.options.columns = $.map(columns.filter(function (col) {
+	                return Object.keys(item).indexOf(col.field) >= 0;
+	            }), exporter._prepareColumn);
+	        },
+
+	        _mapSelectionToData: function (elements, visibleColumns, columnsFilter) {
+	            var that = this;
+	            var elementType = elements[0][0].nodeName;
+	            var isRowSelection = elementType === 'TR';
+	            var dataItem;
+	            var result = {};
+	            var element;
+	            var curr;
+	            var field;
+	            var columnMapHandler = function (col) {
+	                var result = {};
+
+	                if (!col.field || (columnsFilter && !columnsFilter(col))) {
+	                    return;
+	                }
+
+	                result[col.field] = dataItem[col.field];
+	                return result;
+	            };
+	            var hasLockedCols = that._isLocked() && lockedColumns(that.columns).length;
+	            var column;
+
+	            for (var i = 0; i < elements.length; i++) {
+	                element = elements[i];
+	                dataItem = that.dataItem(isRowSelection ? element : element.parent());
+
+	                if (isRowSelection) {
+	                    result[dataItem.uid] = $.extend.apply(null, visibleColumns.map(columnMapHandler));
+	                } else {
+	                    field = that._getCellField(element, hasLockedCols);
+
+	                    if (!field) {
+	                        continue;
+	                    }
+
+	                    curr = result[dataItem.uid];
+
+	                    if (!curr) {
+	                        curr = result[dataItem.uid] = {};
+	                    }
+
+	                    column = findColumnByField(visibleColumns, field);
+
+	                    if (!column || (columnsFilter && !columnsFilter(column))) {
+	                        continue;
+	                    }
+
+	                    curr[field] = dataItem[field];
+	                }
+	            }
+
+	            return Object.keys(result).map(function (id) {
+	                result[id].uid = id;
+	                return result[id];
+	            });
+	        },
+
+	        _getCellField: function (cell, hasLockedCols) {
+	            var grid = this;
+	            var inLockedArea = hasLockedCols && $.contains(grid.lockedTable[0], cell[0]);
+	            var fieldAttr = kendo.attr('field');
+
+	            if (hasLockedCols) {
+	                return grid.element.find(".k-grid-header-" + (inLockedArea ? "locked" : "wrap") +  " th").eq(cell.index()).attr(fieldAttr);
+	            } else {
+	                return grid.thead.find("th").eq(cell.index()).attr(fieldAttr);
+	            }
 	        },
 
 	        _relatedRow: function(row) {
@@ -7464,6 +7682,12 @@ module.exports =
 	                },
 	                scroll: function() {
 	                    that._focusEditable();
+	                },
+	                loadStart: function () {
+	                    that._progress(true);
+	                },
+	                loadEnd: function () {
+	                    that._progress(false);
 	                }
 	            });
 
@@ -10743,11 +10967,40 @@ module.exports =
 	            }
 	        },
 
+	        _buildSkeleton: function () {
+	            var visibleColumns = this.virtualCols ? this.virtualCols : visibleLeafColumns(this.columns);
+	            var pageSize = this.dataSource.pageSize() || this.dataSource.total();
+	            var loaderHTML = "";
+	            var colspan;
+
+	            if (this._hasVirtualColumns()) {
+	                colspan = parseInt(this.content.find("tr:first td:first").attr("colspan"), 10);
+	            }
+
+	            for (var i = 0; i< pageSize; i++) {
+	                loaderHTML += "<tr>";
+	                for (var j = 0; j< visibleColumns.length; j++) {
+	                    if (colspan && !j) {
+	                        loaderHTML += "<td colspan='"+colspan+"'><span class='k-skeleton k-skeleton-text k-skeleton-pulse'></span></td>";
+	                    } else {
+	                        loaderHTML += "<td><span class='k-skeleton k-skeleton-text k-skeleton-pulse'></span></td>";
+	                    }
+	                }
+	                loaderHTML += "</tr>";
+	            }
+	            return loaderHTML;
+	        },
+
 	        _progress: function(toggle) {
 	            var element = this.element;
 	            var endless = this.options.scrollable && this.options.scrollable.endless;
+	            var loaderType = this.options.loaderType;
+	            var isVirtualization = this.options.scrollable && this.options.scrollable.virtual;
+	            var skeleton;
 
-	            if (this._editContainer && this._editMode() === "popup") {
+	            if (isVirtualization) {
+	                element = this.content;
+	            } else if (this._editContainer && this._editMode() === "popup") {
 	                element = this._editContainer;
 	            } else if (this.lockedContent || endless) {
 	                element = this.wrapper;
@@ -10757,10 +11010,21 @@ module.exports =
 	                element = this.content;
 	            }
 
-	            if (endless && toggle) {
-	                kendo.ui.progress(element, toggle, { height: this.content.height(), top: this.content[0].offsetTop, opacity: true });
+	            if (loaderType == "skeleton") {
+	                if (toggle) {
+	                    skeleton = this._buildSkeleton();
+	                        element.find("tbody")
+	                         .empty()
+	                         .append(skeleton);
+	                } else {
+	                    element.find(".k-skeleton").closest("tbody").empty();
+	                }
 	            } else {
-	                kendo.ui.progress(element, toggle);
+	                if (endless && toggle) {
+	                    kendo.ui.progress(element, toggle, { height: this.content.height(), top: this.content[0].offsetTop, opacity: true });
+	                } else {
+	                    kendo.ui.progress(element, toggle);
+	                }
 	            }
 	        },
 
@@ -11834,6 +12098,20 @@ module.exports =
 	           .replace(aposRegExp, "&#39;");
 	   }
 
+	   function getTitle(field, columns) {
+	        return columns.filter(function (col) {
+	            return col.field === field;
+	        })[0].title || field;
+	    }
+
+	    function exportDataSort(a, b) {
+	        return this.dataSource.indexOf(this.dataSource.getByUid(a.uid)) - this.dataSource.indexOf(this.dataSource.getByUid(b.uid));
+	    }
+
+	    function isExcelExportableColumn(column) {
+	        return !(column.exportable === false || (column.exportable && column.exportable.excel === false));
+	    }
+
 	   ui.plugin(Grid);
 	   ui.plugin(VirtualScrollable);
 
@@ -11843,74 +12121,74 @@ module.exports =
 
 	}, __webpack_require__(3));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1048)))
-
-/***/ }),
-
-/***/ 1274:
-/***/ (function(module, exports) {
-
-	module.exports = require("./kendo.reorderable");
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1051)))
 
 /***/ }),
 
 /***/ 1275:
 /***/ (function(module, exports) {
 
-	module.exports = require("./kendo.columnsorter");
+	module.exports = require("./kendo.reorderable");
 
 /***/ }),
 
 /***/ 1276:
 /***/ (function(module, exports) {
 
-	module.exports = require("./kendo.columnmenu");
+	module.exports = require("./kendo.columnsorter");
 
 /***/ }),
 
 /***/ 1277:
 /***/ (function(module, exports) {
 
-	module.exports = require("./kendo.groupable");
+	module.exports = require("./kendo.columnmenu");
 
 /***/ }),
 
 /***/ 1278:
 /***/ (function(module, exports) {
 
-	module.exports = require("./kendo.pager");
+	module.exports = require("./kendo.groupable");
 
 /***/ }),
 
 /***/ 1279:
 /***/ (function(module, exports) {
 
-	module.exports = require("./kendo.sortable");
+	module.exports = require("./kendo.pager");
 
 /***/ }),
 
 /***/ 1280:
 /***/ (function(module, exports) {
 
-	module.exports = require("./kendo.ooxml");
+	module.exports = require("./kendo.sortable");
 
 /***/ }),
 
 /***/ 1281:
 /***/ (function(module, exports) {
 
-	module.exports = require("./kendo.excel");
+	module.exports = require("./kendo.ooxml");
 
 /***/ }),
 
 /***/ 1282:
 /***/ (function(module, exports) {
 
-	module.exports = require("./kendo.pane");
+	module.exports = require("./kendo.excel");
 
 /***/ }),
 
 /***/ 1283:
+/***/ (function(module, exports) {
+
+	module.exports = require("./kendo.pane");
+
+/***/ }),
+
+/***/ 1284:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.progressbar");

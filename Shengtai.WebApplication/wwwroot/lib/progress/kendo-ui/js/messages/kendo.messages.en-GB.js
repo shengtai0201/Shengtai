@@ -46,13 +46,13 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1504);
-	module.exports = __webpack_require__(1504);
+	__webpack_require__(1519);
+	module.exports = __webpack_require__(1519);
 
 
 /***/ }),
 
-/***/ 1504:
+/***/ 1519:
 /***/ (function(module, exports) {
 
 	(function ($, undefined) {
@@ -225,7 +225,8 @@ module.exports =
 	  "associateScope": "Associate using 'scope' attribute",
 	  "associateIds": "Associate using Ids",
 	  "copyFormat": "Copy format",
-	  "applyFormat": "Apply format"
+	  "applyFormat": "Apply format",
+	  "borderNone": "None"
 	});
 	}
 
@@ -526,6 +527,34 @@ module.exports =
 	  "last": "Go to the last page",
 	  "refresh": "Refresh",
 	  "morePages": "More pages"
+	});
+	}
+
+	/* TaskBoard messages */
+
+	if (kendo.ui.TaskBoard) {
+	kendo.ui.TaskBoard.prototype.options.messages =
+	$.extend(true, kendo.ui.TaskBoard.prototype.options.messages,{
+	    "edit": "Edit",
+	    "createNewCard": "Create new card",
+	    "create": "Create",
+	    "search": "Search",
+	    "previewCard": "Preview card",
+	    "addCard": "Add card",
+	    "editCard": "Edit card",
+	    "deleteCard": "Delete Card",
+	    "addColumn": "Add column",
+	    "editColumn": "Edit column",
+	    "deleteColumn": "Delete column",
+	    "close": "Close",
+	    "cancel": "Cancel",
+	    "delete": "Delete",
+	    "saveChanges": "Save changes",
+	    "title": "Title:",
+	    "description": "Description:",
+	    "newColumn": "New column",
+	    "deleteColumnConfirm": "Are you sure you want to delete this column?",
+	    "deleteCardConfirm": "Are you sure you want to delete this card?"
 	});
 	}
 

@@ -46,8 +46,8 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1580);
-	module.exports = __webpack_require__(1580);
+	__webpack_require__(1595);
+	module.exports = __webpack_require__(1595);
 
 
 /***/ }),
@@ -60,18 +60,18 @@ module.exports =
 
 /***/ }),
 
-/***/ 1571:
+/***/ 1586:
 /***/ (function(module, exports) {
 
 	module.exports = require("../kendo.drawing");
 
 /***/ }),
 
-/***/ 1580:
+/***/ 1595:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1571)], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1586)], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	(function($, undefined) {

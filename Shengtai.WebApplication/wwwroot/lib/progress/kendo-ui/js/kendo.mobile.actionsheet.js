@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1319);
+	module.exports = __webpack_require__(1320);
 
 
 /***/ }),
@@ -59,25 +59,25 @@ module.exports =
 
 /***/ }),
 
-/***/ 1301:
+/***/ 1302:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.mobile.shim");
 
 /***/ }),
 
-/***/ 1302:
+/***/ 1303:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.mobile.popover");
 
 /***/ }),
 
-/***/ 1319:
+/***/ 1320:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1302), __webpack_require__(1301) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1303), __webpack_require__(1302) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line

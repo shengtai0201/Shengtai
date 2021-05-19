@@ -125,6 +125,7 @@ module.exports =
 	            '  <div class="k-widget k-chart">' +
 	            '      <div class="k-var--chart-font"></div>' +
 	            '      <div class="k-var--chart-title-font"></div>' +
+	            '      <div class="k-var--chart-pane-title-font"></div>' +
 	            '      <div class="k-var--chart-label-font"></div>' +
 	            '  </div>' +
 	            '  <div class="k-var--series-unset"></div>' +
@@ -240,12 +241,14 @@ module.exports =
 
 	        (function setFonts() {
 	            function font(varName) {
-	                return queryStyle(varName, "fontSize") + " " +
+	                return queryStyle(varName, "fontWeight") + " " +
+	                       queryStyle(varName, "fontSize") + " " +
 	                       queryStyle(varName, "fontFamily");
 	            }
 
 	            var defaultFont = font("chart-font");
 	            var titleFont = font("chart-title-font");
+	            var paneTitleFont = font("chart-pane-title-font");
 	            var labelFont = font("chart-label-font");
 
 	            set("chart.axisDefaults.labels.font", labelFont);
@@ -255,6 +258,7 @@ module.exports =
 	            set("chart.seriesDefaults.labels.font", labelFont);
 	            set("chart.seriesDefaults.notes.label.font", defaultFont);
 	            set("chart.title.font", titleFont);
+	            set("chart.paneDefaults.title.font", paneTitleFont);
 	        })();
 
 	        (function setSeriesColors() {

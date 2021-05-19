@@ -222,7 +222,7 @@ module.exports =
 	                    value = checkboxGroupMembers.is(":checked");
 	                }
 	            } else if(radio.length) {
-	                value = input.closest("[data-role='validator']").find("input[name='" + input.attr("name") + "']:checked").length > 0;
+	                value = kendo.jQuery.find("input[name='" + input.attr("name") + "']:checked").length > 0;
 	            }
 
 	            return !(value === "" || !value || value.length === 0);

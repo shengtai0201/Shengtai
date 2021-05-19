@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1392);
+	module.exports = __webpack_require__(1396);
 
 
 /***/ }),
@@ -59,49 +59,45 @@ module.exports =
 
 /***/ }),
 
-/***/ 1198:
+/***/ 1199:
 /***/ (function(module, exports) {
 
 	module.exports = require("./util/undoredostack");
 
 /***/ }),
 
-/***/ 1263:
+/***/ 1264:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.pdf");
 
 /***/ }),
 
-/***/ 1281:
+/***/ 1282:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.excel");
 
 /***/ }),
 
-/***/ 1283:
+/***/ 1284:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.progressbar");
 
 /***/ }),
 
-/***/ 1392:
+/***/ 1396:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
 	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(1198),
-	        __webpack_require__(1394),
-	        __webpack_require__(1395),
-	        __webpack_require__(1281),
-	        __webpack_require__(1283),
-	        __webpack_require__(1263),
-	        __webpack_require__(1396),
-	        __webpack_require__(1397),
+	        __webpack_require__(1199),
 	        __webpack_require__(1398),
 	        __webpack_require__(1399),
+	        __webpack_require__(1282),
+	        __webpack_require__(1284),
+	        __webpack_require__(1264),
 	        __webpack_require__(1400),
 	        __webpack_require__(1401),
 	        __webpack_require__(1402),
@@ -113,11 +109,11 @@ module.exports =
 	        __webpack_require__(1408),
 	        __webpack_require__(1409),
 	        __webpack_require__(1410),
-	        __webpack_require__(1393),
 	        __webpack_require__(1411),
 	        __webpack_require__(1412),
 	        __webpack_require__(1413),
 	        __webpack_require__(1414),
+	        __webpack_require__(1397),
 	        __webpack_require__(1415),
 	        __webpack_require__(1416),
 	        __webpack_require__(1417),
@@ -133,7 +129,11 @@ module.exports =
 	        __webpack_require__(1427),
 	        __webpack_require__(1428),
 	        __webpack_require__(1429),
-	        __webpack_require__(1430)
+	        __webpack_require__(1430),
+	        __webpack_require__(1431),
+	        __webpack_require__(1432),
+	        __webpack_require__(1433),
+	        __webpack_require__(1434)
 	    ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 	    var __meta__ = { // jshint ignore:line
@@ -716,266 +716,266 @@ module.exports =
 
 /***/ }),
 
-/***/ 1393:
+/***/ 1397:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/formulacontext");
 
 /***/ }),
 
-/***/ 1394:
+/***/ 1398:
 /***/ (function(module, exports) {
 
 	module.exports = require("./util/text-metrics");
 
 /***/ }),
 
-/***/ 1395:
+/***/ 1399:
 /***/ (function(module, exports) {
 
 	module.exports = require("./util/parse-xml");
 
 /***/ }),
 
-/***/ 1396:
+/***/ 1400:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/commands");
 
 /***/ }),
 
-/***/ 1397:
+/***/ 1401:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/formulabar");
 
 /***/ }),
 
-/***/ 1398:
+/***/ 1402:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/formulainput");
 
 /***/ }),
 
-/***/ 1399:
+/***/ 1403:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/eventlistener");
 
 /***/ }),
 
-/***/ 1400:
+/***/ 1404:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/rangelist");
 
 /***/ }),
 
-/***/ 1401:
+/***/ 1405:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/propertybag");
 
 /***/ }),
 
-/***/ 1402:
+/***/ 1406:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/references");
 
 /***/ }),
 
-/***/ 1403:
+/***/ 1407:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/navigator");
 
 /***/ }),
 
-/***/ 1404:
+/***/ 1408:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/axismanager");
 
 /***/ }),
 
-/***/ 1405:
+/***/ 1409:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/clipboard");
 
 /***/ }),
 
-/***/ 1406:
+/***/ 1410:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/range");
 
 /***/ }),
 
-/***/ 1407:
+/***/ 1411:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/sheet");
 
 /***/ }),
 
-/***/ 1408:
+/***/ 1412:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/sheetsbar");
 
 /***/ }),
 
-/***/ 1409:
+/***/ 1413:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/excel-reader");
 
 /***/ }),
 
-/***/ 1410:
+/***/ 1414:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/workbook");
 
 /***/ }),
 
-/***/ 1411:
+/***/ 1415:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/controller");
 
 /***/ }),
 
-/***/ 1412:
+/***/ 1416:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/view");
 
 /***/ }),
 
-/***/ 1413:
+/***/ 1417:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/customeditors");
 
 /***/ }),
 
-/***/ 1414:
+/***/ 1418:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/grid");
 
 /***/ }),
 
-/***/ 1415:
+/***/ 1419:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/axis");
 
 /***/ }),
 
-/***/ 1416:
+/***/ 1420:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/filter");
 
 /***/ }),
 
-/***/ 1417:
+/***/ 1421:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/sorter");
 
 /***/ }),
 
-/***/ 1418:
+/***/ 1422:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/runtime");
 
 /***/ }),
 
-/***/ 1419:
+/***/ 1423:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/calc");
 
 /***/ }),
 
-/***/ 1420:
+/***/ 1424:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/numformat");
 
 /***/ }),
 
-/***/ 1421:
+/***/ 1425:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/runtime.functions");
 
 /***/ }),
 
-/***/ 1422:
+/***/ 1426:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/runtime.functions.2");
 
 /***/ }),
 
-/***/ 1423:
+/***/ 1427:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/toolbar");
 
 /***/ }),
 
-/***/ 1424:
+/***/ 1428:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/dialogs");
 
 /***/ }),
 
-/***/ 1425:
+/***/ 1429:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/sheetbinder");
 
 /***/ }),
 
-/***/ 1426:
+/***/ 1430:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/filtermenu");
 
 /***/ }),
 
-/***/ 1427:
+/***/ 1431:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/editor");
 
 /***/ }),
 
-/***/ 1428:
+/***/ 1432:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/autofill");
 
 /***/ }),
 
-/***/ 1429:
+/***/ 1433:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/nameeditor");
 
 /***/ }),
 
-/***/ 1430:
+/***/ 1434:
 /***/ (function(module, exports) {
 
 	module.exports = require("./spreadsheet/print");

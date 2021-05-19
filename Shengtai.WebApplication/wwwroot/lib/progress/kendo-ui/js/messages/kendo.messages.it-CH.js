@@ -46,13 +46,13 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1543);
-	module.exports = __webpack_require__(1543);
+	__webpack_require__(1558);
+	module.exports = __webpack_require__(1558);
 
 
 /***/ }),
 
-/***/ 1543:
+/***/ 1558:
 /***/ (function(module, exports) {
 
 	(function ($, undefined) {
@@ -432,7 +432,8 @@ module.exports =
 	  "dialogUpdate": "Aggiorna",
 	  "insertFile": "Inserisci file",
 	  "insertFile1": "Inserisci file",
-	  "print": "Stampa"
+	  "print": "Stampa",
+	  "borderNone": "Nessuno"
 	});
 	}
 

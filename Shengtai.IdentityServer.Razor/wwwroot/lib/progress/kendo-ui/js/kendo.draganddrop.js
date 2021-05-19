@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1179);
+	module.exports = __webpack_require__(1180);
 
 
 /***/ }),
@@ -59,25 +59,25 @@ module.exports =
 
 /***/ }),
 
-/***/ 1049:
+/***/ 1042:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.core");
 
 /***/ }),
 
-/***/ 1091:
+/***/ 1092:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.userevents");
 
 /***/ }),
 
-/***/ 1179:
+/***/ 1180:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1049), __webpack_require__(1091) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1042), __webpack_require__(1092) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line

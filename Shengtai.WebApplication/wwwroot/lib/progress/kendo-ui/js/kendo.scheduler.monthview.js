@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1383);
+	module.exports = __webpack_require__(1385);
 
 
 /***/ }),
@@ -59,18 +59,18 @@ module.exports =
 
 /***/ }),
 
-/***/ 1377:
+/***/ 1378:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.scheduler.view");
 
 /***/ }),
 
-/***/ 1383:
+/***/ 1385:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1377) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1378) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -428,6 +428,7 @@ module.exports =
 	            var data = resource.dataSource.view();
 
 	            for (var dataIndex = 0; dataIndex < data.length * NUMBER_OF_ROWS; dataIndex++) {
+	                var value = kendo.getter(resource.dataValueField)(data[dataIndex % data.length]);
 	                var obj = {
 	                    text: groupHeaderTemplate({
 	                        text: kendo.htmlEncode(kendo.getter(resource.dataTextField)(data[dataIndex % data.length])),
@@ -435,11 +436,13 @@ module.exports =
 	                        field: resource.field,
 	                        title: resource.title,
 	                        name: resource.name,
-	                        value: kendo.getter(resource.dataValueField)(data[dataIndex % data.length])
+	                        value: value
 	                    }),
-	                    className: "k-slot-cell"
+	                    className: "k-slot-cell",
+	                    value: value
 	                };
-	                obj.columns = view._createColumnsLayout(resources.slice(1), null, groupHeaderTemplate);
+
+	                obj.columns = view._createColumnsLayout(resources.slice(1), null, groupHeaderTemplate, null, null, value);
 
 	                configuration.push(obj);
 	            }
@@ -1708,11 +1711,17 @@ module.exports =
 	            }
 	        },
 
-	        _renderGroups: function(events, resources, offset, columnLevel) {
+	        _renderGroups: function(events, resources, offset, columnLevel, parentValue) {
 	            var resource = resources[0];
 
 	            if (resource) {
 	                var view = resource.dataSource.view();
+
+	                view = view.filter(function(item) {
+	                    var itemParentValue = kendo.getter(resource.dataParentValueField)(item);
+
+	                    return itemParentValue === null || itemParentValue === undefined || itemParentValue === parentValue;
+	                });
 
 	                for (var itemIdx = 0; itemIdx < view.length; itemIdx++) {
 	                    var value = this._resourceValue(resource, view[itemIdx]);
@@ -1720,7 +1729,7 @@ module.exports =
 	                    var tmp = new kendo.data.Query(events).filter({ field: resource.field, operator: SchedulerView.groupEqFilter(value) }).toArray();
 
 	                    if (resources.length > 1) {
-	                        offset = this._renderGroups(tmp, resources.slice(1), offset++, columnLevel + 1);
+	                        offset = this._renderGroups(tmp, resources.slice(1), offset++, columnLevel + 1, value);
 	                    } else {
 	                        this._renderEvents(tmp, offset++);
 	                    }

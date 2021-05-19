@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1251);
+	module.exports = __webpack_require__(1252);
 
 
 /***/ }),
@@ -59,39 +59,39 @@ module.exports =
 
 /***/ }),
 
-/***/ 1054:
+/***/ 1056:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dropdownlist");
 
 /***/ }),
 
-/***/ 1112:
+/***/ 1113:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.binder");
 
 /***/ }),
 
-/***/ 1174:
+/***/ 1175:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.datepicker");
 
 /***/ }),
 
-/***/ 1191:
+/***/ 1192:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.numerictextbox");
 
 /***/ }),
 
-/***/ 1251:
+/***/ 1252:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1174), __webpack_require__(1191), __webpack_require__(1054), __webpack_require__(1112) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1175), __webpack_require__(1192), __webpack_require__(1056), __webpack_require__(1113) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -1171,7 +1171,7 @@ module.exports =
 	                '<ul class="k-reset">' +
 	                    '#if(search){#' +
 	                        '<li class="k-textbox k-space-right">' +
-	                            '<input placeholder="#=messages.search#" title="#=messages.search#" autocomplete="'+AUTOCOMPLETEVALUE+'"  />' +
+	                            '<input class="k-input" placeholder="#=messages.search#" title="#=messages.search#" autocomplete="'+AUTOCOMPLETEVALUE+'"  />' +
 	                            '<span class="k-icon k-i-zoom"></span>' +
 	                        '</li>' +
 	                    '#}#' +
@@ -1483,6 +1483,12 @@ module.exports =
 	                this.checkBoxAll.prop("checked", state);
 	            }
 	        },
+	        createIsNullItem: function () {
+	            var options = this.options;
+	            var template = kendo.template(options.itemTemplate({ field: "isNull", mobile: this._isMobile, valueField: "value" }));
+	            var isNullContainer = $(template({ isNull: options.messages.isNull, value: null}));
+	            this.container.append(isNullContainer);
+	        },
 	        refresh: function(e) {
 	            var forceUnique = this.options.forceUnique;
 	            var dataSource = this.dataSource;
@@ -1522,6 +1528,7 @@ module.exports =
 	                mobile: this._isMobile,
 	                type: this.type
 	            };
+	            var boolDataFilter = booleanFilterHandler.bind(this);
 
 	            if (!this.options.forceUnique) {
 	                data = this.checkSource.view();
@@ -1535,15 +1542,20 @@ module.exports =
 	                data = this.checkSource.data();
 	            }
 
+	            if (this.type === "boolean") {
+	                this.createIsNullItem();
+	                data = data.filter(boolDataFilter);
+	            }
+
 	            var template = kendo.template(options.itemTemplate(templateOptions));
 	            var itemsHtml = kendo.render(template, data);
+
+	            this.container.on(CHANGE + multiCheckNS, ":checkbox", proxy(this.updateCheckAllState, this));
+	            this.container.prepend(itemsHtml);
+
 	            if (options.checkAll && !this._isMobile) {
 	                this.createCheckAllItem();
 	            }
-	            this.container.on(CHANGE + multiCheckNS, ":checkbox", proxy(this.updateCheckAllState, this));
-
-	            this.container.append(itemsHtml);
-
 	        },
 	        checkAll: function() {
 	            var state = this.checkBoxAll.is(":checked");
@@ -1708,10 +1720,10 @@ module.exports =
 
 	                if (mobile) {
 	                    return "<li class='k-item k-listgroup-item'>" +
-	                            "<label class='k-label k-listgroup-form-row'>" +
+	                            "<label class='k-label k-listgroup-form-row k-checkbox-label'>" +
 	                                "<span class='k-listgroup-form-field-label k-item-title '>#:kendo.format('" + ( format ?  format  : "{0}" ) + "', "  + field + ")#</span>" +
 	                                '<span class="k-listgroup-form-field-wrapper">' +
-	                                    "<input type='checkbox' value='#:kendo.format('{0"+ valueFormat + "}'," + valueField + ")#'/>" +
+	                                    "<input type='checkbox' class='k-checkbox' value='#:kendo.format('{0"+ valueFormat + "}'," + valueField + ")#'/>" +
 	                                '</span>' +
 	                            "</label>" +
 	                        "</li>";
@@ -1730,6 +1742,7 @@ module.exports =
 	            appendToElement: false,
 	            messages: {
 	                checkAll: "Select All",
+	                isNull: "is empty",
 	                clearAll: "Clear All",
 	                clear: "Clear",
 	                filter: "Filter",
@@ -1747,6 +1760,10 @@ module.exports =
 	        },
 	        events: [ INIT, REFRESH, "change", OPEN ]
 	    });
+
+	    function booleanFilterHandler(item) {
+	        return item[this.field] !== null;
+	    }
 
 	    $.extend(FilterMultiCheck.fn, {
 	        _click: FilterMenu.fn._click,

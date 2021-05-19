@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1381);
+	module.exports = __webpack_require__(1383);
 
 
 /***/ }),
@@ -59,18 +59,18 @@ module.exports =
 
 /***/ }),
 
-/***/ 1377:
+/***/ 1378:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.scheduler.view");
 
 /***/ }),
 
-/***/ 1381:
+/***/ 1383:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1377) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1378) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	    var __meta__ = { // jshint ignore:line
@@ -644,6 +644,12 @@ module.exports =
 	                var data = resource.dataSource.view();
 	                var isMobile = this._isMobile();
 
+	                data = data.filter(function(item) {
+	                    var itemParentValue = kendo.getter(resource.dataParentValueField)(item);
+
+	                    return itemParentValue === null || itemParentValue === undefined || (parent && itemParentValue === parent.value);
+	                });
+
 	                for (var dataIndex = 0; dataIndex < data.length; dataIndex++) {
 	                    var value = resourceValue(resource, data[dataIndex]);
 
@@ -687,6 +693,13 @@ module.exports =
 	                }
 
 	                return configuration;
+	            },
+
+	            // TODO: this method for Agenda view has never worked properly
+	            // it used to return wrong resources
+	            // to be clearer the deficit, it now does not return any resources
+	            _resourceBySlot: function() {
+	                return {};
 	            },
 
 	            selectionByElement: function(cell) {

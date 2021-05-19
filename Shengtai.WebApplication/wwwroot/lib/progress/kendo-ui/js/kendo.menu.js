@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1299);
+	module.exports = __webpack_require__(1300);
 
 
 /***/ }),
@@ -59,25 +59,25 @@ module.exports =
 
 /***/ }),
 
-/***/ 1059:
-/***/ (function(module, exports) {
-
-	module.exports = require("./kendo.data");
-
-/***/ }),
-
-/***/ 1089:
+/***/ 1043:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.popup");
 
 /***/ }),
 
-/***/ 1299:
+/***/ 1061:
+/***/ (function(module, exports) {
+
+	module.exports = require("./kendo.data");
+
+/***/ }),
+
+/***/ 1300:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1089), __webpack_require__(1059) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1043), __webpack_require__(1061) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -716,10 +716,12 @@ module.exports =
 	                initialCssWidth = initialCssWidth === "auto" ? "" : initialCssWidth;
 
 	                if (isHorizontal) {
-	                    $(window).on(RESIZE, kendo.throttle(function(){
-	                        that._setOverflowWrapperWidth(initialWidth, initialCssWidth);
-	                        that._toggleScrollButtons(that.element, backwardBtn, forwardBtn, isHorizontal);
-	                    }, 100));
+	                    $(window).on(RESIZE, function() {
+	                        setTimeout(function(){
+	                            that._setOverflowWrapperWidth(initialWidth, initialCssWidth);
+	                            that._toggleScrollButtons(that.element, backwardBtn, forwardBtn, isHorizontal);
+	                        }, 300);
+	                    });
 	                }
 
 	                that._setOverflowWrapperWidth(initialWidth, initialCssWidth);

@@ -647,7 +647,7 @@ module.exports =
 
 	                if (toolName == "break") {
 	                    endGroup();
-	                    $("<li class='k-row-break' />").appendTo(that.element);
+	                    $("<li class='k-row-break' role='presentation' />").appendTo(that.element);
 	                    startGroup(toolName, overflowFlaseTools);
 	                }
 

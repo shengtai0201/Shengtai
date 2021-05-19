@@ -1431,6 +1431,18 @@ module.exports =
 	        return size;
 	    },
 
+	    labelsCount: function() {
+	        var count = NumericAxis.fn.labelsCount.call(this);
+	        var options = this.options;
+	        var angle = options.endAngle - options.startAngle;
+
+	        if (angle >= 360 && (options.max % options.majorUnit === 0)) {
+	            count -= 1;
+	        }
+
+	        return count;
+	    },
+
 	    renderLabels: function() {
 	        var this$1 = this;
 
@@ -1463,7 +1475,9 @@ module.exports =
 
 	        var labels = this.labels;
 	        var count = labels.length;
-	        var padding = labelsOptions.padding;
+	        var padding = getSpacing(labelsOptions.padding);
+	        var paddingWidth = (padding.left + padding.right) / 2;
+	        var paddingHeight = (padding.top + padding.bottom) / 2;
 
 	        for (var i = 0; i < count; i++) {
 	            var label = labels[i];
@@ -1473,8 +1487,8 @@ module.exports =
 	            var labelAngle = (angle - GEO_ARC_ADJUST_ANGLE) * DEGREE;
 
 	            var lp = arc.pointAt(angle);
-	            var cx = lp.x + (Math.cos(labelAngle) * (halfWidth + padding) * (isInside ? 1 : -1));
-	            var cy = lp.y + (Math.sin(labelAngle) * (halfHeight + padding) * (isInside ? 1 : -1));
+	            var cx = lp.x + (Math.cos(labelAngle) * (halfWidth + paddingWidth) * (isInside ? 1 : -1));
+	            var cy = lp.y + (Math.sin(labelAngle) * (halfHeight + paddingHeight) * (isInside ? 1 : -1));
 
 	            label.reflow(new Box(cx - halfWidth, cy - halfHeight, cx + halfWidth, cy + halfHeight));
 	            var labelPos = new GeometryPoint(label.box.x1, label.box.y1);
@@ -1694,6 +1708,10 @@ module.exports =
 	        if (reverse) {
 	            pos += angle;
 	            step = -step;
+	        }
+
+	        if (angle >= 360 && (options.max % stepValue === 0)) {
+	            tickCount -= 1;
 	        }
 
 	        var positions = [];
@@ -2362,6 +2380,21 @@ module.exports =
 	    }
 	});
 
+	var defaultStartAngle = 90;
+
+	var CircularGauge = ArcGauge.extend({
+	    _createModel: function() {
+	        var scaleOptions = this.options.scale;
+	        if (typeof scaleOptions.startAngle !== 'number') {
+	            scaleOptions.startAngle = defaultStartAngle;
+	        }
+
+	        scaleOptions.endAngle = scaleOptions.startAngle + 360;
+
+	        ArcGauge.fn._createModel.call(this);
+	    }
+	});
+
 	kendo.deepExtend(kendo.dataviz, {
 	    Gauge: Gauge,
 	    LinearGauge: LinearGauge,
@@ -2374,7 +2407,8 @@ module.exports =
 	    RadialScale: RadialScale,
 	    ArcGauge: ArcGauge,
 	    RangePointer: RangePointer,
-	    ArcScale: ArcScale
+	    ArcScale: ArcScale,
+	    CircularGauge: CircularGauge
 	});
 
 	})(window.kendo.jQuery);

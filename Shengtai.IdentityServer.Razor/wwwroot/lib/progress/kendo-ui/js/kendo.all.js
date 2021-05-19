@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1041);
+	module.exports = __webpack_require__(1044);
 
 
 /***/ }),
@@ -59,11 +59,11 @@ module.exports =
 
 /***/ }),
 
-/***/ 1041:
+/***/ 1044:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1042), __webpack_require__(1043), __webpack_require__(1044), __webpack_require__(1045), __webpack_require__(1046)  ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1045), __webpack_require__(1046), __webpack_require__(1047), __webpack_require__(1048), __webpack_require__(1049)  ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 	    "bundle all";
 	    return window.kendo;
@@ -72,35 +72,35 @@ module.exports =
 
 /***/ }),
 
-/***/ 1042:
+/***/ 1045:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.web");
 
 /***/ }),
 
-/***/ 1043:
+/***/ 1046:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz");
 
 /***/ }),
 
-/***/ 1044:
+/***/ 1047:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.mobile");
 
 /***/ }),
 
-/***/ 1045:
+/***/ 1048:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.drawing");
 
 /***/ }),
 
-/***/ 1046:
+/***/ 1049:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dom");

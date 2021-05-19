@@ -46,8 +46,8 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1651);
-	module.exports = __webpack_require__(1651);
+	__webpack_require__(1673);
+	module.exports = __webpack_require__(1673);
 
 
 /***/ }),
@@ -67,7 +67,7 @@ module.exports =
 
 /***/ }),
 
-/***/ 1651:
+/***/ 1673:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/***********************************************************************
@@ -202,7 +202,7 @@ module.exports =
 	    measure: function(text, style, options) {
 	        if (options === void 0) { options = {}; }
 
-	        if (!text) {
+	        if (typeof text === 'undefined' || text === null) {
 	            return zeroSize();
 	        }
 

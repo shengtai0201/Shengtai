@@ -46,13 +46,13 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1494);
-	module.exports = __webpack_require__(1494);
+	__webpack_require__(1509);
+	module.exports = __webpack_require__(1509);
 
 
 /***/ }),
 
-/***/ 1494:
+/***/ 1509:
 /***/ (function(module, exports) {
 
 	(function ($, undefined) {
@@ -1011,7 +1011,8 @@ module.exports =
 	  "associateScope": "Асоцииране чрез 'scope' атрибут",
 	  "associateIds": "Асоцииране чрез Id",
 	  "copyFormat": "Копирай форматирането",
-	  "applyFormat": "Приложи форматирането"
+	  "applyFormat": "Приложи форматирането",
+	  "borderNone": "Без рамка"
 	});
 	}
 

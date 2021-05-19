@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1156);
+	module.exports = __webpack_require__(1157);
 
 
 /***/ }),
@@ -59,25 +59,25 @@ module.exports =
 
 /***/ }),
 
-/***/ 1045:
+/***/ 1048:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.drawing");
 
 /***/ }),
 
-/***/ 1114:
+/***/ 1115:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz.core");
 
 /***/ }),
 
-/***/ 1156:
+/***/ 1157:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1114), __webpack_require__(1045) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1115), __webpack_require__(1048) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -134,7 +134,12 @@ module.exports =
 	        minNumericBeforeAlpha = 17,
 	        minNumericBeforeByte = 9,
 	        minAlphaBeforeByte =  16,
-	        round = Math.round;
+	        round = Math.round,
+	        IMAGE = "image",
+	        SWISS_QR = "swiss",
+	        crossPattern = [[0,1],[1,1],[1,2],[2,2],[2,1],[3,1],[3,0],[2,0],[2,-1],[1,-1],[1,0]],
+	        squarePattern = [[0,1],[1,1],[1,0]],
+	        DEFAULT_LOGO_SIZE = 7;
 
 	        function toDecimal(value){
 	            return parseInt(value, 2);
@@ -1060,9 +1065,73 @@ module.exports =
 
 	                    visual.append(that._renderBackground(size, border));
 	                    visual.append(that._renderMatrix(matrix, baseUnit, quietZoneSize));
+	                    if (that._hasCustomLogo()) {
+	                        visual.append(that._renderLogo(size, baseUnit));
+	                    } else if (that._isSwiss()){
+	                        visual.append(that._renderSwissCode(size, baseUnit));
+	                    }
 	                }
 
 	                return visual;
+	            },
+
+	            _renderLogo: function name(qrSize, baseUnit) {
+	                var image;
+	                var imageRect;
+	                var center = round(qrSize / 2);
+	                var logoSize = this._getLogoSize(baseUnit * DEFAULT_LOGO_SIZE);
+	                var logoUrl = this.options.overlay.imageUrl;
+	                var position = {
+	                    x: center - logoSize.width / 2,
+	                    y: center - logoSize.height / 2
+	                };
+
+	                imageRect = new kendo.geometry.Rect(
+	                    new kendo.geometry.Point(position.x, position.y),
+	                    new kendo.geometry.Size(logoSize.width, logoSize.height)
+	                );
+
+	                image = new draw.Image(logoUrl, imageRect);
+	                return image;
+	            },
+
+	            _renderSwissCode: function (qrSize, baseUnit) {
+	                var logoSize = this._getLogoSize(baseUnit * DEFAULT_LOGO_SIZE);
+	                logoSize =  Math.max(logoSize.width, logoSize.height);
+	                var crossSize = logoSize / 4;
+	                var crossOffset = crossSize / 2;
+	                var center = qrSize / 2;
+	                var start = {};
+	                var visual = new draw.Group();
+
+	                start.x = start.y = Math.ceil(center - baseUnit - logoSize / 2);
+	                visual.append(this._renderShape(start, Math.ceil(logoSize + baseUnit * 2), squarePattern, "#fff"));
+
+	                start.x = start.y = center - logoSize / 2;
+	                visual.append(this._renderShape(start, logoSize, squarePattern, this.options.color));
+
+	                start.x = center + crossOffset - logoSize / 2;
+	                start.y = center + crossOffset + crossSize - logoSize / 2;
+	                visual.append(this._renderShape(start, crossSize, crossPattern, "#fff"));
+
+	                return visual;
+	            },
+
+	            _renderShape: function (start, step, pattern, color) {
+	                var path = new draw.MultiPath({
+	                    fill: {
+	                        color: color
+	                    },
+	                    stroke: null
+	                });
+
+	                path.moveTo(start.x, start.y);
+	                for (var i = 0; i < pattern.length; i++) {
+	                    path.lineTo(start.x + step * pattern[i][0], start.y + step * pattern[i][1]);
+	                }
+	                path.close();
+
+	                return path;
 	            },
 
 	            _getSize: function(){
@@ -1183,7 +1252,39 @@ module.exports =
 	                border: {
 	                    color: "",
 	                    width: 0
+	                },
+	                overlay: {
+	                    type: IMAGE,
+	                    imageUrl: "",
+	                    width: 0,
+	                    height: 0
 	                }
+	            },
+
+	            _hasCustomLogo: function () {
+	                return !!this.options.overlay.imageUrl;
+	            },
+
+	            _isSwiss: function () {
+	                return this.options.overlay.type === SWISS_QR;
+	            },
+
+	            _getLogoSize: function (defautLogoSize) {
+	                var width = this.options.overlay.width;
+	                var height = this.options.overlay.height;
+
+	                if (!width && !height) {
+	                    width = height = defautLogoSize;
+	                } else if (width && !height) {
+	                    height = width;
+	                } else if (!width && height) {
+	                    width = height;
+	                }
+
+	                return {
+	                    width: width,
+	                    height: height
+	                };
 	            }
 	        });
 

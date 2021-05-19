@@ -5747,24 +5747,23 @@ module.exports =
 	    createPanes: function() {
 	        var this$1 = this;
 
-	        var defaults = { title: { color: (this.options.title || {}).color } };
-	        var panes = [];
+	        var titleOptions = this.options.title || {};
+	        var paneDefaults = this.options.paneDefaults;
 	        var paneOptions = this.options.panes || [];
 	        var panesLength = Math.max(paneOptions.length, 1);
+	        var panes = [];
 
-	        function setTitle(options, defaults) {
-	            if (isString(options.title)) {
-	                options.title = {
-	                    text: options.title
-	                };
+	        var defaults = deepExtend({
+	            title: {
+	                color: titleOptions.color
 	            }
-
-	            options.title = deepExtend({}, defaults.title, options.title);
-	        }
+	        }, paneDefaults);
 
 	        for (var i = 0; i < panesLength; i++) {
-	            var options = paneOptions[i] || {};
-	            setTitle(options, defaults);
+	            var options = deepExtend({}, defaults, paneOptions[i]);
+	            if (isString(options.title)) {
+	                options.title = deepExtend({ text: options.title }, defaults.title);
+	            }
 
 	            var currentPane = new Pane(options);
 	            currentPane.paneIndex = i;
@@ -6716,6 +6715,9 @@ module.exports =
 	    border: {
 	        color: BLACK,
 	        width: 0
+	    },
+	    paneDefaults: {
+	        title: {}
 	    },
 	    legend: {
 	        inactiveItems: {
@@ -13716,10 +13718,10 @@ module.exports =
 	                }
 	            }
 	        } else if (!point && hasInactiveOpacity) {
-	            if (multipleSeries && this._activеChartInstance) {
+	            if (multipleSeries && this._activeChartInstance) {
 	                this._updateSeriesOpacity(point, true);
-	                this._applySeriesOpacity(this._activеChartInstance.children, null, true);
-	                this._activеChartInstance = null;
+	                this._applySeriesOpacity(this._activeChartInstance.children, null, true);
+	                this._activeChartInstance = null;
 	            }
 	            this._highlight && this._highlight.hide();
 	            this._activePoint = null;
@@ -13736,7 +13738,7 @@ module.exports =
 	    },
 
 	    _displayInactiveOpacity: function(activePoint, multipleSeries, highlightPoints) {
-	        var chartInstance = this._activеChartInstance = this._chartInstanceFromPoint(activePoint);
+	        var chartInstance = this._activeChartInstance = this._chartInstanceFromPoint(activePoint);
 
 	        if (multipleSeries) {
 	            this._updateSeriesOpacity(activePoint);

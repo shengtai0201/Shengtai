@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1441);
+	module.exports = __webpack_require__(1453);
 
 
 /***/ }),
@@ -59,39 +59,39 @@ module.exports =
 
 /***/ }),
 
-/***/ 1048:
-/***/ (function(module, exports) {
-
-	module.exports = require("jquery");
-
-/***/ }),
-
-/***/ 1049:
+/***/ 1042:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.core");
 
 /***/ }),
 
-/***/ 1089:
+/***/ 1043:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.popup");
 
 /***/ }),
 
-/***/ 1108:
+/***/ 1051:
+/***/ (function(module, exports) {
+
+	module.exports = require("jquery");
+
+/***/ }),
+
+/***/ 1109:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.fx");
 
 /***/ }),
 
-/***/ 1441:
+/***/ 1453:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(jQuery) {(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1049), __webpack_require__(1089), __webpack_require__(1108) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1042), __webpack_require__(1043), __webpack_require__(1109) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -584,8 +584,14 @@ module.exports =
 
 	        _removeDescribedBy: function(target) {
 	            var tooltipId = this.popup.element.attr("id"),
-	                arrayAttr = target.attr(DESCRIBEDBY).split(" "),
-	                finalArray, finalDescribedbyAttr;
+	                currentDescribedBy = target.attr(DESCRIBEDBY),
+	                arrayAttr, finalArray, finalDescribedbyAttr;
+
+	            if(!currentDescribedBy) {
+	                return;
+	            }
+
+	            arrayAttr = currentDescribedBy.split(" ");
 
 	            if(arrayAttr && arrayAttr.length > 0) {
 	                finalArray = arrayAttr.filter(function (val) {
@@ -638,7 +644,7 @@ module.exports =
 
 	}, __webpack_require__(3));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1048)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1051)))
 
 /***/ })
 

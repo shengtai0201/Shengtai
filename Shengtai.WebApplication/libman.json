@@ -4,7 +4,7 @@
   "libraries": [
     {
       "provider": "unpkg",
-      "library": "bootstrap@4.6.0",
+      "library": "bootstrap@5.0.1",
       "destination": "wwwroot/lib/bootstrap/"
     },
     {
@@ -27,7 +27,7 @@
       "destination": "wwwroot/lib/fortawesome/fontawesome-free/"
     },
     {
-      "library": "overlayscrollbars@1.13.0",
+      "library": "overlayscrollbars@1.13.1",
       "destination": "wwwroot/lib/overlayscrollbars/"
     },
     {
@@ -36,7 +36,12 @@
     },
     {
       "provider": "unpkg",
-      "library": "@progress/kendo-ui@2021.1.330",
+      "library": "@coreui/coreui@2.1.16",
+      "destination": "wwwroot/lib/coreui/coreui/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "@progress/kendo-ui@2021.2.511",
       "destination": "wwwroot/lib/progress/kendo-ui/"
     },
     {

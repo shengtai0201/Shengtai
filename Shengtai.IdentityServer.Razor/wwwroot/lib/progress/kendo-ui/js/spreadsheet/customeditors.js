@@ -46,8 +46,8 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1601);
-	module.exports = __webpack_require__(1601);
+	__webpack_require__(1616);
+	module.exports = __webpack_require__(1616);
 
 
 /***/ }),
@@ -81,11 +81,11 @@ module.exports =
 
 /***/ }),
 
-/***/ 1601:
+/***/ 1616:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(20), __webpack_require__(953), __webpack_require__(1602), __webpack_require__(1033), __webpack_require__(1603) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(20), __webpack_require__(953), __webpack_require__(1617), __webpack_require__(1033), __webpack_require__(1618) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	(function(kendo) {
@@ -289,14 +289,14 @@ module.exports =
 
 /***/ }),
 
-/***/ 1602:
+/***/ 1617:
 /***/ (function(module, exports) {
 
 	module.exports = require("../kendo.calendar");
 
 /***/ }),
 
-/***/ 1603:
+/***/ 1618:
 /***/ (function(module, exports) {
 
 	module.exports = require("./sheet");

@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1287);
+	module.exports = __webpack_require__(1288);
 
 
 /***/ }),
@@ -59,13 +59,13 @@ module.exports =
 
 /***/ }),
 
-/***/ 1287:
+/***/ 1288:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (f, define) {
 	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(1288),
-	        __webpack_require__(1289)
+	        __webpack_require__(1289),
+	        __webpack_require__(1290)
 	    ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function () {
 
@@ -452,14 +452,14 @@ module.exports =
 
 /***/ }),
 
-/***/ 1288:
+/***/ 1289:
 /***/ (function(module, exports) {
 
 	module.exports = require("./imageeditor/toolbar");
 
 /***/ }),
 
-/***/ 1289:
+/***/ 1290:
 /***/ (function(module, exports) {
 
 	module.exports = require("./imageeditor/commands");

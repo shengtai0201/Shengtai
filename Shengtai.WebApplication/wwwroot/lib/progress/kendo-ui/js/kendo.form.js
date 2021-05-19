@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1254);
+	module.exports = __webpack_require__(1255);
 
 
 /***/ }),
@@ -59,11 +59,11 @@ module.exports =
 
 /***/ }),
 
-/***/ 1254:
+/***/ 1255:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1255) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1256) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	    var __meta__ = { // jshint ignore:line
@@ -154,6 +154,10 @@ module.exports =
 	                Widget.fn.init.call(that, element, options);
 
 	                that.options = kendo.deepExtend({}, that.options, options);
+
+	                if (options && options.formData) {
+	                    that.options.formData = options.formData;
+	                }
 
 	                that._wrapper();
 
@@ -359,6 +363,11 @@ module.exports =
 	                var that = this,
 	                    options = that.options,
 	                    formData = options.formData || {};
+
+	                if(options.formData instanceof kendo.data.ObservableObject) {
+	                    that._model = formData;
+	                    return;
+	                }
 
 	                var MyModel = kendo.data.Model.define({ fields: that._fields });
 
@@ -773,7 +782,7 @@ module.exports =
 
 /***/ }),
 
-/***/ 1255:
+/***/ 1256:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.editable");

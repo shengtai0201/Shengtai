@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1047);
+	module.exports = __webpack_require__(1050);
 
 
 /***/ }),
@@ -59,11 +59,18 @@ module.exports =
 
 /***/ }),
 
-/***/ 1047:
+/***/ 1042:
+/***/ (function(module, exports) {
+
+	module.exports = require("./kendo.core");
+
+/***/ }),
+
+/***/ 1050:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(jQuery) {(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1049) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1042) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function() {
 
 	var __meta__ = { // jshint ignore:line
@@ -1551,21 +1558,14 @@ module.exports =
 
 	}, __webpack_require__(3));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1048)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1051)))
 
 /***/ }),
 
-/***/ 1048:
+/***/ 1051:
 /***/ (function(module, exports) {
 
 	module.exports = require("jquery");
-
-/***/ }),
-
-/***/ 1049:
-/***/ (function(module, exports) {
-
-	module.exports = require("./kendo.core");
 
 /***/ })
 

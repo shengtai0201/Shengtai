@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1249);
+	module.exports = __webpack_require__(1250);
 
 
 /***/ }),
@@ -59,39 +59,39 @@ module.exports =
 
 /***/ }),
 
-/***/ 1053:
+/***/ 1055:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.combobox");
 
 /***/ }),
 
-/***/ 1054:
+/***/ 1056:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dropdownlist");
 
 /***/ }),
 
-/***/ 1174:
+/***/ 1175:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.datepicker");
 
 /***/ }),
 
-/***/ 1191:
+/***/ 1192:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.numerictextbox");
 
 /***/ }),
 
-/***/ 1249:
+/***/ 1250:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1250), __webpack_require__(1174), __webpack_require__(1191), __webpack_require__(1053), __webpack_require__(1054) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1251), __webpack_require__(1175), __webpack_require__(1192), __webpack_require__(1055), __webpack_require__(1056) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -253,7 +253,7 @@ module.exports =
 	                value: null,
 	                operatorVisible: function() {
 	                    var val = this.get("value");
-	                    return  (val !== null && val !== undefined && val != "undefined") || (isNonValueFilter(this.get("operator")) && !that._clearInProgress);
+	                    return  (val !== null && val !== undefined && val != "undefined") || (isNonValueFilter(this.get("operator")) && that.dataSource.filter() && !that._clearInProgress);
 	                }
 	            });
 	            that._prevOperator = options.operator;
@@ -446,6 +446,9 @@ module.exports =
 	                viewModel.set("operator", filter.operator);
 	            }
 	            viewModel.set("value", filter.value);
+	            if ($.isEmptyObject(filter)) {
+	                viewModel.trigger(CHANGE, { field: "operatorVisible" });
+	            }
 	            that.manuallyUpdatingVM = false;
 	        },
 
@@ -681,7 +684,7 @@ module.exports =
 
 /***/ }),
 
-/***/ 1250:
+/***/ 1251:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.autocomplete");

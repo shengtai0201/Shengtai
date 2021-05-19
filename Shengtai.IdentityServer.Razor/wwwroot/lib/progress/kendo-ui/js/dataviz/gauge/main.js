@@ -75,6 +75,7 @@ module.exports =
 	    var LinearGauge = dataviz.LinearGauge;
 	    var RadialGauge = dataviz.RadialGauge;
 	    var ArcGauge = dataviz.ArcGauge;
+	    var CircularGauge = dataviz.CircularGauge;
 	    var draw = kendo.drawing;
 
 	    function themeOptions(options) {
@@ -280,6 +281,16 @@ module.exports =
 	        }
 	    });
 
+	    var CircularGaugeWidget = ArcGaugeWidget.extend({
+	        options: {
+	            name: "CircularGauge"
+	        },
+
+	        _gaugeType: function() {
+	            return CircularGauge;
+	        }
+	    });
+
 	    function createExportMethod(name) {
 	        ArcGaugeWidget.fn[name] = function(options) {
 	            var gauge = this;
@@ -304,12 +315,14 @@ module.exports =
 	    dataviz.ui.plugin(LinearGaugeWidget);
 	    dataviz.ui.plugin(RadialGaugeWidget);
 	    dataviz.ui.plugin(ArcGaugeWidget);
+	    dataviz.ui.plugin(CircularGaugeWidget);
 
 	    kendo.deepExtend(dataviz, {
 	        Gauge: Gauge,
 	        LinearGauge: LinearGaugeWidget,
 	        RadialGauge: RadialGaugeWidget,
-	        ArcGauge: ArcGaugeWidget
+	        ArcGauge: ArcGaugeWidget,
+	        CircularGauge: CircularGaugeWidget
 	    });
 
 	})(window.kendo.jQuery);

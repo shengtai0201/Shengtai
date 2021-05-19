@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1163);
+	module.exports = __webpack_require__(1164);
 
 
 /***/ }),
@@ -59,22 +59,22 @@ module.exports =
 
 /***/ }),
 
-/***/ 1114:
+/***/ 1115:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz.core");
 
 /***/ }),
 
-/***/ 1163:
+/***/ 1164:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
 	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(1114),
-	        __webpack_require__(1164),
+	        __webpack_require__(1115),
 	        __webpack_require__(1165),
-	        __webpack_require__(1166)
+	        __webpack_require__(1166),
+	        __webpack_require__(1167)
 	    ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
@@ -92,21 +92,21 @@ module.exports =
 
 /***/ }),
 
-/***/ 1164:
+/***/ 1165:
 /***/ (function(module, exports) {
 
 	module.exports = require("./dataviz/themes/chart-base-theme");
 
 /***/ }),
 
-/***/ 1165:
+/***/ 1166:
 /***/ (function(module, exports) {
 
 	module.exports = require("./dataviz/themes/auto-theme");
 
 /***/ }),
 
-/***/ 1166:
+/***/ 1167:
 /***/ (function(module, exports) {
 
 	module.exports = require("./dataviz/themes/themes");

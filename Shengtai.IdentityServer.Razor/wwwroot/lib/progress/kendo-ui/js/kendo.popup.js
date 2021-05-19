@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1364);
+	module.exports = __webpack_require__(1365);
 
 
 /***/ }),
@@ -59,18 +59,18 @@ module.exports =
 
 /***/ }),
 
-/***/ 1049:
+/***/ 1042:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.core");
 
 /***/ }),
 
-/***/ 1364:
+/***/ 1365:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1049) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1042) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -255,7 +255,8 @@ module.exports =
 	                    duration: 100,
 	                    hide: true
 	                }
-	            }
+	            },
+	            omitOriginOffsets: false
 	        },
 
 	        _animationClose: function() {
@@ -766,8 +767,8 @@ module.exports =
 	                height = outerHeight(element) || outerHeight(element.children().first()),
 	                anchorWidth = outerWidth(anchor),
 	                anchorHeight = outerHeight(anchor),
-	                top = anchorOffset.top,
-	                left = anchorOffset.left,
+	                top = that.options.omitOriginOffsets ? 0 : anchorOffset.top,
+	                left = that.options.omitOriginOffsets ? 0 : anchorOffset.left,
 	                round = Math.round;
 
 	            if (appendTo[0] != document.body) {

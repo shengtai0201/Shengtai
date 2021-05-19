@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1087);
+	module.exports = __webpack_require__(1089);
 
 
 /***/ }),
@@ -59,25 +59,32 @@ module.exports =
 
 /***/ }),
 
-/***/ 1048:
-/***/ (function(module, exports) {
-
-	module.exports = require("jquery");
-
-/***/ }),
-
-/***/ 1049:
+/***/ 1042:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.core");
 
 /***/ }),
 
-/***/ 1087:
+/***/ 1043:
+/***/ (function(module, exports) {
+
+	module.exports = require("./kendo.popup");
+
+/***/ }),
+
+/***/ 1051:
+/***/ (function(module, exports) {
+
+	module.exports = require("jquery");
+
+/***/ }),
+
+/***/ 1089:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(jQuery) {(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1049), __webpack_require__(1088), __webpack_require__(1089), __webpack_require__(1090), __webpack_require__(1091), __webpack_require__(1092) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1042), __webpack_require__(1090), __webpack_require__(1043), __webpack_require__(1091), __webpack_require__(1092), __webpack_require__(1093) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -1052,39 +1059,32 @@ module.exports =
 
 	}, __webpack_require__(3));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1048)))
-
-/***/ }),
-
-/***/ 1088:
-/***/ (function(module, exports) {
-
-	module.exports = require("./kendo.color");
-
-/***/ }),
-
-/***/ 1089:
-/***/ (function(module, exports) {
-
-	module.exports = require("./kendo.popup");
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1051)))
 
 /***/ }),
 
 /***/ 1090:
 /***/ (function(module, exports) {
 
-	module.exports = require("./kendo.slider");
+	module.exports = require("./kendo.color");
 
 /***/ }),
 
 /***/ 1091:
 /***/ (function(module, exports) {
 
-	module.exports = require("./kendo.userevents");
+	module.exports = require("./kendo.slider");
 
 /***/ }),
 
 /***/ 1092:
+/***/ (function(module, exports) {
+
+	module.exports = require("./kendo.userevents");
+
+/***/ }),
+
+/***/ 1093:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.button");

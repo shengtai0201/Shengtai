@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1440);
+	module.exports = __webpack_require__(1452);
 
 
 /***/ }),
@@ -59,39 +59,39 @@ module.exports =
 
 /***/ }),
 
-/***/ 1048:
-/***/ (function(module, exports) {
-
-	module.exports = require("jquery");
-
-/***/ }),
-
-/***/ 1049:
+/***/ 1042:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.core");
 
 /***/ }),
 
-/***/ 1089:
+/***/ 1043:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.popup");
 
 /***/ }),
 
-/***/ 1091:
+/***/ 1051:
+/***/ (function(module, exports) {
+
+	module.exports = require("jquery");
+
+/***/ }),
+
+/***/ 1092:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.userevents");
 
 /***/ }),
 
-/***/ 1440:
+/***/ 1452:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(jQuery) {(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1049), __webpack_require__(1091), __webpack_require__(1089) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1042), __webpack_require__(1092), __webpack_require__(1043) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -1891,7 +1891,7 @@ module.exports =
 
 	}, __webpack_require__(3));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1048)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1051)))
 
 /***/ })
 

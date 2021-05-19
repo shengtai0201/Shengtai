@@ -46,8 +46,8 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1641);
-	module.exports = __webpack_require__(1641);
+	__webpack_require__(1656);
+	module.exports = __webpack_require__(1656);
 
 
 /***/ }),
@@ -95,11 +95,11 @@ module.exports =
 
 /***/ }),
 
-/***/ 1641:
+/***/ 1656:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1030), __webpack_require__(969), __webpack_require__(6), __webpack_require__(967), __webpack_require__(953), __webpack_require__(1642) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1030), __webpack_require__(969), __webpack_require__(6), __webpack_require__(967), __webpack_require__(953), __webpack_require__(1657) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	(function(kendo) {
@@ -1372,7 +1372,7 @@ module.exports =
 
 /***/ }),
 
-/***/ 1642:
+/***/ 1657:
 /***/ (function(module, exports) {
 
 	module.exports = require("./borderpalette");

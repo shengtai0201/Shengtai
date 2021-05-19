@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1180);
+	module.exports = __webpack_require__(1181);
 
 
 /***/ }),
@@ -59,18 +59,18 @@ module.exports =
 
 /***/ }),
 
-/***/ 1091:
+/***/ 1092:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.userevents");
 
 /***/ }),
 
-/***/ 1180:
+/***/ 1181:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1091) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1092) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -133,7 +133,7 @@ module.exports =
 	                if ($.contains(that.drawerItemsWrapper[0], e.event.target)) {
 	                    that._itemClick(e);
 	                }
-	                if (that.visible && !that.trigger("hide", { sender: this})) {
+	                if (options.autoCollapse && that.visible && !that.trigger("hide", { sender: this})) {
 	                    that.hide();
 	                    e.preventDefault();
 	                }
@@ -628,6 +628,7 @@ module.exports =
 
 	        options: {
 	            name: "Drawer",
+	            autoCollapse: true,
 	            position: LEFT,
 	            mode: "overlay",
 	            swipeToOpen: true,

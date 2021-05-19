@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1342);
+	module.exports = __webpack_require__(1343);
 
 
 /***/ }),
@@ -59,32 +59,32 @@ module.exports =
 
 /***/ }),
 
-/***/ 1049:
+/***/ 1042:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.core");
 
 /***/ }),
 
-/***/ 1091:
+/***/ 1092:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.userevents");
 
 /***/ }),
 
-/***/ 1296:
+/***/ 1297:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.floatinglabel");
 
 /***/ }),
 
-/***/ 1342:
+/***/ 1343:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1049), __webpack_require__(1091), __webpack_require__(1296) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1042), __webpack_require__(1092), __webpack_require__(1297) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -223,6 +223,7 @@ module.exports =
 	             });
 
 	             that._label();
+	             that._ariaLabel();
 
 	             kendo.notify(that);
 	         },
@@ -609,7 +610,7 @@ module.exports =
 	            text = wrapper.find(POINT + CLASSNAME);
 
 	            if (!text[0]) {
-	                text = $('<input type="text"/>').insertBefore(element).addClass(CLASSNAME).attr("aria-hidden", "true");
+	                text = $('<input type="text"/>').insertBefore(element).addClass(CLASSNAME);
 	            }
 
 	            try {
@@ -787,6 +788,32 @@ module.exports =
 	            element.attr(option, value);
 	        },
 
+	        _ariaLabel: function(){
+	            var that = this;
+	            var text = that._text;
+	            var inputElm = that.element;
+	            var id = inputElm.attr("id");
+	            var labelElm = $("label[for=\'" + id  + "\']");
+	            var ariaLabel = inputElm.attr("aria-label");
+	            var ariaLabelledBy = inputElm.attr("aria-labelledby");
+	            var labelId;
+
+	            if (ariaLabel) {
+	                text.attr("aria-label", ariaLabel);
+	            } else if (ariaLabelledBy){
+	                text.attr("aria-labelledby", ariaLabelledBy);
+	            } else if (labelElm.length){
+	                labelId = labelElm.attr("id");
+	                if (labelId) {
+	                    text.attr("aria-labelledby", labelId);
+	                } else {
+	                    labelId = kendo.guid();
+	                    labelElm.attr("id", labelId);
+	                    text.attr("aria-labelledby", labelId);
+	                }
+	            }
+	        },
+
 	        _spin: function(step, timeout) {
 	            var that = this;
 
@@ -833,6 +860,11 @@ module.exports =
 	            var that = this;
 
 	            that._text.toggle(toggle);
+	            if (toggle) {
+	                that._text.removeAttr("aria-hidden");
+	            } else {
+	                that._text.attr("aria-hidden", "true");
+	            }
 	            that.element.toggle(!toggle);
 	        },
 

@@ -592,7 +592,7 @@ module.exports =
 	                tagName = dom.name(node);
 	                jqNode = $(node);
 
-	                if (jqNode.hasClass("k-table-resize-handle-wrapper") || jqNode.hasClass("k-column-resize-handle-wrapper") || jqNode.hasClass("k-row-resize-handle-wrapper")) {
+	                if (jqNode.hasClass("k-element-resize-handle-wrapper") || jqNode.hasClass("k-column-resize-handle-wrapper") || jqNode.hasClass("k-row-resize-handle-wrapper")) {
 	                    return;
 	                }
 

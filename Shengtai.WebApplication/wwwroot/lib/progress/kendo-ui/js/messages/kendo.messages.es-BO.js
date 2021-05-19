@@ -46,13 +46,13 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1507);
-	module.exports = __webpack_require__(1507);
+	__webpack_require__(1522);
+	module.exports = __webpack_require__(1522);
 
 
 /***/ }),
 
-/***/ 1507:
+/***/ 1522:
 /***/ (function(module, exports) {
 
 	(function ($, undefined) {

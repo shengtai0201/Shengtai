@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1351);
+	module.exports = __webpack_require__(1352);
 
 
 /***/ }),
@@ -59,26 +59,26 @@ module.exports =
 
 /***/ }),
 
-/***/ 1069:
+/***/ 1071:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.mobile.scroller");
 
 /***/ }),
 
-/***/ 1351:
+/***/ 1352:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
 	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(1069),
-	        __webpack_require__(1352),
+	        __webpack_require__(1071),
 	        __webpack_require__(1353),
 	        __webpack_require__(1354),
 	        __webpack_require__(1355),
 	        __webpack_require__(1356),
 	        __webpack_require__(1357),
-	        __webpack_require__(1358)
+	        __webpack_require__(1358),
+	        __webpack_require__(1359)
 	    ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
@@ -906,49 +906,49 @@ module.exports =
 
 /***/ }),
 
-/***/ 1352:
+/***/ 1353:
 /***/ (function(module, exports) {
 
 	module.exports = require("./pdfviewer/processors/pdfjs-processor");
 
 /***/ }),
 
-/***/ 1353:
+/***/ 1354:
 /***/ (function(module, exports) {
 
 	module.exports = require("./pdfviewer/processors/dpl-processor");
 
 /***/ }),
 
-/***/ 1354:
+/***/ 1355:
 /***/ (function(module, exports) {
 
 	module.exports = require("./pdfviewer/toolbar");
 
 /***/ }),
 
-/***/ 1355:
+/***/ 1356:
 /***/ (function(module, exports) {
 
 	module.exports = require("./pdfviewer/page");
 
 /***/ }),
 
-/***/ 1356:
+/***/ 1357:
 /***/ (function(module, exports) {
 
 	module.exports = require("./pdfviewer/search");
 
 /***/ }),
 
-/***/ 1357:
+/***/ 1358:
 /***/ (function(module, exports) {
 
 	module.exports = require("./pdfviewer/dialogs");
 
 /***/ }),
 
-/***/ 1358:
+/***/ 1359:
 /***/ (function(module, exports) {
 
 	module.exports = require("./pdfviewer/commands");

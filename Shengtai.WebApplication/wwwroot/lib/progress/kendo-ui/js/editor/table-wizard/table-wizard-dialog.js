@@ -575,7 +575,7 @@ module.exports =
 	        that._initInput(element.find("#k-editor-id"), "id", tableProperties, tableView);
 	        that._initNumericTextbox(element.find("#k-editor-border-width"), "borderWidth", tableProperties, tableView);
 	        that._initColorPicker(element.find("#k-editor-border-color"), "borderColor", tableProperties, tableView);
-	        that._initDropDownList(element.find("#k-editor-border-style"), "borderStyle", tableProperties, tableView, borderStyles);
+	        that._initBorderStyleDropDown(element.find("#k-editor-border-style"), "borderStyle", tableProperties, tableView, borderStyles);
 	        that._initCheckbox(element.find("#k-editor-collapse-borders"), "collapseBorders", tableProperties, tableView);
 	    },
 
@@ -600,7 +600,7 @@ module.exports =
 	        this._initInput(element.find("#k-editor-cell-id"), "id", cellProperties, cellView);
 	        this._initNumericTextbox(element.find("#k-editor-cell-border-width"), "borderWidth", cellProperties, cellView);
 	        this._initColorPicker(element.find("#k-editor-cell-border-color"), "borderColor", cellProperties, cellView);
-	        this._initDropDownList(element.find("#k-editor-cell-border-style"), "borderStyle", cellProperties, cellView, borderStyles);
+	        this._initBorderStyleDropDown(element.find("#k-editor-cell-border-style"), "borderStyle", cellProperties, cellView, borderStyles);
 	        this._initCheckbox(element.find("#k-editor-wrap-text"), "wrapText", cellProperties, cellView);
 	    },
 
@@ -629,6 +629,14 @@ module.exports =
 	    _initDropDownList: function(element, property, data, storage, dataSource) {
 	        var component = storage[property] = element.kendoDropDownList({
 	            dataSource: dataSource
+	        }).data("kendoDropDownList");
+	        this._setComponentValue(component, data, property);
+	    },
+
+	    _initBorderStyleDropDown: function(element, property, data, storage, dataSource) {
+	        var component = storage[property] = element.kendoDropDownList({
+	            dataSource: dataSource,
+	            optionLabel: this.options.messages.borderNone
 	        }).data("kendoDropDownList");
 	        this._setComponentValue(component, data, property);
 	    },

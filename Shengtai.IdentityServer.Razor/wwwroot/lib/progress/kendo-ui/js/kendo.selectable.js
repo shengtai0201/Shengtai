@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1388);
+	module.exports = __webpack_require__(1391);
 
 
 /***/ }),
@@ -59,25 +59,25 @@ module.exports =
 
 /***/ }),
 
-/***/ 1049:
+/***/ 1042:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.core");
 
 /***/ }),
 
-/***/ 1091:
+/***/ 1092:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.userevents");
 
 /***/ }),
 
-/***/ 1388:
+/***/ 1391:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1049), __webpack_require__(1091) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1042), __webpack_require__(1092) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -163,7 +163,8 @@ module.exports =
 	            inputSelectors: INPUTSELECTOR,
 	            multiple: false,
 	            relatedTarget: $.noop,
-	            ignoreOverlapped: false
+	            ignoreOverlapped: false,
+	            addIdToRanges: false
 	        },
 
 	        _isElement: function(target) {
@@ -289,7 +290,9 @@ module.exports =
 	        },
 
 	        _end: function(e) {
-	            var that = this;
+	            var that = this,
+	            rangeSelectedAttr = kendo.attr("range-selected"),
+	            uid = kendo.guid();
 
 	            that._marquee.remove();
 
@@ -300,6 +303,12 @@ module.exports =
 
 	            var target = that.element.find(that.options.filter + "." + ACTIVE);
 	            target = target.add(that.relatedTarget(target));
+
+	            if (that.options.addIdToRanges) {
+	                for (var i = 0; i < that._currentlyActive.length; i++) {
+	                    $(that._currentlyActive[i]).attr(rangeSelectedAttr, uid);
+	                }
+	            }
 
 	            that.value(target, e);
 	            that._lastActive = that._downTarget;
@@ -385,6 +394,34 @@ module.exports =
 	            return that.element.find(that.options.filter + "." + SELECTED);
 	        },
 
+	        selectedRanges: function () {
+	            var that = this;
+	            var rangeSelectedAttr = kendo.attr("range-selected");
+	            var map = {};
+
+	            that.element.find("[" + rangeSelectedAttr + "]").each(function (_, elem) {
+	                var rangeId = $(elem).attr(rangeSelectedAttr);
+	                var mapLocation = map[rangeId];
+
+	                if (!mapLocation) {
+	                    mapLocation = map[rangeId] = [];
+	                }
+
+	                mapLocation.push($(elem));
+	            });
+
+	            return map;
+	        },
+
+	        selectedSingleItems: function () {
+	            var that = this;
+	            var rangeSelectedAttr = kendo.attr("range-selected");
+
+	            return that.element.find(that.options.filter + "." + SELECTED + ":not([" + rangeSelectedAttr + "])").toArray().map(function (elem) {
+	                return $(elem);
+	            });
+	        },
+
 	        _firstSelectee: function() {
 	            var that = this,
 	                selected;
@@ -423,7 +460,9 @@ module.exports =
 	                return;
 	            }
 
-	            element.removeClass(SELECTED);
+	            var rangeSelectedAttr = kendo.attr("range-selected");
+
+	            element.removeClass(SELECTED).removeAttr(rangeSelectedAttr);
 
 	            if (this.options.aria) {
 	                element.attr(ARIASELECTED, false);

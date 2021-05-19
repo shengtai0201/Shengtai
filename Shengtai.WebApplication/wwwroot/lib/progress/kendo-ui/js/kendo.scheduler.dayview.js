@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1382);
+	module.exports = __webpack_require__(1384);
 
 
 /***/ }),
@@ -59,18 +59,18 @@ module.exports =
 
 /***/ }),
 
-/***/ 1377:
+/***/ 1378:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.scheduler.view");
 
 /***/ }),
 
-/***/ 1382:
+/***/ 1384:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1377) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1378) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -377,7 +377,13 @@ module.exports =
 	        },
 
 	        _updateResizeHint: function(event, groupIndex, startTime, endTime) {
-	            var multiday = event.isMultiDay();
+	            var multiday;
+
+	            if(this.options.enforceAllDaySlot) {
+	                multiday = event.isMultiDay();
+	            } else {
+	                multiday = event.isAllDay;
+	            }
 
 	            var group = this.groups[groupIndex];
 
@@ -451,7 +457,13 @@ module.exports =
 	        },
 
 	        _updateMoveHint: function (event, groupIndex, distance) {
-	            var multiday = event.isMultiDay();
+	            var multiday;
+
+	            if(this.options.enforceAllDaySlot) {
+	                multiday = event.isMultiDay();
+	            } else {
+	                multiday = event.isAllDay;
+	            }
 
 	            var group = this.groups[groupIndex];
 
@@ -467,10 +479,12 @@ module.exports =
 
 	            this._removeMoveHint(event.uid);
 
-	            if (!multiday && (getMilliseconds(end) === 0 || getMilliseconds(end) < getMilliseconds(this.startTime()))) {
-	                if (ranges.length > 1) {
+	            if (!multiday &&
+	                getMilliseconds(end) < getMilliseconds(this.startTime()) &&
+	                (end < this._end().getTime()) &&
+	                getMilliseconds(end) !== 0 &&
+	                ranges.length > 1) {
 	                    ranges.pop();
-	                }
 	            }
 
 	            var eventHint = $();
@@ -868,7 +882,10 @@ module.exports =
 	            currentTimeMarker: {
 	                 updateInterval: 10000,
 	                 useLocalTimezone: true
-	            }
+	            },
+	            // a hidden option that provides us a fallback to the previous behaviour
+	            // e.g. all events of 24 hours or more will be rendered in the allDaySlot
+	            enforceAllDaySlot: false
 	        },
 
 	        events: ["remove", "add", "edit"],
@@ -1703,15 +1720,27 @@ module.exports =
 	            if (event.isAllDay) {
 	                eventEndDate = getDate(event.end);
 	            }
-
 	            if ((!isInDateRange(getDate(eventStartDate), startDate, endDate) &&
 	                !isInDateRange(eventEndDate, startDate, endDate)) ||
-	                (isOneDayEvent && eventStartTime < startTime && eventEndTime > endTime)) {
+	                (isOneDayEvent &&
+	                    event.start.getTime() !== event.end.getTime() &&
+	                    (eventStartTime < startTime || eventStartTime >= endTime) &&
+	                    (eventEndTime > endTime || eventEndTime <= startTime ))) {
 
 	                middle = true;
-	            } else if (getDate(eventStartDate) < startDate || (isOneDayEvent && eventStartTime < startTime)) {
+	            } else if (getDate(eventStartDate) < startDate ||
+	                (isOneDayEvent &&
+	                    eventStartTime !== 0 &&
+	                    event.start.getTime() !== event.end.getTime() &&
+	                    (eventStartTime < startTime || eventStartTime >= endTime))) {
+
 	                tail = true;
-	            } else if ((eventEndDate > endDate && !isOneDayEvent) || (isOneDayEvent && eventEndTime > endTime)) {
+	            } else if ((eventEndDate > endDate && !isOneDayEvent) ||
+	                (isOneDayEvent &&
+	                    eventEndTime !== 0 &&
+	                    event.start.getTime() !== event.end.getTime() &&
+	                    (eventEndTime > endTime || eventEndTime <= startTime))) {
+
 	                head = true;
 	            }
 
@@ -1785,7 +1814,8 @@ module.exports =
 	            return isInTimeRange(startTime, slotStartTime, slotEndTime, overlaps) ||
 	                isInTimeRange(endTime, slotStartTime, slotEndTime, overlaps) ||
 	                isInTimeRange(slotStartTime, startTime, endTime) ||
-	                isInTimeRange(slotEndTime, startTime, endTime);
+	                isInTimeRange(slotEndTime, startTime, endTime) ||
+	                (event.end.getDate() > event.start.getDate() && endTime > slotStartTime);
 	        },
 
 	        _isInDateSlot: function(event) {
@@ -1833,9 +1863,15 @@ module.exports =
 	                event = events[idx];
 
 	                if (this._isInDateSlot(event)) {
-	                    var isMultiDayEvent = event.isAllDay || event.duration() >= MS_PER_DAY;
-	                    var container = isMultiDayEvent && !this._isVerticallyGrouped() ? allDayEventContainer : this.content;
-	                    var element, ranges, range, start, end, group;
+	                    var isMultiDayEvent, container, element, ranges, range, start, end, group;
+
+	                    if(this.options.enforceAllDaySlot) {
+	                        isMultiDayEvent = event.isAllDay || event.duration() >= MS_PER_DAY;
+	                    } else {
+	                        isMultiDayEvent = event.isAllDay;
+	                    }
+
+	                    container = isMultiDayEvent && !this._isVerticallyGrouped() ? allDayEventContainer : this.content;
 
 	                    if (!isMultiDayEvent) {
 	                        if (this._isInTimeSlot(event)) {
@@ -1943,6 +1979,8 @@ module.exports =
 	        },
 
 	        render: function(events) {
+	            var that = this;
+
 	            this._headerColumnCount = 0;
 
 	            this._cachedEvents = events;
@@ -1963,7 +2001,11 @@ module.exports =
 	                return Math.max.apply(null,
 	                    $.map(eventsByResource, function(events) {
 	                        return $.grep(events, function(event) {
-	                            return event.isMultiDay() && isInDateRange(date, getDate(event.start), getDate(event.end));
+	                            if(that.options.enforceAllDaySlot) {
+	                                return event.isMultiDay() && isInDateRange(date, getDate(event.start), getDate(event.end));
+	                            } else {
+	                                return event.isAllDay && isInDateRange(date, getDate(event.start), getDate(event.end));
+	                            }
 	                        }).length;
 	                    })
 	                );
@@ -1984,11 +2026,17 @@ module.exports =
 	            this.trigger("activate");
 	        },
 
-	        _eventsByResource: function(events, resources, result) {
+	        _eventsByResource: function(events, resources, result, parentValue) {
 	            var resource = resources[0];
 
 	            if (resource) {
 	                var view = resource.dataSource.view();
+
+	                view = view.filter(function(item) {
+	                    var itemParentValue = kendo.getter(resource.dataParentValueField)(item);
+
+	                    return itemParentValue === null || itemParentValue === undefined || itemParentValue === parentValue;
+	                });
 
 	                for (var itemIdx = 0; itemIdx < view.length; itemIdx++) {
 	                    var value = this._resourceValue(resource, view[itemIdx]);
@@ -1996,7 +2044,7 @@ module.exports =
 	                    var eventsFilteredByResource = new kendo.data.Query(events).filter({ field: resource.field, operator: SchedulerView.groupEqFilter(value) }).toArray();
 
 	                    if (resources.length > 1) {
-	                        this._eventsByResource(eventsFilteredByResource, resources.slice(1), result);
+	                        this._eventsByResource(eventsFilteredByResource, resources.slice(1), result, value);
 	                    } else {
 	                        result.push(eventsFilteredByResource);
 	                    }

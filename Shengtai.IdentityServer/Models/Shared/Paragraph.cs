@@ -30,7 +30,7 @@ namespace Shengtai.IdentityServer.Models.Shared
                 }
                 else if (another.Parent != null && this.Parent != null)
                 {
-                    if (another.Parent.Equals(this.Parent) && another.Text == this.Text && another.Small == this.Small)
+                    if (another.Parent.Text == this.Parent.Text && another.Parent.Small == this.Parent.Parent.Small && another.Text == this.Text && another.Small == this.Small)
                         return true;
                 }
             }
@@ -43,7 +43,11 @@ namespace Shengtai.IdentityServer.Models.Shared
             int hashCode = 0;
 
             if (this.Parent != null)
-                hashCode += this.Parent.GetHashCode();
+            {
+                hashCode += this.Parent.Text.GetHashCode();
+                if (!string.IsNullOrEmpty(this.Parent.Small))
+                    hashCode += this.Parent.Small.GetHashCode();
+            }
 
             if (!string.IsNullOrEmpty(this.Text))
                 hashCode += this.Text.GetHashCode();

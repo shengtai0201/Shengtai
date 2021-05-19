@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1181);
+	module.exports = __webpack_require__(1182);
 
 
 /***/ }),
@@ -59,16 +59,16 @@ module.exports =
 
 /***/ }),
 
-/***/ 1181:
+/***/ 1182:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
 	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(1182),
 	        __webpack_require__(1183),
 	        __webpack_require__(1184),
 	        __webpack_require__(1185),
-	        __webpack_require__(1186)
+	        __webpack_require__(1186),
+	        __webpack_require__(1187)
 	    ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
@@ -84,35 +84,35 @@ module.exports =
 
 /***/ }),
 
-/***/ 1182:
+/***/ 1183:
 /***/ (function(module, exports) {
 
 	module.exports = require("./drawing/util");
 
 /***/ }),
 
-/***/ 1183:
+/***/ 1184:
 /***/ (function(module, exports) {
 
 	module.exports = require("./drawing/kendo-drawing");
 
 /***/ }),
 
-/***/ 1184:
+/***/ 1185:
 /***/ (function(module, exports) {
 
 	module.exports = require("./drawing/surface-tooltip");
 
 /***/ }),
 
-/***/ 1185:
+/***/ 1186:
 /***/ (function(module, exports) {
 
 	module.exports = require("./drawing/surface");
 
 /***/ }),
 
-/***/ 1186:
+/***/ 1187:
 /***/ (function(module, exports) {
 
 	module.exports = require("./drawing/html");

@@ -402,7 +402,7 @@ module.exports =
 	        var point = this.restorePoint;
 	        point.restoreHtml();
 
-	        $(this.editor.body).find(".k-table-resize-handle-wrapper")
+	        $(this.editor.body).find(".k-element-resize-handle-wrapper")
 	            .each(function(index,el){
 	                el.remove();
 	            });
@@ -427,11 +427,11 @@ module.exports =
 	            }
 	        }
 	    },
-	    _resetTableResizing: function (editor) {
+	    _resetElementResizing: function (editor) {
 	        editor._destroyResizings();
 	        editor._initializeColumnResizing();
 	        editor._initializeRowResizing();
-	        editor._initializeTableResizing();
+	        editor._initializeElementResizing();
 	    },
 	    _findNextTdInRow: function (row, colIndex){
 	        var lastTd = row.find("td:last-child"),
@@ -548,7 +548,7 @@ module.exports =
 	        this._clearColIndexAttr(table);
 	        this.releaseRange(range);
 
-	        this._resetTableResizing(this.editor);
+	        this._resetElementResizing(this.editor);
 	    },
 	    _appendCell: function(row, cell){
 	        var newCell;
@@ -624,7 +624,7 @@ module.exports =
 	        this._clearColIndexAttr(table);
 	        this.releaseRange(range);
 
-	        this._resetTableResizing(this.editor);
+	        this._resetElementResizing(this.editor);
 	    },
 	    _processForColSpan: function (row, columnIndex, position, selectedCell) {
 	        var cell,
@@ -715,7 +715,7 @@ module.exports =
 	            }
 
 	            dom.remove(table);
-	            this._resetTableResizing(this.editor);
+	            this._resetElementResizing(this.editor);
 	        } else if(rowParent.rows.length <= rows.length) {
 	            focusElement = rowParent.nextSibling;
 
@@ -755,7 +755,7 @@ module.exports =
 	            this._focusElement(range, focusElement);
 	        }
 
-	        this._resetTableResizing(this.editor);
+	        this._resetElementResizing(this.editor);
 	    },
 	    _focusElement: function (range, node) {
 	        range.setStart(node, 0);
@@ -831,7 +831,7 @@ module.exports =
 	            }
 
 	            dom.remove(table);
-	            this._resetTableResizing(this.editor);
+	            this._resetElementResizing(this.editor);
 	        } else {
 	            dom.removeTextSiblings(td);
 
@@ -870,7 +870,7 @@ module.exports =
 	            this.editor.selectRange(range);
 	        }
 
-	        this._resetTableResizing(this.editor);
+	        this._resetElementResizing(this.editor);
 	    },
 	    _handleColSpanCells: function (row, colIndex) {
 	        var cell = $(row).find("[col-index=" + colIndex + "]");
@@ -961,7 +961,7 @@ module.exports =
 
 	            this._clearColIndexAttr(table);
 	            this.releaseRange(range);
-	            this._resetTableResizing(this.editor);
+	            this._resetElementResizing(this.editor);
 	    },
 	    _getColspan: function (td) {
 	        return parseInt(td.getAttribute(COLSPAN), 10) || 1;
@@ -1192,8 +1192,8 @@ module.exports =
 
 	        FormatCommand.fn.exec.call(this);
 
-	        if(editor.tableResizing) {
-	            editor.tableResizing._showResizeHandles();
+	        if(editor.elementResizing) {
+	            editor.elementResizing._showResizeHandles();
 	        }
 	    }
 	});

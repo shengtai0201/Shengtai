@@ -76,6 +76,8 @@ module.exports =
 
 	(function($) {
 
+	    /* jshint proto: true */
+
 	    function createPromise() {
 	        return $.Deferred();
 	    }
@@ -84,10 +86,27 @@ module.exports =
 	        return $.when.apply($, promises);
 	    }
 
+	    function extendStatic(dest, src) {
+	        if (!src) {
+	            return;
+	        }
+
+	        if (typeof src.__proto__ === 'function') {
+	            dest.__proto__ = src;
+	        } else {
+	            for (var member in src) {
+	                if (src.hasOwnProperty(member)) {
+	                    dest[member] = src[member];
+	                }
+	            }
+	        }
+	    }
+
 	    kendo.drawing.util = kendo.drawing.util || {};
 	    kendo.deepExtend(kendo.drawing.util, {
 	        createPromise: createPromise,
-	        promiseAll: promiseAll
+	        promiseAll: promiseAll,
+	        extendStatic: extendStatic
 	    });
 
 	})(window.kendo.jQuery);

@@ -102,7 +102,7 @@ module.exports =
 	            that.releaseRange(range);
 	            editor._initializeColumnResizing();
 	            editor._initializeRowResizing();
-	            editor._initializeTableResizing();
+	            editor._initializeElementResizing();
 	        });
 	    }
 	});

@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1297);
+	module.exports = __webpack_require__(1298);
 
 
 /***/ }),
@@ -59,32 +59,32 @@ module.exports =
 
 /***/ }),
 
-/***/ 1054:
+/***/ 1056:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dropdownlist");
 
 /***/ }),
 
-/***/ 1090:
+/***/ 1091:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.slider");
 
 /***/ }),
 
-/***/ 1107:
+/***/ 1108:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.tooltip");
 
 /***/ }),
 
-/***/ 1297:
+/***/ 1298:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (f, define) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1090), __webpack_require__(1298), __webpack_require__(1054), __webpack_require__(1107)], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1091), __webpack_require__(1299), __webpack_require__(1056), __webpack_require__(1108)], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function () {
 
 	    var __meta__ = { // jshint ignore:line
@@ -1219,7 +1219,7 @@ module.exports =
 
 /***/ }),
 
-/***/ 1298:
+/***/ 1299:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.toolbar");

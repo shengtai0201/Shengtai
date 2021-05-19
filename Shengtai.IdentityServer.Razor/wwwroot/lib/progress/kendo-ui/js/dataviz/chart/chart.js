@@ -949,7 +949,7 @@ module.exports =
 	                    "<div class='k-tooltip #if (!d.autoHide) {# k-tooltip-closable#}# k-chart-tooltip#= d.rtl ? \" k-rtl\" : \"\"#' " +
 	                    "style='display:none; position: absolute; font: #= d.font #;" +
 	                    "#if (d.border) {# border: #= d.border.width #px solid; #}#" +
-	                    "opacity: #= d.opacity #; filter: alpha(opacity=#= d.opacity * 100 #);'>" +
+	                    "opacity: #= d.opacity #;'>" +
 	                    '<div class="k-tooltip-content"></div>' +
 	                    '#if (!d.autoHide) {# <div class="k-tooltip-button"><a href="\\#" class="k-icon k-i-close" title="Close"></a></div> #}#' +
 	                    "</div>", { useWithBlock: false, paramName: "d"});
@@ -963,7 +963,7 @@ module.exports =
 	            var mobileScrollerSelector = kendo.format("[{0}='content'],[{0}='scroller']", kendo.attr("role"));
 	            tooltip._mobileScroller = chartElement.closest(mobileScrollerSelector).data("kendoMobileScroller");
 	            tooltip.downEvent = kendo.applyEventMap(MOUSEDOWN, kendo.guid());
-	            tooltip._closeTooltipHandler = proxy(tooltip._closeTooltip, tooltip);            
+	            tooltip._closeTooltipHandler = proxy(tooltip._closeTooltip, tooltip);
 	        },
 
 	        destroy: function() {

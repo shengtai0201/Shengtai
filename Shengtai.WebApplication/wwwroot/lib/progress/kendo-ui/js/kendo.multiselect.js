@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1339);
+	module.exports = __webpack_require__(1340);
 
 
 /***/ }),
@@ -59,32 +59,32 @@ module.exports =
 
 /***/ }),
 
-/***/ 1068:
+/***/ 1070:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.list");
 
 /***/ }),
 
-/***/ 1069:
+/***/ 1071:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.mobile.scroller");
 
 /***/ }),
 
-/***/ 1070:
+/***/ 1072:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.virtuallist");
 
 /***/ }),
 
-/***/ 1339:
+/***/ 1340:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1068), __webpack_require__(1069), __webpack_require__(1070) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1070), __webpack_require__(1071), __webpack_require__(1072) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line

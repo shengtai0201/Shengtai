@@ -375,7 +375,8 @@ module.exports =
 	        associateScope: "Associate using 'scope' attribute",
 	        associateIds: "Associate using Ids",
 	        copyFormat: "Copy format",
-	        applyFormat: "Apply format"
+	        applyFormat: "Apply format",
+	        borderNone: "None"
 	    };
 
 	    var supportedBrowser = !os || (os.ios && os.flatVersion >= 500) || (!os.ios && typeof(document.documentElement.contentEditable) != 'undefined');
@@ -592,35 +593,37 @@ module.exports =
 	            }
 	        },
 
-	        _initializeTableResizing: function() {
+	        _initializeElementResizing: function() {
 	            var editor = this;
 
-	            kendo.ui.editor.TableResizing.create(editor);
+	            kendo.ui.editor.ElementResizingFactory.current.create(editor);
 
-	            editor._showTableResizeHandlesProxy = proxy(editor._showTableResizeHandles, editor);
-	            editor.bind(SELECT, editor._showTableResizeHandlesProxy);
+	            editor._showElementResizeHandlesProxy = proxy(editor._showElementResizeHandles, editor);
+	            editor.bind(SELECT, editor._showElementResizeHandlesProxy);
 	        },
 
-	        _destroyTableResizing: function() {
+	        _destroyElementResizing: function() {
 	            var editor = this;
-	            var tableResizing = editor.tableResizing;
+	            var elementResizing = editor.elementResizing;
 
-	            if (tableResizing) {
-	                tableResizing.destroy();
-	                editor.tableResizing = null;
+	            if (elementResizing) {
+	                elementResizing.destroy();
+	                editor.elementResizing = null;
 	            }
 
-	            if (editor._showTableResizeHandlesProxy) {
-	                editor.unbind(SELECT, editor._showTableResizeHandlesProxy);
+	            if (editor._showElementResizeHandlesProxy) {
+	                editor.unbind(SELECT, editor._showElementResizeHandlesProxy);
 	            }
 	        },
 
-	        _showTableResizeHandles: function() {
+	        _showElementResizeHandles: function() {
 	            var editor = this;
-	            var tableResizing = editor.tableResizing;
+	            var elementResizing = editor.elementResizing;
 
-	            if (tableResizing) {
-	                tableResizing.showResizeHandles();
+	            if (elementResizing && elementResizing.element && elementResizing.element.parentNode) {
+	                elementResizing.showResizeHandles();
+	            } else if (elementResizing && (!elementResizing.element || !elementResizing.element.parentNode)) {
+	                editor._destroyElementResizing();
 	            }
 	        },
 
@@ -740,17 +743,17 @@ module.exports =
 	                    ".k-row-resize-handle {display: table; width: 100%; height: 100%;}" +
 	                    ".k-row-resize-marker-wrapper{display: table-cell; height:100%; width:100%; margin:0; padding:0; vertical-align: middle;}" +
 	                    ".k-row-resize-marker{margin: 0; padding:0; width:100%; height:2px; background-color: #00b0ff; opacity:0.8; display:none;}" +
-	                    ".k-table-resize-handle-wrapper {position: absolute; background-color: #fff; border: 1px solid #000; z-index: 100; width: 5px; height: 5px;}" +
-	                    ".k-table-resize-handle {width: 100%; height: 100%;}" +
-	                    ".k-table-resize-handle.k-resize-east{cursor:e-resize;}" +
-	                    ".k-table-resize-handle.k-resize-north{cursor:n-resize;}" +
-	                    ".k-table-resize-handle.k-resize-northeast{cursor:ne-resize;}" +
-	                    ".k-table-resize-handle.k-resize-northwest{cursor:nw-resize;}" +
-	                    ".k-table-resize-handle.k-resize-south{cursor:s-resize;}" +
-	                    ".k-table-resize-handle.k-resize-southeast{cursor:se-resize;}" +
-	                    ".k-table-resize-handle.k-resize-southwest{cursor:sw-resize;}" +
-	                    ".k-table-resize-handle.k-resize-west{cursor:w-resize;}" +
-	                    ".k-table.k-table-resizing{opacity:0.6;}" +
+	                    ".k-element-resize-handle-wrapper {position: absolute; background-color: #fff; border: 1px solid #000; z-index: 100; width: 5px; height: 5px;}" +
+	                    ".k-element-resize-handle {width: 100%; height: 100%;}" +
+	                    ".k-element-resize-handle.k-resize-east{cursor:e-resize;}" +
+	                    ".k-element-resize-handle.k-resize-north{cursor:n-resize;}" +
+	                    ".k-element-resize-handle.k-resize-northeast{cursor:ne-resize;}" +
+	                    ".k-element-resize-handle.k-resize-northwest{cursor:nw-resize;}" +
+	                    ".k-element-resize-handle.k-resize-south{cursor:s-resize;}" +
+	                    ".k-element-resize-handle.k-resize-southeast{cursor:se-resize;}" +
+	                    ".k-element-resize-handle.k-resize-southwest{cursor:sw-resize;}" +
+	                    ".k-element-resize-handle.k-resize-west{cursor:w-resize;}" +
+	                    ".k-table.k-element-resizing{opacity:0.6;}" +
 	                    ".k-placeholder{color:grey}" +
 	                    "k\\:script{display:none;}" +
 	                "</style>" +
@@ -1011,7 +1014,7 @@ module.exports =
 	                "keypress": function(e) {
 	                    setTimeout(function () {
 	                        editor._runPostContentKeyCommands(e);
-	                        editor._showTableResizeHandles();
+	                        editor._showElementResizeHandles();
 	                    }, 0);
 	                },
 	                "keyup": function (e) {
@@ -1083,7 +1086,7 @@ module.exports =
 
 	            editor._initializeColumnResizing();
 	            editor._initializeRowResizing();
-	            editor._initializeTableResizing();
+	            editor._initializeElementResizing();
 	        },
 
 	        _initializePlaceholder: function() {
@@ -1301,8 +1304,8 @@ module.exports =
 	        _destroyResizings: function() {
 	            var editor = this;
 
-	            editor._destroyTableResizing();
-	            kendo.ui.editor.TableResizing.dispose(editor);
+	            editor._destroyElementResizing();
+	            kendo.ui.editor.ElementResizingFactory.current.dispose(editor);
 	            editor._destroyRowResizing();
 	            kendo.ui.editor.RowResizing.dispose(editor);
 	            editor._destroyColumnResizing();

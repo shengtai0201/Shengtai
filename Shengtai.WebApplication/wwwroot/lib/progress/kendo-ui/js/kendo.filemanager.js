@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1240);
+	module.exports = __webpack_require__(1241);
 
 
 /***/ }),
@@ -59,42 +59,42 @@ module.exports =
 
 /***/ }),
 
-/***/ 1194:
+/***/ 1195:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.resizable");
 
 /***/ }),
 
-/***/ 1238:
+/***/ 1239:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.upload");
 
 /***/ }),
 
-/***/ 1239:
+/***/ 1240:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.breadcrumb");
 
 /***/ }),
 
-/***/ 1240:
+/***/ 1241:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
 	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(1245),
-	        __webpack_require__(1242),
+	        __webpack_require__(1246),
 	        __webpack_require__(1243),
 	        __webpack_require__(1244),
-	        __webpack_require__(1241),
+	        __webpack_require__(1245),
+	        __webpack_require__(1242),
 
+	        __webpack_require__(1240),
 	        __webpack_require__(1239),
-	        __webpack_require__(1238),
-	        __webpack_require__(1246),
-	        __webpack_require__(1194)
+	        __webpack_require__(1247),
+	        __webpack_require__(1195)
 	    ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
@@ -1341,42 +1341,42 @@ module.exports =
 
 /***/ }),
 
-/***/ 1241:
+/***/ 1242:
 /***/ (function(module, exports) {
 
 	module.exports = require("./filemanager/contextmenu");
 
 /***/ }),
 
-/***/ 1242:
+/***/ 1243:
 /***/ (function(module, exports) {
 
 	module.exports = require("./filemanager/view");
 
 /***/ }),
 
-/***/ 1243:
+/***/ 1244:
 /***/ (function(module, exports) {
 
 	module.exports = require("./filemanager/toolbar");
 
 /***/ }),
 
-/***/ 1244:
+/***/ 1245:
 /***/ (function(module, exports) {
 
 	module.exports = require("./filemanager/data");
 
 /***/ }),
 
-/***/ 1245:
+/***/ 1246:
 /***/ (function(module, exports) {
 
 	module.exports = require("./filemanager/commands");
 
 /***/ }),
 
-/***/ 1246:
+/***/ 1247:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dialog");

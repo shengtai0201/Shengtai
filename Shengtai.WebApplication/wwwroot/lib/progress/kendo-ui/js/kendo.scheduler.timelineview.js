@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1385);
+	module.exports = __webpack_require__(1387);
 
 
 /***/ }),
@@ -59,18 +59,18 @@ module.exports =
 
 /***/ }),
 
-/***/ 1377:
+/***/ 1378:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.scheduler.view");
 
 /***/ }),
 
-/***/ 1385:
+/***/ 1387:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1377) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1378) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -1880,11 +1880,17 @@ module.exports =
 	            }
 	        },
 
-	        _eventsByResource: function(events, resources, result) {
+	        _eventsByResource: function(events, resources, result, parentValue) {
 	            var resource = resources[0];
 
 	            if (resource) {
 	                var view = resource.dataSource.view();
+
+	                view = view.filter(function(item) {
+	                    var itemParentValue = kendo.getter(resource.dataParentValueField)(item);
+
+	                    return itemParentValue === null || itemParentValue === undefined || itemParentValue === parentValue;
+	                });
 
 	                for (var itemIdx = 0; itemIdx < view.length; itemIdx++) {
 	                    var value = this._resourceValue(resource, view[itemIdx]);
@@ -1892,7 +1898,7 @@ module.exports =
 	                    var eventsFilteredByResource = new kendo.data.Query(events).filter({ field: resource.field, operator: SchedulerView.groupEqFilter(value) }).toArray();
 
 	                    if (resources.length > 1) {
-	                        this._eventsByResource(eventsFilteredByResource, resources.slice(1), result);
+	                        this._eventsByResource(eventsFilteredByResource, resources.slice(1), result, value);
 	                    } else {
 	                        result.push(eventsFilteredByResource);
 	                    }
@@ -2472,6 +2478,46 @@ module.exports =
 	                if (that.options.editable.update !== false) {
 	                    that._editUserEvents.destroy();
 	                }
+	            }
+	        },
+
+	        _resourceBySlot: function(slot) {
+	            var resources = this.groupedResources;
+	            var result = {},
+	            groupOptions = this.options.group;
+
+	            if(resources.length && groupOptions.orientation === "horizontal" && groupOptions.date) {
+	                var resourceIndex = slot.groupIndex,
+	                    levels = this.columnLevels,
+	                    groupLevel = levels[levels.length - 1],
+	                    resource = resources[resources.length - 1],
+	                    groupLevelMember = groupLevel[resourceIndex],
+	                    passedChildren, numberOfChildren, j, i;
+
+	                this._setResourceValue(groupLevelMember, resource, result);
+
+	                for (j = levels.length - 2; j >= 3; j--) {
+	                    groupLevel = levels[j];
+	                    resource = resources[j - 3];
+	                    passedChildren = 0;
+
+	                    for (i = 0; i < groupLevel.length; i++) {
+	                        groupLevelMember = groupLevel[i];
+	                        numberOfChildren = groupLevelMember.columns.length;
+
+	                        if(numberOfChildren > resourceIndex - passedChildren) {
+	                            this._setResourceValue(groupLevelMember, resource, result);
+
+	                            i = groupLevel.length;
+	                        } else {
+	                            passedChildren += numberOfChildren;
+	                        }
+	                    }
+	                }
+
+	                return result;
+	            } else {
+	                return SchedulerView.fn._resourceBySlot.call(this, slot);
 	            }
 	        }
 	    });

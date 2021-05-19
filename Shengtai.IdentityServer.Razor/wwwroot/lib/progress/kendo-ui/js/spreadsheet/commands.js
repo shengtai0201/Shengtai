@@ -46,8 +46,8 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1597);
-	module.exports = __webpack_require__(1597);
+	__webpack_require__(1612);
+	module.exports = __webpack_require__(1612);
 
 
 /***/ }),
@@ -74,23 +74,23 @@ module.exports =
 
 /***/ }),
 
-/***/ 1578:
+/***/ 1593:
 /***/ (function(module, exports) {
 
 	module.exports = require("../kendo.binder");
 
 /***/ }),
 
-/***/ 1597:
+/***/ 1612:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
 	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	        __webpack_require__(20),
-	        __webpack_require__(1578),
+	        __webpack_require__(1593),
 	        __webpack_require__(968),
-	        __webpack_require__(1598),
-	        __webpack_require__(1599)
+	        __webpack_require__(1613),
+	        __webpack_require__(1614)
 	    ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
@@ -852,6 +852,9 @@ module.exports =
 	                for(i = 0; i < targetRangeRefs.length; i++) {
 	                    that._populateTargetRange(targetRangeRefs[i], sourceRows, sourceCols, multipliers[i]);
 	                }
+	            }, {
+	                recalc: true,
+	                ref: range._ref
 	            });
 
 	            range._adjustRowHeight();
@@ -1439,14 +1442,14 @@ module.exports =
 
 /***/ }),
 
-/***/ 1598:
+/***/ 1613:
 /***/ (function(module, exports) {
 
 	module.exports = require("../kendo.list");
 
 /***/ }),
 
-/***/ 1599:
+/***/ 1614:
 /***/ (function(module, exports) {
 
 	module.exports = require("../kendo.tabstrip");

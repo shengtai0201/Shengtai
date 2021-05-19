@@ -46,8 +46,8 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1650);
-	module.exports = __webpack_require__(1650);
+	__webpack_require__(1672);
+	module.exports = __webpack_require__(1672);
 
 
 /***/ }),
@@ -67,7 +67,7 @@ module.exports =
 
 /***/ }),
 
-/***/ 1650:
+/***/ 1672:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
@@ -131,54 +131,63 @@ module.exports =
 	    if (doubleFocus) {
 	        return;
 	    }
-	    // suppress focus when animating ripples
-	    container.classList.add("k-ripple-target");
-	    var _a = createRipple(doc), ripple = _a[0], blob = _a[1];
-	    var state = {
-	        animated: false,
-	        released: false,
-	        blob: blob,
-	        container: container,
-	        ripple: ripple
-	    };
-	    var eventType = {
-	        'focusin': 'focusout',
-	        'keydown': 'keyup',
-	        'mousedown': 'mouseup',
-	        'pointerdown': 'pointerup',
-	        'touchdown': 'touchup'
-	    }[e.type];
-	    once(e.currentTarget, eventType, function () { return release(state); });
-	    container.appendChild(ripple);
-	    // recalc to allow the effect to animate
-	    window.getComputedStyle(ripple).getPropertyValue('opacity');
-	    var rect = container.getBoundingClientRect();
-	    var left = 0;
-	    var top = 0;
-	    if ((/mouse|pointer|touch/).test(e.type)) {
-	        left = e.clientX - rect.left;
-	        top = e.clientY - rect.top;
+	    if (!target.classList.contains('k-checkbox') && !target.classList.contains('k-radio')) {
+	        // suppress focus when animating ripples
+	        container.classList.add("k-ripple-target");
+	        var _a = createRipple(doc), ripple = _a[0], blob = _a[1];
+	        var state_1 = {
+	            animated: false,
+	            released: false,
+	            blob: blob,
+	            container: container,
+	            ripple: ripple
+	        };
+	        var eventType = {
+	            'focusin': 'focusout',
+	            'keydown': 'keyup',
+	            'mousedown': 'mouseup',
+	            'pointerdown': 'pointerup',
+	            'touchdown': 'touchup',
+	            'animationstart': 'animationend'
+	        }[e.type];
+	        once(e.currentTarget, eventType, function () { return release(state_1); });
+	        container.appendChild(ripple);
+	        // recalc to allow the effect to animate
+	        window.getComputedStyle(ripple).getPropertyValue('opacity');
+	        var rect = container.getBoundingClientRect();
+	        var left = 0;
+	        var top = 0;
+	        if ((/mouse|pointer|touch/).test(e.type)) {
+	            left = e.clientX - rect.left;
+	            top = e.clientY - rect.top;
+	        }
+	        else {
+	            left = rect.width / 2;
+	            top = rect.height / 2;
+	        }
+	        // coordinates of the farthest corner
+	        var xMax = left < rect.width / 2 ? rect.width : 0;
+	        var yMax = top < rect.height / 2 ? rect.height : 0;
+	        // distance to the farthest corner
+	        var dx = left - xMax;
+	        var dy = top - yMax;
+	        // blob size is twice the blob radius
+	        var size = 2 * Math.sqrt(dx * dx + dy * dy);
+	        var duration = 500;
+	        blob.style.width = blob.style.height = size + "px";
+	        // force reflow for Safari 11 to align ripple blob
+	        if (blob.offsetWidth < 0) {
+	            throw new Error("Inconceivable!");
+	        }
+	        blob.style.cssText = "\n        width: " + size + "px;\n        height: " + size + "px;\n        transform: translate(-50%, -50%) scale(1);\n        left: " + left + "px;\n        top: " + top + "px;\n    ";
+	        setTimeout(function () { return finishAnimation(state_1); }, duration);
 	    }
 	    else {
-	        left = rect.width / 2;
-	        top = rect.height / 2;
+	        e.target.classList.remove('k-ripple-focus');
+	        if (e.type !== 'animationend') {
+	            e.target.classList.add('k-ripple-focus');
+	        }
 	    }
-	    // coordinates of the farthest corner
-	    var xMax = left < rect.width / 2 ? rect.width : 0;
-	    var yMax = top < rect.height / 2 ? rect.height : 0;
-	    // distance to the farthest corner
-	    var dx = left - xMax;
-	    var dy = top - yMax;
-	    // blob size is twice the blob radius
-	    var size = 2 * Math.sqrt(dx * dx + dy * dy);
-	    var duration = 500;
-	    blob.style.width = blob.style.height = size + "px";
-	    // force reflow for Safari 11 to align ripple blob
-	    if (blob.offsetWidth < 0) {
-	        throw new Error("Inconceivable!");
-	    }
-	    blob.style.cssText = "\n    width: " + size + "px;\n    height: " + size + "px;\n    transform: translate(-50%, -50%) scale(1);\n    left: " + left + "px;\n    top: " + top + "px;\n  ";
-	    setTimeout(function () { return finishAnimation(state); }, duration);
 	}; };
 	var finishAnimation = function (state) {
 	    state.animated = true;

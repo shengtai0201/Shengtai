@@ -46,13 +46,13 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1562);
-	module.exports = __webpack_require__(1562);
+	__webpack_require__(1577);
+	module.exports = __webpack_require__(1577);
 
 
 /***/ }),
 
-/***/ 1562:
+/***/ 1577:
 /***/ (function(module, exports) {
 
 	/* JS for All Kendo UI Components Simplified Chinese (zh-CN) Language Pack | Written by IKKI | 2018-02-03 */

@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1080);
+	module.exports = __webpack_require__(1082);
 
 
 /***/ }),
@@ -59,11 +59,11 @@ module.exports =
 
 /***/ }),
 
-/***/ 1080:
+/***/ 1082:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1081), __webpack_require__(1082), __webpack_require__(1083) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1083), __webpack_require__(1084), __webpack_require__(1085) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -347,21 +347,21 @@ module.exports =
 
 /***/ }),
 
-/***/ 1081:
+/***/ 1083:
 /***/ (function(module, exports) {
 
 	module.exports = require("./chat/messageBox");
 
 /***/ }),
 
-/***/ 1082:
+/***/ 1084:
 /***/ (function(module, exports) {
 
 	module.exports = require("./chat/toolbar");
 
 /***/ }),
 
-/***/ 1083:
+/***/ 1085:
 /***/ (function(module, exports) {
 
 	module.exports = require("./chat/view");

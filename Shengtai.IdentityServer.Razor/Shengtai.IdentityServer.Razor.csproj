@@ -17,6 +17,8 @@
   <ItemGroup>
     <Folder Include="Pages\" />
     <Folder Include="wwwroot\css\" />
+    <Folder Include="wwwroot\lib\bootstrap\dist\js\" />
+    <Folder Include="wwwroot\lib\coreui\coreui\dist\js\" />
   </ItemGroup>
 
   <ItemGroup>

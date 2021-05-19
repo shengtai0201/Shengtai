@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1099);
+	module.exports = __webpack_require__(1100);
 
 
 /***/ }),
@@ -59,18 +59,18 @@ module.exports =
 
 /***/ }),
 
-/***/ 1048:
+/***/ 1051:
 /***/ (function(module, exports) {
 
 	module.exports = require("jquery");
 
 /***/ }),
 
-/***/ 1099:
+/***/ 1100:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(jQuery) {(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1048)], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1051)], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -181,7 +181,7 @@ module.exports =
 	            return target;
 	        };
 
-	    kendo.version = "2021.1.330".replace(/^\s+|\s+$/g, '');
+	    kendo.version = "2021.2.511".replace(/^\s+|\s+$/g, '');
 
 	    function Class() {}
 
@@ -1996,7 +1996,7 @@ module.exports =
 	        }
 
 	        var overflow = getComputedStyles(element, ["overflow"]).overflow;
-	        return overflow == "auto" || overflow == "scroll";
+	        return overflow.indexOf("auto") > -1 || overflow.indexOf("scroll") > -1;
 	    }
 
 	    function scrollLeft(element, value) {
@@ -4114,6 +4114,14 @@ module.exports =
 	            return last;
 	        }
 
+	        function firstDayOfYear(date) {
+	            return new Date(date.getFullYear(), 0, 1);
+	        }
+
+	        function lastDayOfYear(date) {
+	            return new Date(date.getFullYear(), 11, 31);
+	        }
+
 	        function moveDateToWeekStart(date, weekStartDay) {
 	            if (weekStartDay !== 1) {
 	                return addDays(dayOfWeek(date, weekStartDay, -1), 4);
@@ -4256,6 +4264,12 @@ module.exports =
 	            return staticDate;
 	        }
 
+	        function addYear(date, offset) {
+	            var currentDate = new Date(date);
+
+	            return new Date(currentDate.setFullYear(currentDate.getFullYear() + offset));
+	        }
+
 	        return {
 	            adjustDST: adjustDST,
 	            dayOfWeek: dayOfWeek,
@@ -4282,7 +4296,15 @@ module.exports =
 	            firstDayOfMonth: firstDayOfMonth,
 	            lastDayOfMonth: lastDayOfMonth,
 	            weekInYear: weekInYear,
-	            getMilliseconds: getMilliseconds
+	            getMilliseconds: getMilliseconds,
+	            firstDayOfYear: firstDayOfYear,
+	            lastDayOfYear: lastDayOfYear,
+	            nextYear: function(date) {
+	                return addYear(date, 1);
+	            },
+	            previousYear: function(date) {
+	                return addYear(date, -1);
+	            }
 	        };
 	    })();
 
@@ -4937,7 +4959,7 @@ module.exports =
 
 	}, __webpack_require__(3));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1048)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1051)))
 
 /***/ })
 

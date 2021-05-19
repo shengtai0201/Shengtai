@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1106);
+	module.exports = __webpack_require__(1107);
 
 
 /***/ }),
@@ -59,83 +59,82 @@ module.exports =
 
 /***/ }),
 
-/***/ 1045:
-/***/ (function(module, exports) {
-
-	module.exports = require("./kendo.drawing");
-
-/***/ }),
-
-/***/ 1049:
+/***/ 1042:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.core");
 
 /***/ }),
 
-/***/ 1059:
-/***/ (function(module, exports) {
-
-	module.exports = require("./kendo.data");
-
-/***/ }),
-
-/***/ 1069:
-/***/ (function(module, exports) {
-
-	module.exports = require("./kendo.mobile.scroller");
-
-/***/ }),
-
-/***/ 1089:
+/***/ 1043:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.popup");
 
 /***/ }),
 
-/***/ 1091:
+/***/ 1048:
+/***/ (function(module, exports) {
+
+	module.exports = require("./kendo.drawing");
+
+/***/ }),
+
+/***/ 1061:
+/***/ (function(module, exports) {
+
+	module.exports = require("./kendo.data");
+
+/***/ }),
+
+/***/ 1071:
+/***/ (function(module, exports) {
+
+	module.exports = require("./kendo.mobile.scroller");
+
+/***/ }),
+
+/***/ 1092:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.userevents");
 
 /***/ }),
 
-/***/ 1101:
+/***/ 1102:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.data.odata");
 
 /***/ }),
 
-/***/ 1102:
+/***/ 1103:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.data.xml");
 
 /***/ }),
 
-/***/ 1106:
+/***/ 1107:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
 	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(1049),
-	        __webpack_require__(1108),
+	        __webpack_require__(1042),
 	        __webpack_require__(1109),
 	        __webpack_require__(1110),
-	        __webpack_require__(1101),
-	        __webpack_require__(1102),
-	        __webpack_require__(1059),
 	        __webpack_require__(1111),
+	        __webpack_require__(1102),
+	        __webpack_require__(1103),
+	        __webpack_require__(1061),
 	        __webpack_require__(1112),
-	        __webpack_require__(1091),
 	        __webpack_require__(1113),
-	        __webpack_require__(1069),
-	        __webpack_require__(1089),
-	        __webpack_require__(1107),
-	        __webpack_require__(1045),
+	        __webpack_require__(1092),
 	        __webpack_require__(1114),
+	        __webpack_require__(1071),
+	        __webpack_require__(1043),
+	        __webpack_require__(1108),
+	        __webpack_require__(1048),
 	        __webpack_require__(1115),
 	        __webpack_require__(1116),
 	        __webpack_require__(1117),
@@ -146,7 +145,8 @@ module.exports =
 	        __webpack_require__(1122),
 	        __webpack_require__(1123),
 	        __webpack_require__(1124),
-	        __webpack_require__(1125)
+	        __webpack_require__(1125),
+	        __webpack_require__(1126)
 	    ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 	    "bundle all";
@@ -156,133 +156,133 @@ module.exports =
 
 /***/ }),
 
-/***/ 1107:
+/***/ 1108:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.tooltip");
 
 /***/ }),
 
-/***/ 1108:
+/***/ 1109:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.fx");
 
 /***/ }),
 
-/***/ 1109:
+/***/ 1110:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.router");
 
 /***/ }),
 
-/***/ 1110:
+/***/ 1111:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.view");
 
 /***/ }),
 
-/***/ 1111:
+/***/ 1112:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.data.signalr");
 
 /***/ }),
 
-/***/ 1112:
+/***/ 1113:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.binder");
 
 /***/ }),
 
-/***/ 1113:
+/***/ 1114:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.draganddrop");
 
 /***/ }),
 
-/***/ 1114:
+/***/ 1115:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz.core");
 
 /***/ }),
 
-/***/ 1115:
+/***/ 1116:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz.themes");
 
 /***/ }),
 
-/***/ 1116:
+/***/ 1117:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz.chart");
 
 /***/ }),
 
-/***/ 1117:
+/***/ 1118:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz.gauge");
 
 /***/ }),
 
-/***/ 1118:
+/***/ 1119:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz.barcode");
 
 /***/ }),
 
-/***/ 1119:
+/***/ 1120:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz.qrcode");
 
 /***/ }),
 
-/***/ 1120:
+/***/ 1121:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz.stock");
 
 /***/ }),
 
-/***/ 1121:
+/***/ 1122:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz.sparkline");
 
 /***/ }),
 
-/***/ 1122:
+/***/ 1123:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz.map");
 
 /***/ }),
 
-/***/ 1123:
+/***/ 1124:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz.diagram");
 
 /***/ }),
 
-/***/ 1124:
+/***/ 1125:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.dataviz.treemap");
 
 /***/ }),
 
-/***/ 1125:
+/***/ 1126:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.angular");

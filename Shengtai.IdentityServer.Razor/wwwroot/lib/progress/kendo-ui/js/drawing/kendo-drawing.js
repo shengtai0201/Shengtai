@@ -79,10 +79,13 @@ module.exports =
 	/* jshint -W058 */
 	/* jshint -W069 */
 	/* jshint latedef: nofunc */
+	/* jshint shadow: true */
+	/* jshint unused: false */
 
 	window.kendo = window.kendo || {};
 	var kendoDrawing = kendo.drawing;
 	var kendoDrawingUtil = kendoDrawing.util;
+	var extendStatic = kendoDrawingUtil.extendStatic;
 	var Class = kendo.Class;
 	var kendoUtil = kendo.util;
 	var support = kendo.support;
@@ -91,41 +94,41 @@ module.exports =
 	var createPromise = kendoDrawingUtil.createPromise;
 	var promiseAll = kendoDrawingUtil.promiseAll;
 
-	var ObserversMixin = {
-	    extend: function(proto) {
-	        var this$1 = this;
+	var HasObservers = (function (Class$$1) {
+	    function HasObservers () {
+	        Class$$1.apply(this, arguments);
+	    }
 
-	        for (var method in this) {
-	            if (method !== "extend") {
-	                proto[method] = this$1[method];
-	            }
-	        }
-	    },
+	    extendStatic(HasObservers, Class$$1);
+	    HasObservers.prototype = Object.create( Class$$1 && Class$$1.prototype );
+	    HasObservers.prototype.constructor = HasObservers;
+	    HasObservers.fn = HasObservers.prototype;
+	    HasObservers.fn.init = HasObservers.fn.constructor;
 
-	    observers: function() {
+	    HasObservers.prototype.observers = function observers () {
 	        this._observers = this._observers || [];
 	        return this._observers;
-	    },
+	    };
 
-	    addObserver: function(element) {
+	    HasObservers.prototype.addObserver = function addObserver (element) {
 	        if (!this._observers) {
 	            this._observers = [ element ];
 	        } else {
 	            this._observers.push(element);
 	        }
 	        return this;
-	    },
+	    };
 
-	    removeObserver: function(element) {
+	    HasObservers.prototype.removeObserver = function removeObserver (element) {
 	        var observers = this.observers();
 	        var index = observers.indexOf(element);
 	        if (index !== -1) {
 	            observers.splice(index, 1);
 	        }
 	        return this;
-	    },
+	    };
 
-	    trigger: function(methodName, event) {
+	    HasObservers.prototype.trigger = function trigger (methodName, event) {
 	        var observers = this._observers;
 
 	        if (observers && !this._suspended) {
@@ -137,41 +140,43 @@ module.exports =
 	            }
 	        }
 	        return this;
-	    },
+	    };
 
-	    optionsChange: function(e) {
+	    HasObservers.prototype.optionsChange = function optionsChange (e) {
 	        if (e === void 0) { e = {}; }
 
 	        e.element = this;
 	        this.trigger("optionsChange", e);
-	    },
+	    };
 
-	    geometryChange: function() {
+	    HasObservers.prototype.geometryChange = function geometryChange () {
 	        this.trigger("geometryChange", {
 	            element: this
 	        });
-	    },
+	    };
 
-	    suspend: function() {
+	    HasObservers.prototype.suspend = function suspend () {
 	        this._suspended = (this._suspended || 0) + 1;
 	        return this;
-	    },
+	    };
 
-	    resume: function() {
+	    HasObservers.prototype.resume = function resume () {
 	        this._suspended = Math.max((this._suspended || 0) - 1, 0);
 	        return this;
-	    },
+	    };
 
-	    _observerField: function(field, value) {
+	    HasObservers.prototype._observerField = function _observerField (field, value) {
 	        if (this[field]) {
 	            this[field].removeObserver(this);
 	        }
 	        this[field] = value;
 	        value.addObserver(this);
-	    }
-	};
+	    };
 
-	function append(first, second) {
+	    return HasObservers;
+	}(Class));
+
+	function append$1$1(first, second) {
 	    first.push.apply(first, second);
 	    return first;
 	}
@@ -364,6 +369,10 @@ module.exports =
 	    })(a);
 	}
 
+	var now = Date.now || function() {
+	    return new Date().getTime();
+	};
+
 	function rad(degrees) {
 	    return degrees * DEG_TO_RAD;
 	}
@@ -469,6 +478,306 @@ module.exports =
 	    };
 	}
 
+	var Matrix = (function (Class$$1) {
+	    function Matrix(a, b, c, d, e, f) {
+	        if (a === void 0) { a = 0; }
+	        if (b === void 0) { b = 0; }
+	        if (c === void 0) { c = 0; }
+	        if (d === void 0) { d = 0; }
+	        if (e === void 0) { e = 0; }
+	        if (f === void 0) { f = 0; }
+
+	        Class$$1.call(this);
+
+	        this.a = a;
+	        this.b = b;
+	        this.c = c;
+	        this.d = d;
+	        this.e = e;
+	        this.f = f;
+	    }
+
+	    extendStatic(Matrix, Class$$1);
+	    Matrix.prototype = Object.create( Class$$1 && Class$$1.prototype );
+	    Matrix.prototype.constructor = Matrix;
+	    Matrix.fn = Matrix.prototype;
+	    Matrix.fn.init = Matrix.fn.constructor;
+
+	    Matrix.prototype.multiplyCopy = function multiplyCopy (matrix) {
+	        return new Matrix(
+	            this.a * matrix.a + this.c * matrix.b,
+	            this.b * matrix.a + this.d * matrix.b,
+	            this.a * matrix.c + this.c * matrix.d,
+	            this.b * matrix.c + this.d * matrix.d,
+	            this.a * matrix.e + this.c * matrix.f + this.e,
+	            this.b * matrix.e + this.d * matrix.f + this.f
+	        );
+	    };
+
+	    Matrix.prototype.invert = function invert () {
+	        var ref = this;
+	        var a = ref.a;
+	        var b = ref.b;
+	        var d = ref.c;
+	        var e = ref.d;
+	        var g = ref.e;
+	        var h = ref.f;
+	        var det = a * e - b * d;
+
+	        if (det === 0) {
+	            return null;
+	        }
+
+	        return new Matrix(e / det, -b / det, -d / det, a / det,
+	                          (d * h - e * g) / det, (b * g - a * h) / det);
+	    };
+
+	    Matrix.prototype.clone = function clone () {
+	        return new Matrix(this.a, this.b, this.c, this.d, this.e, this.f);
+	    };
+
+	    Matrix.prototype.equals = function equals (other) {
+	        if (!other) {
+	            return false;
+	        }
+
+	        return this.a === other.a && this.b === other.b &&
+	               this.c === other.c && this.d === other.d &&
+	               this.e === other.e && this.f === other.f;
+	    };
+
+	    Matrix.prototype.round = function round$1 (precision) {
+	        this.a = round(this.a, precision);
+	        this.b = round(this.b, precision);
+	        this.c = round(this.c, precision);
+	        this.d = round(this.d, precision);
+	        this.e = round(this.e, precision);
+	        this.f = round(this.f, precision);
+
+	        return this;
+	    };
+
+	    Matrix.prototype.toArray = function toArray (precision) {
+	        var result = [ this.a, this.b, this.c, this.d, this.e, this.f ];
+
+	        if (defined(precision)) {
+	            for (var i = 0; i < result.length; i++) {
+	                result[i] = round(result[i], precision);
+	            }
+	        }
+
+	        return result;
+	    };
+
+	    Matrix.prototype.toString = function toString (precision, separator) {
+	        if (separator === void 0) { separator = ","; }
+
+	        return this.toArray(precision).join(separator);
+	    };
+
+	    Matrix.translate = function translate (x, y) {
+	        return new Matrix(1, 0, 0, 1, x, y);
+	    };
+
+	    Matrix.unit = function unit () {
+	        return new Matrix(1, 0, 0, 1, 0, 0);
+	    };
+
+	    Matrix.rotate = function rotate (angle, x, y) {
+	        var matrix = new Matrix();
+	        matrix.a = Math.cos(rad(angle));
+	        matrix.b = Math.sin(rad(angle));
+	        matrix.c = -matrix.b;
+	        matrix.d = matrix.a;
+	        matrix.e = (x - x * matrix.a + y * matrix.b) || 0;
+	        matrix.f = (y - y * matrix.a - x * matrix.b) || 0;
+
+	        return matrix;
+	    };
+
+	    Matrix.scale = function scale (scaleX, scaleY) {
+	        return new Matrix(scaleX, 0, 0, scaleY, 0, 0);
+	    };
+
+	    return Matrix;
+	}(Class));
+
+	Matrix.IDENTITY = Matrix.unit();
+
+	var matrixRegexp = /matrix\((.*)\)/;
+
+	function parseMatrix(matrixString) {
+	    var match = matrixString.match(matrixRegexp);
+	    if (match === null || match.length !== 2) {
+	        return Matrix.unit();
+	    }
+
+	    var members = match[1].split(',').map(function (x) { return parseFloat(x); });
+	    return new (Function.prototype.bind.apply( Matrix, [ null ].concat( members) ));
+	}
+
+	function transformMatrix(element) {
+	    var transform = getComputedStyle(element).transform;
+
+	    if (transform === 'none') {
+	        return Matrix.unit();
+	    }
+
+	    return parseMatrix(transform);
+	}
+
+	function elementScale(element) {
+	    if (!element) {
+	        return Matrix.unit();
+	    }
+
+	    var matrix = transformMatrix(element);
+	    var parent = element.parentElement;
+	    while (parent) {
+	        var parentMatrix = transformMatrix(parent);
+	        matrix = matrix.multiplyCopy(parentMatrix);
+	        parent = parent.parentElement;
+	    }
+
+	    matrix.b = matrix.c = matrix.e = matrix.f = 0;
+	    return matrix;
+	}
+
+	var util = {
+		append: append$1$1,
+		arabicToRoman: arabicToRoman,
+		createPromise: createPromise,
+		defined: defined,
+		definitionId: definitionId,
+		deg: deg,
+		encodeBase64: encodeBase64,
+		eventCoordinates: eventCoordinates,
+		eventElement: eventElement,
+		isTransparent: isTransparent,
+		last: last,
+		limitValue: limitValue,
+		mergeSort: mergeSort,
+		now: now,
+		promiseAll: promiseAll,
+		rad: rad,
+		round: round,
+		valueOrDefault: valueOrDefault,
+		bindEvents: bindEvents,
+		elementOffset: elementOffset,
+		elementSize: elementSize,
+		elementStyles: elementStyles,
+		unbindEvents: unbindEvents,
+		elementPadding: elementPadding,
+		elementScale: elementScale,
+		DEG_TO_RAD: DEG_TO_RAD,
+		MAX_NUM: MAX_NUM,
+		MIN_NUM: MIN_NUM
+	};
+
+	var toString$1 = {}.toString;
+
+	var OptionsStore = (function (HasObservers$$1) {
+	    function OptionsStore(options, prefix) {
+	        var this$1 = this;
+	        if (prefix === void 0) { prefix = ""; }
+
+	        HasObservers$$1.call(this);
+
+	        this.prefix = prefix;
+
+	        for (var field in options) {
+	            var member = options[field];
+	            member = this$1._wrap(member, field);
+	            this$1[field] = member;
+	        }
+	    }
+
+	    extendStatic(OptionsStore, HasObservers$$1);
+	    OptionsStore.prototype = Object.create( HasObservers$$1 && HasObservers$$1.prototype );
+	    OptionsStore.prototype.constructor = OptionsStore;
+	    OptionsStore.fn = OptionsStore.prototype;
+	    OptionsStore.fn.init = OptionsStore.fn.constructor;
+
+	    OptionsStore.prototype.get = function get (field) {
+	        var parts = field.split(".");
+	        var result = this;
+
+	        while (parts.length && result) {
+	            var part = parts.shift();
+	            result = result[part];
+	        }
+
+	        return result;
+	    };
+
+	    OptionsStore.prototype.set = function set (field, value) {
+	        var current = this.get(field);
+
+	        if (current !== value) {
+	            this._set(field, this._wrap(value, field));
+	            this.optionsChange({
+	                field: this.prefix + field,
+	                value: value
+	            });
+	        }
+	    };
+
+	    OptionsStore.prototype._set = function _set (field, value) {
+	        var this$1 = this;
+
+	        var composite = field.indexOf(".") >= 0;
+	        var parentObj = this;
+	        var fieldName = field;
+
+	        if (composite) {
+	            var parts = fieldName.split(".");
+	            var prefix = this.prefix;
+
+	            while (parts.length > 1) {
+	                fieldName = parts.shift();
+	                prefix += fieldName + ".";
+
+	                var obj = parentObj[fieldName];
+
+	                if (!obj) {
+	                    obj = new OptionsStore({}, prefix);
+	                    obj.addObserver(this$1);
+	                    parentObj[fieldName] = obj;
+	                }
+	                parentObj = obj;
+	            }
+	            fieldName = parts[0];
+	        }
+
+	        parentObj._clear(fieldName);
+	        parentObj[fieldName] = value;
+	    };
+
+	    OptionsStore.prototype._clear = function _clear (field) {
+	        var current = this[field];
+	        if (current && current.removeObserver) {
+	            current.removeObserver(this);
+	        }
+	    };
+
+	    OptionsStore.prototype._wrap = function _wrap (object, field) {
+	        var type = toString$1.call(object);
+	        var wrapped = object;
+
+	        if (wrapped !== null && defined(wrapped) && type === "[object Object]") {
+	            if (!(object instanceof OptionsStore) && !(object instanceof Class)) {
+	                wrapped = new OptionsStore(wrapped, this.prefix + field + ".");
+	            }
+
+	            wrapped.addObserver(this);
+	        }
+
+	        return wrapped;
+	    };
+
+	    return OptionsStore;
+	}(HasObservers));
+
 	function setAccessor(field) {
 	    return function(value) {
 	        if (this[field] !== value) {
@@ -497,121 +806,22 @@ module.exports =
 	    }
 	}
 
-	var Matrix = Class.extend({
-	    init: function(a, b, c, d, e, f) {
-	        if (a === void 0) { a = 0; }
-	        if (b === void 0) { b = 0; }
-	        if (c === void 0) { c = 0; }
-	        if (d === void 0) { d = 0; }
-	        if (e === void 0) { e = 0; }
-	        if (f === void 0) { f = 0; }
-
-	        this.a = a;
-	        this.b = b;
-	        this.c = c;
-	        this.d = d;
-	        this.e = e;
-	        this.f = f;
-	    },
-
-	    multiplyCopy: function(matrix) {
-	        return new Matrix(
-	            this.a * matrix.a + this.c * matrix.b,
-	            this.b * matrix.a + this.d * matrix.b,
-	            this.a * matrix.c + this.c * matrix.d,
-	            this.b * matrix.c + this.d * matrix.d,
-	            this.a * matrix.e + this.c * matrix.f + this.e,
-	            this.b * matrix.e + this.d * matrix.f + this.f
-	        );
-	    },
-
-	    invert: function() {
-	        var ref = this;
-	        var a = ref.a;
-	        var b = ref.b;
-	        var d = ref.c;
-	        var e = ref.d;
-	        var g = ref.e;
-	        var h = ref.f;
-	        var det = a * e - b * d;
-
-	        if (det === 0) {
-	            return null;
-	        }
-
-	        return new Matrix(e / det, -b / det, -d / det, a / det,
-	                          (d * h - e * g) / det, (b * g - a * h) / det);
-	    },
-
-	    clone: function() {
-	        return new Matrix(this.a, this.b, this.c, this.d, this.e, this.f);
-	    },
-
-	    equals: function(other) {
-	        if (!other) {
-	            return false;
-	        }
-
-	        return this.a === other.a && this.b === other.b &&
-	               this.c === other.c && this.d === other.d &&
-	               this.e === other.e && this.f === other.f;
-	    },
-
-	    round: function(precision) {
-	        this.a = round(this.a, precision);
-	        this.b = round(this.b, precision);
-	        this.c = round(this.c, precision);
-	        this.d = round(this.d, precision);
-	        this.e = round(this.e, precision);
-	        this.f = round(this.f, precision);
-
-	        return this;
-	    },
-
-	    toArray: function(precision) {
-	        var result = [ this.a, this.b, this.c, this.d, this.e, this.f ];
-
-	        if (defined(precision)) {
-	            for (var i = 0; i < result.length; i++) {
-	                result[i] = round(result[i], precision);
-	            }
-	        }
+	var withAccessors = function (TBase, names) {
+	    var result = (function (TBase) {
+	        function result () {
+	            TBase.apply(this, arguments);
+	        }extendStatic(result, TBase);
+	        result.prototype = Object.create( TBase && TBase.prototype );
+	        result.prototype.constructor = result;
+	        result.fn = result.prototype;
+	        result.fn.init = result.fn.constructor;
 
 	        return result;
-	    },
+	    }(TBase));
+	    defineAccessors(result.prototype, names);
 
-	    toString: function(precision, separator) {
-	        if (separator === void 0) { separator = ","; }
-
-	        return this.toArray(precision).join(separator);
-	    }
-	});
-
-	Matrix.translate = function(x, y) {
-	    return new Matrix(1, 0, 0, 1, x, y);
+	    return result;
 	};
-
-	Matrix.unit = function() {
-	    return new Matrix(1, 0, 0, 1, 0, 0);
-	};
-
-	Matrix.rotate = function(angle, x, y) {
-	    var matrix = new Matrix();
-	    matrix.a = Math.cos(rad(angle));
-	    matrix.b = Math.sin(rad(angle));
-	    matrix.c = -matrix.b;
-	    matrix.d = matrix.a;
-	    matrix.e = (x - x * matrix.a + y * matrix.b) || 0;
-	    matrix.f = (y - y * matrix.a - x * matrix.b) || 0;
-
-	    return matrix;
-	};
-
-	Matrix.scale = function(scaleX, scaleY) {
-	    return new Matrix(scaleX, 0, 0, scaleY, 0, 0);
-	};
-
-	Matrix.IDENTITY = Matrix.unit();
 
 	function toMatrix(transformation) {
 	    if (transformation && typeof transformation.matrix === "function") {
@@ -621,46 +831,55 @@ module.exports =
 	    return transformation;
 	}
 
-	var Point = Class.extend({
-	    init: function(x, y) {
+	var Point = (function (superclass) {
+	    function Point(x, y) {
+	        superclass.call(this);
 
 	        this.x = x || 0;
 	        this.y = y || 0;
-	    },
+	    }
 
-	    equals: function(other) {
+	    extendStatic(Point, superclass);
+	    Point.prototype = Object.create( superclass && superclass.prototype );
+	    Point.prototype.constructor = Point;
+	    Point.fn = Point.prototype;
+	    Point.fn.init = Point.fn.constructor;
+
+	    var staticAccessors = { ZERO: {} };
+
+	    Point.prototype.equals = function equals (other) {
 	        return other && other.x === this.x && other.y === this.y;
-	    },
+	    };
 
-	    clone: function() {
+	    Point.prototype.clone = function clone () {
 	        return new Point(this.x, this.y);
-	    },
+	    };
 
-	    rotate: function(angle, origin) {
+	    Point.prototype.rotate = function rotate (angle, origin) {
 	        var originPoint = Point.create(origin) || Point.ZERO;
 
 	        return this.transform(Matrix.rotate(angle, originPoint.x, originPoint.y));
-	    },
+	    };
 
-	    translate: function(x, y) {
+	    Point.prototype.translate = function translate (x, y) {
 	        this.x += x;
 	        this.y += y;
 
 	        this.geometryChange();
 
 	        return this;
-	    },
+	    };
 
-	    translateWith: function(point) {
+	    Point.prototype.translateWith = function translateWith (point) {
 	        return this.translate(point.x, point.y);
-	    },
+	    };
 
-	    move: function(x, y) {
+	    Point.prototype.move = function move (x, y) {
 	        this.x = this.y = 0;
 	        return this.translate(x, y);
-	    },
+	    };
 
-	    scale: function(scaleX, scaleY) {
+	    Point.prototype.scale = function scale (scaleX, scaleY) {
 	        if (scaleY === void 0) { scaleY = scaleX; }
 
 	        this.x *= scaleX;
@@ -669,13 +888,13 @@ module.exports =
 	        this.geometryChange();
 
 	        return this;
-	    },
+	    };
 
-	    scaleCopy: function(scaleX, scaleY) {
+	    Point.prototype.scaleCopy = function scaleCopy (scaleX, scaleY) {
 	        return this.clone().scale(scaleX, scaleY);
-	    },
+	    };
 
-	    transform: function(transformation) {
+	    Point.prototype.transform = function transform (transformation) {
 	        var matrix = toMatrix(transformation);
 	        var ref = this;
 	        var x = ref.x;
@@ -687,9 +906,9 @@ module.exports =
 	        this.geometryChange();
 
 	        return this;
-	    },
+	    };
 
-	    transformCopy: function(transformation) {
+	    Point.prototype.transformCopy = function transformCopy (transformation) {
 	        var point = this.clone();
 
 	        if (transformation) {
@@ -697,33 +916,33 @@ module.exports =
 	        }
 
 	        return point;
-	    },
+	    };
 
-	    distanceTo: function(point) {
+	    Point.prototype.distanceTo = function distanceTo (point) {
 	        var dx = this.x - point.x;
 	        var dy = this.y - point.y;
 
 	        return Math.sqrt(dx * dx + dy * dy);
-	    },
+	    };
 
-	    round: function(digits) {
+	    Point.prototype.round = function round$1 (digits) {
 	        this.x = round(this.x, digits);
 	        this.y = round(this.y, digits);
 
 	        this.geometryChange();
 
 	        return this;
-	    },
+	    };
 
-	    toArray: function(digits) {
+	    Point.prototype.toArray = function toArray (digits) {
 	        var doRound = defined(digits);
 	        var x = doRound ? round(this.x, digits) : this.x;
 	        var y = doRound ? round(this.y, digits) : this.y;
 
 	        return [ x, y ];
-	    },
+	    };
 
-	    toString: function(digits, separator) {
+	    Point.prototype.toString = function toString (digits, separator) {
 	        if (separator === void 0) { separator = " "; }
 
 	        var ref = this;
@@ -736,208 +955,215 @@ module.exports =
 	        }
 
 	        return x + separator + y;
-	    }
-	});
+	    };
 
-	Point.create = function(arg0, arg1) {
-	    if (defined(arg0)) {
-	        if (arg0 instanceof Point) {
-	            return arg0;
-	        } else if (arguments.length === 1 && arg0.length === 2) {
-	            return new Point(arg0[0], arg0[1]);
-	        }
-
-	        return new Point(arg0, arg1);
-	    }
-	};
-
-	Point.min = function() {
-	    var arguments$1 = arguments;
-
-	    var minX = MAX_NUM;
-	    var minY = MAX_NUM;
-
-	    for (var i = 0; i < arguments.length; i++) {
-	        var point = arguments$1[i];
-	        minX = Math.min(point.x, minX);
-	        minY = Math.min(point.y, minY);
-	    }
-
-	    return new Point(minX, minY);
-	};
-
-	Point.max = function() {
-	    var arguments$1 = arguments;
-
-	    var maxX = MIN_NUM;
-	    var maxY = MIN_NUM;
-
-	    for (var i = 0; i < arguments.length; i++) {
-	        var point = arguments$1[i];
-	        maxX = Math.max(point.x, maxX);
-	        maxY = Math.max(point.y, maxY);
-	    }
-
-	    return new Point(maxX, maxY);
-	};
-
-	Point.minPoint = function() {
-	    return new Point(MIN_NUM, MIN_NUM);
-	};
-
-	Point.maxPoint = function() {
-	    return new Point(MAX_NUM, MAX_NUM);
-	};
-
-	if (Object.defineProperties) {
-	    Object.defineProperties(Point, {
-	        ZERO: {
-	            get: function() {
-	                return new Point(0, 0);
+	    Point.create = function create (arg0, arg1) {
+	        if (defined(arg0)) {
+	            if (arg0 instanceof Point) {
+	                return arg0;
+	            } else if (arguments.length === 1 && arg0.length === 2) {
+	                return new Point(arg0[0], arg0[1]);
 	            }
+
+	            return new Point(arg0, arg1);
 	        }
-	    });
-	}
+	    };
 
-	defineAccessors(Point.prototype, [ "x", "y" ]);
-	ObserversMixin.extend(Point.prototype);
+	    Point.min = function min () {
+	        var arguments$1 = arguments;
 
-	var Size = Class.extend({
-	    init: function(width, height) {
+	        var minX = MAX_NUM;
+	        var minY = MAX_NUM;
+
+	        for (var i = 0; i < arguments.length; i++) {
+	            var point = arguments$1[i];
+	            minX = Math.min(point.x, minX);
+	            minY = Math.min(point.y, minY);
+	        }
+
+	        return new Point(minX, minY);
+	    };
+
+	    Point.max = function max () {
+	        var arguments$1 = arguments;
+
+	        var maxX = MIN_NUM;
+	        var maxY = MIN_NUM;
+
+	        for (var i = 0; i < arguments.length; i++) {
+	            var point = arguments$1[i];
+	            maxX = Math.max(point.x, maxX);
+	            maxY = Math.max(point.y, maxY);
+	        }
+
+	        return new Point(maxX, maxY);
+	    };
+
+	    Point.minPoint = function minPoint () {
+	        return new Point(MIN_NUM, MIN_NUM);
+	    };
+
+	    Point.maxPoint = function maxPoint () {
+	        return new Point(MAX_NUM, MAX_NUM);
+	    };
+
+	    staticAccessors.ZERO.get = function () {
+	        return new Point(0, 0);
+	    };
+
+	    Object.defineProperties( Point, staticAccessors );
+
+	    return Point;
+	}(withAccessors(HasObservers, [ "x", "y" ])));
+
+	var Size = (function (superclass) {
+	    function Size(width, height) {
+	        superclass.call(this);
 
 	        this.width = width || 0;
 	        this.height = height || 0;
-	    },
+	    }
 
-	    equals: function(other) {
+	    extendStatic(Size, superclass);
+	    Size.prototype = Object.create( superclass && superclass.prototype );
+	    Size.prototype.constructor = Size;
+	    Size.fn = Size.prototype;
+	    Size.fn.init = Size.fn.constructor;
+
+	    var staticAccessors = { ZERO: {} };
+
+	    Size.prototype.equals = function equals (other) {
 	        return other && other.width === this.width && other.height === this.height;
-	    },
+	    };
 
-	    clone: function() {
+	    Size.prototype.clone = function clone () {
 	        return new Size(this.width, this.height);
-	    },
+	    };
 
-	    toArray: function(digits) {
+	    Size.prototype.toArray = function toArray (digits) {
 	        var doRound = defined(digits);
 	        var width = doRound ? round(this.width, digits) : this.width;
 	        var height = doRound ? round(this.height, digits) : this.height;
 
 	        return [ width, height ];
-	    }
-	});
+	    };
 
-	Size.create = function(arg0, arg1) {
-	    if (defined(arg0)) {
-	        if (arg0 instanceof Size) {
-	            return arg0;
-	        } else if (arguments.length === 1 && arg0.length === 2) {
-	            return new Size(arg0[0], arg0[1]);
-	        }
-
-	        return new Size(arg0, arg1);
-	    }
-	};
-
-	if (Object.defineProperties) {
-	    Object.defineProperties(Size, {
-	        ZERO: {
-	            get: function() {
-	                return new Size(0, 0);
+	    Size.create = function create (arg0, arg1) {
+	        if (defined(arg0)) {
+	            if (arg0 instanceof Size) {
+	                return arg0;
+	            } else if (arguments.length === 1 && arg0.length === 2) {
+	                return new Size(arg0[0], arg0[1]);
 	            }
+
+	            return new Size(arg0, arg1);
 	        }
-	    });
-	}
+	    };
 
-	defineAccessors(Size.prototype, [ "width", "height" ]);
-	ObserversMixin.extend(Size.prototype);
+	    staticAccessors.ZERO.get = function () {
+	        return new Size(0, 0);
+	    };
 
-	var Rect = Class.extend({
-	    init: function(origin, size) {
+	    Object.defineProperties( Size, staticAccessors );
+
+	    return Size;
+	}(withAccessors(HasObservers, [ "width", "height" ])));
+
+	var Rect = (function (HasObservers$$1) {
+	    function Rect(origin, size) {
 	        if (origin === void 0) { origin = new Point(); }
 	        if (size === void 0) { size = new Size(); }
 
+	        HasObservers$$1.call(this);
+
 	        this.setOrigin(origin);
 	        this.setSize(size);
-	    },
+	    }
 
-	    clone: function() {
+	    extendStatic(Rect, HasObservers$$1);
+	    Rect.prototype = Object.create( HasObservers$$1 && HasObservers$$1.prototype );
+	    Rect.prototype.constructor = Rect;
+	    Rect.fn = Rect.prototype;
+	    Rect.fn.init = Rect.fn.constructor;
+
+	    Rect.prototype.clone = function clone () {
 	        return new Rect(
 	            this.origin.clone(),
 	            this.size.clone()
 	        );
-	    },
+	    };
 
-	    equals: function(other) {
+	    Rect.prototype.equals = function equals (other) {
 	        return other &&
 	               other.origin.equals(this.origin) &&
 	               other.size.equals(this.size);
-	    },
+	    };
 
-	    setOrigin: function(value) {
+	    Rect.prototype.setOrigin = function setOrigin (value) {
 	        this._observerField("origin", Point.create(value));
 	        this.geometryChange();
 	        return this;
-	    },
+	    };
 
-	    getOrigin: function() {
+	    Rect.prototype.getOrigin = function getOrigin () {
 	        return this.origin;
-	    },
+	    };
 
-	    setSize: function(value) {
+	    Rect.prototype.setSize = function setSize (value) {
 	        this._observerField("size", Size.create(value));
 	        this.geometryChange();
 	        return this;
-	    },
+	    };
 
-	    getSize: function() {
+	    Rect.prototype.getSize = function getSize () {
 	        return this.size;
-	    },
+	    };
 
-	    width: function() {
+	    Rect.prototype.width = function width () {
 	        return this.size.width;
-	    },
+	    };
 
-	    height: function() {
+	    Rect.prototype.height = function height () {
 	        return this.size.height;
-	    },
+	    };
 
-	    topLeft: function() {
+	    Rect.prototype.topLeft = function topLeft () {
 	        return this.origin.clone();
-	    },
+	    };
 
-	    bottomRight: function() {
+	    Rect.prototype.bottomRight = function bottomRight () {
 	        return this.origin.clone().translate(this.width(), this.height());
-	    },
+	    };
 
-	    topRight: function() {
+	    Rect.prototype.topRight = function topRight () {
 	        return this.origin.clone().translate(this.width(), 0);
-	    },
+	    };
 
-	    bottomLeft: function() {
+	    Rect.prototype.bottomLeft = function bottomLeft () {
 	        return this.origin.clone().translate(0, this.height());
-	    },
+	    };
 
-	    center: function() {
+	    Rect.prototype.center = function center () {
 	        return this.origin.clone().translate(this.width() / 2, this.height() / 2);
-	    },
+	    };
 
-	    bbox: function(matrix) {
+	    Rect.prototype.bbox = function bbox (matrix) {
 	        var tl = this.topLeft().transformCopy(matrix);
 	        var tr = this.topRight().transformCopy(matrix);
 	        var br = this.bottomRight().transformCopy(matrix);
 	        var bl = this.bottomLeft().transformCopy(matrix);
 
 	        return Rect.fromPoints(tl, tr, br, bl);
-	    },
+	    };
 
-	    transformCopy: function(m) {
+	    Rect.prototype.transformCopy = function transformCopy (m) {
 	        return Rect.fromPoints(
 	            this.topLeft().transform(m),
 	            this.bottomRight().transform(m)
 	        );
-	    },
+	    };
 
-	    expand: function(x, y) {
+	    Rect.prototype.expand = function expand (x, y) {
 	        if (y === void 0) { y = x; }
 
 	        this.size.width += 2 * x;
@@ -946,71 +1172,327 @@ module.exports =
 	        this.origin.translate(-x, -y);
 
 	        return this;
-	    },
+	    };
 
-	    expandCopy: function(x, y) {
+	    Rect.prototype.expandCopy = function expandCopy (x, y) {
 	        return this.clone().expand(x, y);
-	    },
+	    };
 
-	    containsPoint: function(point) {
+	    Rect.prototype.containsPoint = function containsPoint (point) {
 	        var origin = this.origin;
 	        var bottomRight = this.bottomRight();
 	        return !(point.x < origin.x || point.y < origin.y || bottomRight.x < point.x || bottomRight.y < point.y);
-	    },
+	    };
 
-	    _isOnPath: function(point, width) {
+	    Rect.prototype._isOnPath = function _isOnPath (point, width) {
 	        var rectOuter = this.expandCopy(width, width);
 	        var rectInner = this.expandCopy(-width, -width);
 
 	        return rectOuter.containsPoint(point) && !rectInner.containsPoint(point);
-	    }
-	});
-
-	Rect.fromPoints = function() {
-	    var topLeft = Point.min.apply(null, arguments);
-	    var bottomRight = Point.max.apply(null, arguments);
-	    var size = new Size(
-	        bottomRight.x - topLeft.x,
-	        bottomRight.y - topLeft.y
-	    );
-
-	    return new Rect(topLeft, size);
-	};
-
-	Rect.union = function(a, b) {
-	    return Rect.fromPoints(
-	        Point.min(a.topLeft(), b.topLeft()),
-	        Point.max(a.bottomRight(), b.bottomRight())
-	    );
-	};
-
-	Rect.intersect = function(a, b) {
-	    var rect1 = {
-	        left: a.topLeft().x,
-	        top: a.topLeft().y,
-	        right: a.bottomRight().x,
-	        bottom: a.bottomRight().y
 	    };
 
-	    var rect2 = {
-	        left: b.topLeft().x,
-	        top: b.topLeft().y,
-	        right: b.bottomRight().x,
-	        bottom: b.bottomRight().y
-	    };
-
-	    if (rect1.left <= rect2.right &&
-	        rect2.left <= rect1.right &&
-	        rect1.top <= rect2.bottom &&
-	        rect2.top <= rect1.bottom) {
-	        return Rect.fromPoints(
-	            new Point(Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)),
-	            new Point(Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom))
+	    Rect.fromPoints = function fromPoints () {
+	        var topLeft = Point.min.apply(null, arguments);
+	        var bottomRight = Point.max.apply(null, arguments);
+	        var size = new Size(
+	            bottomRight.x - topLeft.x,
+	            bottomRight.y - topLeft.y
 	        );
-	    }
-	};
 
-	ObserversMixin.extend(Rect.prototype);
+	        return new Rect(topLeft, size);
+	    };
+
+	    Rect.union = function union (a, b) {
+	        return Rect.fromPoints(
+	            Point.min(a.topLeft(), b.topLeft()),
+	            Point.max(a.bottomRight(), b.bottomRight())
+	        );
+	    };
+
+	    Rect.intersect = function intersect (a, b) {
+	        var rect1 = {
+	            left: a.topLeft().x,
+	            top: a.topLeft().y,
+	            right: a.bottomRight().x,
+	            bottom: a.bottomRight().y
+	        };
+
+	        var rect2 = {
+	            left: b.topLeft().x,
+	            top: b.topLeft().y,
+	            right: b.bottomRight().x,
+	            bottom: b.bottomRight().y
+	        };
+
+	        if (rect1.left <= rect2.right &&
+	            rect2.left <= rect1.right &&
+	            rect1.top <= rect2.bottom &&
+	            rect2.top <= rect1.bottom) {
+	            return Rect.fromPoints(
+	                new Point(Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)),
+	                new Point(Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom))
+	            );
+	        }
+	    };
+
+	    return Rect;
+	}(HasObservers));
+
+	var Transformation = (function (HasObservers$$1) {
+	    function Transformation(matrix) {
+	        if (matrix === void 0) { matrix = Matrix.unit(); }
+
+	        HasObservers$$1.call(this);
+
+	        this._matrix = matrix;
+	    }
+
+	    extendStatic(Transformation, HasObservers$$1);
+	    Transformation.prototype = Object.create( HasObservers$$1 && HasObservers$$1.prototype );
+	    Transformation.prototype.constructor = Transformation;
+	    Transformation.fn = Transformation.prototype;
+	    Transformation.fn.init = Transformation.fn.constructor;
+
+	    Transformation.prototype.clone = function clone () {
+	        return new Transformation(
+	            this._matrix.clone()
+	        );
+	    };
+
+	    Transformation.prototype.equals = function equals (other) {
+	        return other &&
+	               other._matrix.equals(this._matrix);
+	    };
+
+	    Transformation.prototype.translate = function translate (x, y) {
+	        this._matrix = this._matrix.multiplyCopy(Matrix.translate(x, y));
+
+	        this._optionsChange();
+	        return this;
+	    };
+
+	    Transformation.prototype.scale = function scale (scaleX, scaleY, origin) {
+	        if (scaleY === void 0) { scaleY = scaleX; }
+	        if (origin === void 0) { origin = null; }
+
+	        var originPoint = origin;
+
+	        if (originPoint) {
+	            originPoint = Point.create(originPoint);
+	            this._matrix = this._matrix.multiplyCopy(Matrix.translate(originPoint.x, originPoint.y));
+	        }
+
+	        this._matrix = this._matrix.multiplyCopy(Matrix.scale(scaleX, scaleY));
+
+	        if (originPoint) {
+	            this._matrix = this._matrix.multiplyCopy(Matrix.translate(-originPoint.x, -originPoint.y));
+	        }
+
+	        this._optionsChange();
+	        return this;
+	    };
+
+	    Transformation.prototype.rotate = function rotate (angle, origin) {
+	        var originPoint = Point.create(origin) || Point.ZERO;
+
+	        this._matrix = this._matrix.multiplyCopy(Matrix.rotate(angle, originPoint.x, originPoint.y));
+
+	        this._optionsChange();
+	        return this;
+	    };
+
+	    Transformation.prototype.multiply = function multiply (transformation) {
+	        var matrix = toMatrix(transformation);
+
+	        this._matrix = this._matrix.multiplyCopy(matrix);
+
+	        this._optionsChange();
+	        return this;
+	    };
+
+	    Transformation.prototype.matrix = function matrix (value) {
+	        if (value) {
+	            this._matrix = value;
+	            this._optionsChange();
+	            return this;
+	        }
+
+	        return this._matrix;
+	    };
+
+	    Transformation.prototype._optionsChange = function _optionsChange () {
+	        this.optionsChange({
+	            field: "transform",
+	            value: this
+	        });
+	    };
+
+	    return Transformation;
+	}(HasObservers));
+
+	function transform$1(matrix) {
+	    if (matrix === null) {
+	        return null;
+	    }
+
+	    if (matrix instanceof Transformation) {
+	        return matrix;
+	    }
+
+	    return new Transformation(matrix);
+	}
+
+	var Element$1 = (function (HasObservers$$1) {
+	    function Element(options) {
+	        HasObservers$$1.call(this);
+
+	        this._initOptions(options);
+	    }
+
+	    extendStatic(Element, HasObservers$$1);
+	    Element.prototype = Object.create( HasObservers$$1 && HasObservers$$1.prototype );
+	    Element.prototype.constructor = Element;
+	    Element.fn = Element.prototype;
+	    Element.fn.init = Element.fn.constructor;
+
+	    var prototypeAccessors = { nodeType: {} };
+
+	    prototypeAccessors.nodeType.get = function () {
+	        return "Rect";
+	    };
+
+	    Element.prototype._initOptions = function _initOptions (options) {
+	        if (options === void 0) { options = {}; }
+
+	        var clip = options.clip;
+	        var transform = options.transform;
+
+	        if (transform) {
+	            options.transform = transform$1(transform);
+	        }
+
+	        if (clip && !clip.id) {
+	            clip.id = definitionId();
+	        }
+
+	        this.options = new OptionsStore(options);
+	        this.options.addObserver(this);
+	    };
+
+	    Element.prototype.transform = function transform (value) {
+	        if (defined(value)) {
+	            this.options.set("transform", transform$1(value));
+	        } else {
+	            return this.options.get("transform");
+	        }
+	    };
+
+	    Element.prototype.parentTransform = function parentTransform () {
+	        var element = this;
+	        var parentMatrix;
+
+	        while (element.parent) {
+	            element = element.parent;
+	            var transformation = element.transform();
+	            if (transformation) {
+	                parentMatrix = transformation.matrix().multiplyCopy(parentMatrix || Matrix.unit());
+	            }
+	        }
+
+	        if (parentMatrix) {
+	            return transform$1(parentMatrix);
+	        }
+	    };
+
+	    Element.prototype.currentTransform = function currentTransform (parentTransform) {
+	        if (parentTransform === void 0) { parentTransform = this.parentTransform(); }
+
+	        var elementTransform = this.transform();
+	        var elementMatrix = toMatrix(elementTransform);
+
+	        var parentMatrix = toMatrix(parentTransform);
+	        var combinedMatrix;
+
+	        if (elementMatrix && parentMatrix) {
+	            combinedMatrix = parentMatrix.multiplyCopy(elementMatrix);
+	        } else {
+	            combinedMatrix = elementMatrix || parentMatrix;
+	        }
+
+	        if (combinedMatrix) {
+	            return transform$1(combinedMatrix);
+	        }
+	    };
+
+	    Element.prototype.visible = function visible (value) {
+	        if (defined(value)) {
+	            this.options.set("visible", value);
+	            return this;
+	        }
+
+	        return this.options.get("visible") !== false;
+	    };
+
+	    Element.prototype.clip = function clip (value) {
+	        var options = this.options;
+	        if (defined(value)) {
+	            if (value && !value.id) {
+	                value.id = definitionId();
+	            }
+	            options.set("clip", value);
+	            return this;
+	        }
+
+	        return options.get("clip");
+	    };
+
+	    Element.prototype.opacity = function opacity (value) {
+	        if (defined(value)) {
+	            this.options.set("opacity", value);
+	            return this;
+	        }
+
+	        return valueOrDefault(this.options.get("opacity"), 1);
+	    };
+
+	    Element.prototype.clippedBBox = function clippedBBox (transformation) {
+	        var bbox = this._clippedBBox(transformation);
+	        if (bbox) {
+	            var clip = this.clip();
+	            return clip ? Rect.intersect(bbox, clip.bbox(transformation)) : bbox;
+	        }
+	    };
+
+	    Element.prototype.containsPoint = function containsPoint (point, parentTransform) {
+	        if (this.visible()) {
+	            var transform = this.currentTransform(parentTransform);
+	            var transformedPoint = point;
+	            if (transform) {
+	                transformedPoint = point.transformCopy(transform.matrix().invert());
+	            }
+	            return (this._hasFill() && this._containsPoint(transformedPoint)) || (this._isOnPath && this._hasStroke() && this._isOnPath(transformedPoint));
+	        }
+	        return false;
+	    };
+
+	    Element.prototype._hasFill = function _hasFill () {
+	        var fill = this.options.fill;
+	        return fill && !isTransparent(fill.color);
+	    };
+
+	    Element.prototype._hasStroke = function _hasStroke () {
+	        var stroke = this.options.stroke;
+	        return stroke && stroke.width > 0 && !isTransparent(stroke.color);
+	    };
+
+	    Element.prototype._clippedBBox = function _clippedBBox (transformation) {
+	        return this.bbox(transformation);
+	    };
+
+	    Object.defineProperties( Element.prototype, prototypeAccessors );
+
+	    return Element;
+	}(HasObservers));
 
 	function ellipseExtremeAngles(center, rx, ry, matrix) {
 	    var extremeX = 0;
@@ -1031,40 +1513,48 @@ module.exports =
 
 	var PI_DIV_2 = Math.PI / 2;
 
-	var Circle = Class.extend({
-	    init: function(center, radius) {
+	var Circle$2 = (function (superclass) {
+	    function Circle(center, radius) {
 	        if (center === void 0) { center = new Point(); }
 	        if (radius === void 0) { radius = 0; }
 
+	        superclass.call(this);
+
 	        this.setCenter(center);
 	        this.setRadius(radius);
-	    },
+	    }
 
-	    setCenter: function(value) {
+	    extendStatic(Circle, superclass);
+	    Circle.prototype = Object.create( superclass && superclass.prototype );
+	    Circle.prototype.constructor = Circle;
+	    Circle.fn = Circle.prototype;
+	    Circle.fn.init = Circle.fn.constructor;
+
+	    Circle.prototype.setCenter = function setCenter (value) {
 	        this._observerField("center", Point.create(value));
 	        this.geometryChange();
 	        return this;
-	    },
+	    };
 
-	    getCenter: function() {
+	    Circle.prototype.getCenter = function getCenter () {
 	        return this.center;
-	    },
+	    };
 
-	    equals: function(other) {
+	    Circle.prototype.equals = function equals (other) {
 	        return other &&
 	               other.center.equals(this.center) &&
 	               other.radius === this.radius;
-	    },
+	    };
 
-	    clone: function() {
+	    Circle.prototype.clone = function clone () {
 	        return new Circle(this.center.clone(), this.radius);
-	    },
+	    };
 
-	    pointAt: function(angle) {
+	    Circle.prototype.pointAt = function pointAt (angle) {
 	        return this._pointAt(rad(angle));
-	    },
+	    };
 
-	    bbox: function(matrix) {
+	    Circle.prototype.bbox = function bbox (matrix) {
 	        var this$1 = this;
 
 	        var extremeAngles = ellipseExtremeAngles(this.center, this.radius, this.radius, matrix);
@@ -1081,9 +1571,9 @@ module.exports =
 	        }
 
 	        return Rect.fromPoints(minPoint, maxPoint);
-	    },
+	    };
 
-	    _pointAt: function(angle) {
+	    Circle.prototype._pointAt = function _pointAt (angle) {
 	        var ref = this;
 	        var center = ref.center;
 	        var radius = ref.radius;
@@ -1092,40 +1582,230 @@ module.exports =
 	            center.x + radius * Math.cos(angle),
 	            center.y + radius * Math.sin(angle)
 	        );
-	    },
+	    };
 
-	    containsPoint: function(point) {
+	    Circle.prototype.containsPoint = function containsPoint (point) {
 	        var ref = this;
 	        var center = ref.center;
 	        var radius = ref.radius;
 	        var inCircle = Math.pow(point.x - center.x, 2) +
 	            Math.pow(point.y - center.y, 2) <= Math.pow(radius, 2);
 	        return inCircle;
-	    },
+	    };
 
-	    _isOnPath: function(point, width) {
+	    Circle.prototype._isOnPath = function _isOnPath (point, width) {
 	        var ref = this;
 	        var center = ref.center;
 	        var radius = ref.radius;
 	        var pointDistance = center.distanceTo(point);
 
 	        return radius - width <= pointDistance && pointDistance <= radius + width;
-	    }
-	});
+	    };
 
-	defineAccessors(Circle.prototype, [ "radius" ]);
-	ObserversMixin.extend(Circle.prototype);
+	    return Circle;
+	}(withAccessors(HasObservers, [ "radius" ])));
+
+	var GRADIENT = "Gradient";
+
+	var paintable = function (TBase) { return (
+	    (function (TBase) {
+	        function anonymous () {
+	            TBase.apply(this, arguments);
+	        }
+
+	        extendStatic(anonymous, TBase);
+	        anonymous.prototype = Object.create( TBase && TBase.prototype );
+	        anonymous.prototype.constructor = anonymous;
+	        anonymous.fn = anonymous.prototype;
+	        anonymous.fn.init = anonymous.fn.constructor;
+
+	        anonymous.prototype.fill = function fill (color, opacity) {
+	            var options = this.options;
+
+	            if (defined(color)) {
+	                if (color && color.nodeType !== GRADIENT) {
+	                    var newFill = {
+	                        color: color
+	                    };
+	                    if (defined(opacity)) {
+	                        newFill.opacity = opacity;
+	                    }
+	                    options.set("fill", newFill);
+	                } else {
+	                    options.set("fill", color);
+	                }
+
+	                return this;
+	            }
+
+	            return options.get("fill");
+	        };
+
+	        anonymous.prototype.stroke = function stroke (color, width, opacity) {
+	            if (defined(color)) {
+	                this.options.set("stroke.color", color);
+
+	                if (defined(width)) {
+	                    this.options.set("stroke.width", width);
+	                }
+
+	                if (defined(opacity)) {
+	                    this.options.set("stroke.opacity", opacity);
+	                }
+
+	                return this;
+	            }
+
+	            return this.options.get("stroke");
+	        };
+
+	        return anonymous;
+	    }(TBase))
+	); };
+
+	var IDENTITY_MATRIX_HASH = Matrix.IDENTITY.toString();
+
+	var measurable = function (TBase) { return (
+	    (function (TBase) {
+	        function anonymous () {
+	            TBase.apply(this, arguments);
+	        }
+
+	        extendStatic(anonymous, TBase);
+	        anonymous.prototype = Object.create( TBase && TBase.prototype );
+	        anonymous.prototype.constructor = anonymous;
+	        anonymous.fn = anonymous.prototype;
+	        anonymous.fn.init = anonymous.fn.constructor;
+
+	        anonymous.prototype.bbox = function bbox (transformation) {
+	            var combinedMatrix = toMatrix(this.currentTransform(transformation));
+	            var matrixHash = combinedMatrix ? combinedMatrix.toString() : IDENTITY_MATRIX_HASH;
+	            var bbox;
+
+	            if (this._bboxCache && this._matrixHash === matrixHash) {
+	                bbox = this._bboxCache.clone();
+	            } else {
+	                bbox = this._bbox(combinedMatrix);
+	                this._bboxCache = bbox ? bbox.clone() : null;
+	                this._matrixHash = matrixHash;
+	            }
+
+	            var strokeWidth = this.options.get("stroke.width");
+	            if (strokeWidth && bbox) {
+	                bbox.expand(strokeWidth / 2);
+	            }
+
+	            return bbox;
+	        };
+
+	        anonymous.prototype.geometryChange = function geometryChange () {
+	            delete this._bboxCache;
+	            this.trigger("geometryChange", {
+	                element: this
+	            });
+	        };
+
+	        return anonymous;
+	    }(TBase))
+	); };
+
+	function geometryAccessor(name) {
+	    var fieldName = "_" + name;
+	    return function(value) {
+	        if (defined(value)) {
+	            this._observerField(fieldName, value);
+	            this.geometryChange();
+	            return this;
+	        }
+
+	        return this[fieldName];
+	    };
+	}
+
+	function defineGeometryAccessors(fn, names) {
+	    for (var i = 0; i < names.length; i++) {
+	        fn[names[i]] = geometryAccessor(names[i]);
+	    }
+	}
+
+	var withGeometry = function (TBase, names) {
+	    if (names === void 0) { names = [ "geometry" ]; }
+
+	    var result = (function (TBase) {
+	        function result () {
+	            TBase.apply(this, arguments);
+	        }extendStatic(result, TBase);
+	        result.prototype = Object.create( TBase && TBase.prototype );
+	        result.prototype.constructor = result;
+	        result.fn = result.prototype;
+	        result.fn.init = result.fn.constructor;
+
+	        return result;
+	    }(TBase));
+	    defineGeometryAccessors(result.prototype, names);
+
+	    return result;
+	};
+
+	var DEFAULT_STROKE = "#000";
+
+	var Circle = (function (superclass) {
+	    function Circle(geometry, options) {
+	        if (geometry === void 0) { geometry = new Circle$2(); }
+	        if (options === void 0) { options = {}; }
+
+	        superclass.call(this, options);
+
+	        this.geometry(geometry);
+
+	        if (!defined(this.options.stroke)) {
+	            this.stroke(DEFAULT_STROKE);
+	        }
+	    }
+
+	    extendStatic(Circle, superclass);
+	    Circle.prototype = Object.create( superclass && superclass.prototype );
+	    Circle.prototype.constructor = Circle;
+	    Circle.fn = Circle.prototype;
+	    Circle.fn.init = Circle.fn.constructor;
+
+	    var prototypeAccessors = { nodeType: {} };
+
+	    prototypeAccessors.nodeType.get = function () {
+	        return "Circle";
+	    };
+
+	    Circle.prototype.rawBBox = function rawBBox () {
+	        return this._geometry.bbox();
+	    };
+
+	    Circle.prototype._bbox = function _bbox (matrix) {
+	        return this._geometry.bbox(matrix);
+	    };
+
+	    Circle.prototype._containsPoint = function _containsPoint (point) {
+	        return this.geometry().containsPoint(point);
+	    };
+
+	    Circle.prototype._isOnPath = function _isOnPath (point) {
+	        return this.geometry()._isOnPath(point, this.options.stroke.width / 2);
+	    };
+
+	    Object.defineProperties( Circle.prototype, prototypeAccessors );
+
+	    return Circle;
+	}(paintable(measurable(withGeometry(Element$1)))));
 
 	var PRECISION = 10;
 
-	function close(a, b, tolerance) {
+	function close$1(a, b, tolerance) {
 	    if (tolerance === void 0) { tolerance = PRECISION; }
 
 	    return round(Math.abs(a - b), tolerance) === 0;
 	}
 
 	function closeOrLess(a, b, tolerance) {
-	    return a < b || close(a, b, tolerance);
+	    return a < b || close$1(a, b, tolerance);
 	}
 
 	function lineIntersection(p0, p1, p2, p3) {
@@ -1144,109 +1824,16 @@ module.exports =
 	    }
 	}
 
-	var Transformation = Class.extend({
-	    init: function(matrix) {
-	        if (matrix === void 0) { matrix = Matrix.unit(); }
-
-	        this._matrix = matrix;
-	    },
-
-	    clone: function() {
-	        return new Transformation(
-	            this._matrix.clone()
-	        );
-	    },
-
-	    equals: function(other) {
-	        return other &&
-	               other._matrix.equals(this._matrix);
-	    },
-
-	    translate: function(x, y) {
-	        this._matrix = this._matrix.multiplyCopy(Matrix.translate(x, y));
-
-	        this._optionsChange();
-	        return this;
-	    },
-
-	    scale: function(scaleX, scaleY, origin) {
-	        if (scaleY === void 0) { scaleY = scaleX; }
-	        if (origin === void 0) { origin = null; }
-
-	        var originPoint = origin;
-
-	        if (originPoint) {
-	            originPoint = Point.create(originPoint);
-	            this._matrix = this._matrix.multiplyCopy(Matrix.translate(originPoint.x, originPoint.y));
-	        }
-
-	        this._matrix = this._matrix.multiplyCopy(Matrix.scale(scaleX, scaleY));
-
-	        if (originPoint) {
-	            this._matrix = this._matrix.multiplyCopy(Matrix.translate(-originPoint.x, -originPoint.y));
-	        }
-
-	        this._optionsChange();
-	        return this;
-	    },
-
-	    rotate: function(angle, origin) {
-	        var originPoint = Point.create(origin) || Point.ZERO;
-
-	        this._matrix = this._matrix.multiplyCopy(Matrix.rotate(angle, originPoint.x, originPoint.y));
-
-	        this._optionsChange();
-	        return this;
-	    },
-
-	    multiply: function(transformation) {
-	        var matrix = toMatrix(transformation);
-
-	        this._matrix = this._matrix.multiplyCopy(matrix);
-
-	        this._optionsChange();
-	        return this;
-	    },
-
-	    matrix: function(value) {
-	        if (value) {
-	            this._matrix = value;
-	            this._optionsChange();
-	            return this;
-	        }
-
-	        return this._matrix;
-	    },
-
-	    _optionsChange: function() {
-	        this.optionsChange({
-	            field: "transform",
-	            value: this
-	        });
-	    }
-	});
-
-	ObserversMixin.extend(Transformation.prototype);
-
-	function transform(matrix) {
-	    if (matrix === null) {
-	        return null;
-	    }
-
-	    if (matrix instanceof Transformation) {
-	        return matrix;
-	    }
-
-	    return new Transformation(matrix);
-	}
-
 	var MAX_INTERVAL = 45;
 	var pow$1 = Math.pow;
+	var accessors = [ "radiusX", "radiusY", "startAngle", "endAngle", "anticlockwise" ];
 
-	var Arc = Class.extend({
-	    init: function(center, options) {
+	var Arc$2 = (function (superclass) {
+	    function Arc(center, options) {
 	        if (center === void 0) { center = new Point(); }
 	        if (options === void 0) { options = {}; }
+
+	        superclass.call(this);
 
 	        this.setCenter(center);
 
@@ -1256,9 +1843,15 @@ module.exports =
 	        this.endAngle = options.endAngle;
 	        this.anticlockwise = options.anticlockwise || false;
 	        this.xRotation = options.xRotation;
-	    },
+	    }
 
-	    clone: function() {
+	    extendStatic(Arc, superclass);
+	    Arc.prototype = Object.create( superclass && superclass.prototype );
+	    Arc.prototype.constructor = Arc;
+	    Arc.fn = Arc.prototype;
+	    Arc.fn.init = Arc.fn.constructor;
+
+	    Arc.prototype.clone = function clone () {
 	        return new Arc(this.center, {
 	            radiusX: this.radiusX,
 	            radiusY: this.radiusY,
@@ -1266,19 +1859,19 @@ module.exports =
 	            endAngle: this.endAngle,
 	            anticlockwise: this.anticlockwise
 	        });
-	    },
+	    };
 
-	    setCenter: function(value) {
+	    Arc.prototype.setCenter = function setCenter (value) {
 	        this._observerField("center", Point.create(value));
 	        this.geometryChange();
 	        return this;
-	    },
+	    };
 
-	    getCenter: function() {
+	    Arc.prototype.getCenter = function getCenter () {
 	        return this.center;
-	    },
+	    };
 
-	    pointAt: function(angle) {
+	    Arc.prototype.pointAt = function pointAt (angle) {
 	        var center = this.center;
 	        var radian = rad(angle);
 
@@ -1286,9 +1879,9 @@ module.exports =
 	            center.x + this.radiusX * Math.cos(radian),
 	            center.y + this.radiusY * Math.sin(radian)
 	        );
-	    },
+	    };
 
-	    curvePoints: function() {
+	    Arc.prototype.curvePoints = function curvePoints () {
 	        var this$1 = this;
 
 	        var startAngle = this.startAngle;
@@ -1301,7 +1894,7 @@ module.exports =
 	        var currentAngle = startAngle;
 	        var transformation;
 	        if (this.xRotation) {
-	            transformation = transform().rotate(this.xRotation, this.center);
+	            transformation = transform$1().rotate(this.xRotation, this.center);
 	        }
 
 	        for (var i = 1; i <= subIntervalsCount; i++) {
@@ -1313,9 +1906,9 @@ module.exports =
 	        }
 
 	        return curvePoints;
-	    },
+	    };
 
-	    bbox: function(matrix) {
+	    Arc.prototype.bbox = function bbox (matrix) {
 	        var this$1 = this;
 
 	        var interval = this._arcInterval();
@@ -1350,9 +1943,9 @@ module.exports =
 	        }
 
 	        return Rect.fromPoints(minPoint, maxPoint);
-	    },
+	    };
 
-	    _arcInterval: function() {
+	    Arc.prototype._arcInterval = function _arcInterval () {
 	        var ref = this;
 	        var startAngle = ref.startAngle;
 	        var endAngle = ref.endAngle;
@@ -1372,9 +1965,9 @@ module.exports =
 	            startAngle: startAngle,
 	            endAngle: endAngle
 	        };
-	    },
+	    };
 
-	    _intervalCurvePoints: function(startAngle, endAngle, transformation) {
+	    Arc.prototype._intervalCurvePoints = function _intervalCurvePoints (startAngle, endAngle, transformation) {
 	        var p1 = this.pointAt(startAngle);
 	        var p2 = this.pointAt(endAngle);
 	        var p1Derivative = this._derivativeAt(startAngle);
@@ -1395,15 +1988,15 @@ module.exports =
 	            cp2: cp2,
 	            p2: p2
 	        };
-	    },
+	    };
 
-	    _derivativeAt: function(angle) {
+	    Arc.prototype._derivativeAt = function _derivativeAt (angle) {
 	        var radian = rad(angle);
 
 	        return new Point(-this.radiusX * Math.sin(radian), this.radiusY * Math.cos(radian));
-	    },
+	    };
 
-	    containsPoint: function(point) {
+	    Arc.prototype.containsPoint = function containsPoint (point) {
 	        var interval = this._arcInterval();
 	        var intervalAngle = interval.endAngle - interval.startAngle;
 	        var ref = this;
@@ -1431,9 +2024,9 @@ module.exports =
 	            containsPoint = (inAngleRange && closeOrLess(distance, pointRadius)) || (!inAngleRange && (!intersection || intersection.equals(point)));
 	        }
 	        return containsPoint;
-	    },
+	    };
 
-	    _isOnPath: function(point, width) {
+	    Arc.prototype._isOnPath = function _isOnPath (point, width) {
 	        var interval = this._arcInterval();
 	        var center = this.center;
 	        var angle = calculateAngle(center.x, center.y, this.radiusX, this.radiusY, point.x, point.y);
@@ -1444,34 +2037,33 @@ module.exports =
 	        var inAngleRange = interval.startAngle <= angle && angle <= interval.endAngle;
 
 	        return inAngleRange && this.pointAt(angle).distanceTo(point) <= width;
-	    }
-	});
+	    };
 
-	Arc.fromPoints = function(start, end, rx, ry, largeArc, swipe, rotation) {// eslint-disable-line max-params
-	    var arcParameters = normalizeArcParameters({
-	        x1: start.x,
-	        y1: start.y,
-	        x2: end.x,
-	        y2: end.y,
-	        rx: rx,
-	        ry: ry,
-	        largeArc: largeArc,
-	        swipe: swipe,
-	        rotation: rotation
-	    });
+	    Arc.fromPoints = function fromPoints (start, end, rx, ry, largeArc, swipe, rotation) {// eslint-disable-line max-params
+	        var arcParameters = normalizeArcParameters({
+	            x1: start.x,
+	            y1: start.y,
+	            x2: end.x,
+	            y2: end.y,
+	            rx: rx,
+	            ry: ry,
+	            largeArc: largeArc,
+	            swipe: swipe,
+	            rotation: rotation
+	        });
 
-	    return new Arc(arcParameters.center, {
-	        startAngle: arcParameters.startAngle,
-	        endAngle: arcParameters.endAngle,
-	        radiusX: arcParameters.radiusX,
-	        radiusY: arcParameters.radiusY,
-	        xRotation: arcParameters.xRotation,
-	        anticlockwise: swipe === 0
-	    });
-	};
+	        return new Arc(arcParameters.center, {
+	            startAngle: arcParameters.startAngle,
+	            endAngle: arcParameters.endAngle,
+	            radiusX: arcParameters.radiusX,
+	            radiusY: arcParameters.radiusY,
+	            xRotation: arcParameters.xRotation,
+	            anticlockwise: swipe === 0
+	        });
+	    };
 
-	defineAccessors(Arc.prototype, [ "radiusX", "radiusY", "startAngle", "endAngle", "anticlockwise" ]);
-	ObserversMixin.extend(Arc.prototype);
+	    return Arc;
+	}(withAccessors(HasObservers, accessors)));
 
 	function calculateAngle(cx, cy, rx, ry, x, y) {
 	    var cos = round((x - cx) / rx, 3);
@@ -1569,28 +2161,167 @@ module.exports =
 	    return startAngle;
 	}
 
-	function pointAccessor(name) {
-	    var fieldName = "_" + name;
-	    return function(value) {
-	        if (defined(value)) {
-	            this._observerField(fieldName, Point.create(value));
-	            this.geometryChange();
+	var push = [].push;
+	var pop = [].pop;
+	var splice = [].splice;
+	var shift = [].shift;
+	var slice = [].slice;
+	var unshift = [].unshift;
+
+	var ElementsArray = (function (HasObservers$$1) {
+	    function ElementsArray(array) {
+	        if (array === void 0) { array = []; }
+
+	        HasObservers$$1.call(this);
+
+	        this.length = 0;
+	        this._splice(0, array.length, array);
+	    }
+
+	    extendStatic(ElementsArray, HasObservers$$1);
+	    ElementsArray.prototype = Object.create( HasObservers$$1 && HasObservers$$1.prototype );
+	    ElementsArray.prototype.constructor = ElementsArray;
+	    ElementsArray.fn = ElementsArray.prototype;
+	    ElementsArray.fn.init = ElementsArray.fn.constructor;
+
+	    ElementsArray.prototype.elements = function elements (value) {
+	        if (value) {
+	            this._splice(0, this.length, value);
+
+	            this._change();
 	            return this;
 	        }
 
-	        return this[fieldName];
+	        return this.slice(0);
 	    };
-	}
 
-	function definePointAccessors(fn, names) {
-	    for (var i = 0; i < names.length; i++) {
-	        fn[names[i]] = pointAccessor(names[i]);
+	    ElementsArray.prototype.push = function push$1 () {
+	        var elements = arguments;
+	        var result = push.apply(this, elements);
+
+	        this._add(elements);
+
+	        return result;
+	    };
+
+	    ElementsArray.prototype.slice = function slice$1 () {
+	        return slice.call(this);
+	    };
+
+	    ElementsArray.prototype.pop = function pop$1 () {
+	        var length = this.length;
+	        var result = pop.apply(this);
+
+	        if (length) {
+	            this._remove([ result ]);
+	        }
+
+	        return result;
+	    };
+
+	    ElementsArray.prototype.splice = function splice$1 (index, howMany) {
+	        var elements = slice.call(arguments, 2);
+	        var result = this._splice(index, howMany, elements);
+
+	        this._change();
+
+	        return result;
+	    };
+
+	    ElementsArray.prototype.shift = function shift$1 () {
+	        var length = this.length;
+	        var result = shift.apply(this);
+
+	        if (length) {
+	            this._remove([ result ]);
+	        }
+
+	        return result;
+	    };
+
+	    ElementsArray.prototype.unshift = function unshift$1 () {
+	        var elements = arguments;
+	        var result = unshift.apply(this, elements);
+
+	        this._add(elements);
+
+	        return result;
+	    };
+
+	    ElementsArray.prototype.indexOf = function indexOf (element) {
+	        var this$1 = this;
+
+	        var length = this.length;
+
+	        for (var idx = 0; idx < length; idx++) {
+	            if (this$1[idx] === element) {
+	                return idx;
+	            }
+	        }
+	        return -1;
+	    };
+
+	    ElementsArray.prototype._splice = function _splice (index, howMany, elements) {
+	        var result = splice.apply(this, [ index, howMany ].concat(elements));
+
+	        this._clearObserver(result);
+	        this._setObserver(elements);
+
+	        return result;
+	    };
+
+	    ElementsArray.prototype._add = function _add (elements) {
+	        this._setObserver(elements);
+	        this._change();
+	    };
+
+	    ElementsArray.prototype._remove = function _remove (elements) {
+	        this._clearObserver(elements);
+	        this._change();
+	    };
+
+	    ElementsArray.prototype._setObserver = function _setObserver (elements) {
+	        var this$1 = this;
+
+	        for (var idx = 0; idx < elements.length; idx++) {
+	            elements[idx].addObserver(this$1);
+	        }
+	    };
+
+	    ElementsArray.prototype._clearObserver = function _clearObserver (elements) {
+	        var this$1 = this;
+
+	        for (var idx = 0; idx < elements.length; idx++) {
+	            elements[idx].removeObserver(this$1);
+	        }
+	    };
+
+	    ElementsArray.prototype._change = function _change () {};
+
+	    return ElementsArray;
+	}(HasObservers));
+
+	var GeometryElementsArray = (function (ElementsArray$$1) {
+	    function GeometryElementsArray () {
+	        ElementsArray$$1.apply(this, arguments);
 	    }
-	}
+
+	    extendStatic(GeometryElementsArray, ElementsArray$$1);
+	    GeometryElementsArray.prototype = Object.create( ElementsArray$$1 && ElementsArray$$1.prototype );
+	    GeometryElementsArray.prototype.constructor = GeometryElementsArray;
+	    GeometryElementsArray.fn = GeometryElementsArray.prototype;
+	    GeometryElementsArray.fn.init = GeometryElementsArray.fn.constructor;
+
+	    GeometryElementsArray.prototype._change = function _change () {
+	        this.geometryChange();
+	    };
+
+	    return GeometryElementsArray;
+	}(ElementsArray));
 
 	function isOutOfEndPoint(endPoint, controlPoint, point) {
 	    var angle = deg(Math.atan2(controlPoint.y - endPoint.y, controlPoint.x - endPoint.x));
-	    var rotatedPoint = point.transformCopy(transform().rotate(-angle, endPoint));
+	    var rotatedPoint = point.transformCopy(transform$1().rotate(-angle, endPoint));
 
 	    return rotatedPoint.x < endPoint.x;
 	}
@@ -1611,52 +2342,62 @@ module.exports =
 	    ];
 	}
 
-	var ComplexNumber = Class.extend({
-	    init: function(real, img) {
+	var ComplexNumber = (function (Class$$1) {
+	    function ComplexNumber(real, img) {
 	        if (real === void 0) { real = 0; }
 	        if (img === void 0) { img = 0; }
 
+	        Class$$1.call(this);
+
 	        this.real = real;
 	        this.img = img;
-	    },
+	    }
 
-	    add: function(cNumber) {
+	    extendStatic(ComplexNumber, Class$$1);
+	    ComplexNumber.prototype = Object.create( Class$$1 && Class$$1.prototype );
+	    ComplexNumber.prototype.constructor = ComplexNumber;
+	    ComplexNumber.fn = ComplexNumber.prototype;
+	    ComplexNumber.fn.init = ComplexNumber.fn.constructor;
+
+	    ComplexNumber.prototype.add = function add (cNumber) {
 	        return new ComplexNumber(round(this.real + cNumber.real, PRECISION), round(this.img + cNumber.img, PRECISION));
-	    },
+	    };
 
-	    addConstant: function(value) {
+	    ComplexNumber.prototype.addConstant = function addConstant (value) {
 	        return new ComplexNumber(this.real + value, this.img);
-	    },
+	    };
 
-	    negate: function() {
+	    ComplexNumber.prototype.negate = function negate () {
 	        return new ComplexNumber(-this.real, -this.img);
-	    },
+	    };
 
-	    multiply: function(cNumber) {
+	    ComplexNumber.prototype.multiply = function multiply (cNumber) {
 	        return new ComplexNumber(this.real * cNumber.real - this.img * cNumber.img,
 	            this.real * cNumber.img + this.img * cNumber.real);
-	    },
+	    };
 
-	    multiplyConstant: function(value) {
+	    ComplexNumber.prototype.multiplyConstant = function multiplyConstant (value) {
 	        return new ComplexNumber(this.real * value, this.img * value);
-	    },
+	    };
 
-	    nthRoot: function(n) {
+	    ComplexNumber.prototype.nthRoot = function nthRoot (n) {
 	        var rad$$1 = Math.atan2(this.img, this.real);
 	        var r = Math.sqrt(Math.pow(this.img, 2) + Math.pow(this.real, 2));
 	        var nthR = Math.pow(r, 1 / n);
 
 	        return new ComplexNumber(nthR * Math.cos(rad$$1 / n), nthR * Math.sin(rad$$1 / n)); //Moivre's formula
-	    },
+	    };
 
-	    equals: function(cNumber) {
+	    ComplexNumber.prototype.equals = function equals (cNumber) {
 	        return this.real === cNumber.real && this.img === cNumber.img;
-	    },
+	    };
 
-	    isReal: function() {
+	    ComplexNumber.prototype.isReal = function isReal () {
 	        return this.img === 0;
-	    }
-	});
+	    };
+
+	    return ComplexNumber;
+	}(Class));
 
 	function numberSign(x) {
 	    return x < 0 ? -1 : 1;
@@ -1738,7 +2479,7 @@ module.exports =
 	    var count = 0;
 	    for (var i = 0; i < roots.length; i++) {
 	        rayIntersection = calculateCurveAt(roots[i], "y", points);
-	        intersectsRay = close(rayIntersection, point.y) || rayIntersection > point.y;
+	        intersectsRay = close$1(rayIntersection, point.y) || rayIntersection > point.y;
 	        if (intersectsRay && (((roots[i] === 0 || roots[i] === 1) && bbox.bottomRight().x > point.x) || (0 < roots[i] && roots[i] < 1))) {
 	            count++;
 	        }
@@ -1766,15 +2507,60 @@ module.exports =
 	    return intersects ? 1 : 0;
 	}
 
-	var Segment = Class.extend({
-	    init: function(anchor, controlIn, controlOut) {
+	function pointAccessor(name) {
+	    var fieldName = "_" + name;
+	    return function(value) {
+	        if (defined(value)) {
+	            this._observerField(fieldName, Point.create(value));
+	            this.geometryChange();
+	            return this;
+	        }
+
+	        return this[fieldName];
+	    };
+	}
+
+	function definePointAccessors(fn, names) {
+	    for (var i = 0; i < names.length; i++) {
+	        fn[names[i]] = pointAccessor(names[i]);
+	    }
+	}
+
+	var withPoints = function (TBase, names) {
+	    var result = (function (TBase) {
+	        function result () {
+	            TBase.apply(this, arguments);
+	        }extendStatic(result, TBase);
+	        result.prototype = Object.create( TBase && TBase.prototype );
+	        result.prototype.constructor = result;
+	        result.fn = result.prototype;
+	        result.fn.init = result.fn.constructor;
+
+	        return result;
+	    }(TBase));
+	    definePointAccessors(result.prototype, names);
+
+	    return result;
+	};
+
+	var points = [ "anchor", "controlIn", "controlOut" ];
+
+	var Segment = (function (superclass) {
+	    function Segment(anchor, controlIn, controlOut) {
+	        superclass.call(this);
 
 	        this.anchor(anchor || new Point());
 	        this.controlIn(controlIn);
 	        this.controlOut(controlOut);
-	    },
+	    }
 
-	    bboxTo: function(toSegment, matrix) {
+	    extendStatic(Segment, superclass);
+	    Segment.prototype = Object.create( superclass && superclass.prototype );
+	    Segment.prototype.constructor = Segment;
+	    Segment.fn = Segment.prototype;
+	    Segment.fn.init = Segment.fn.constructor;
+
+	    Segment.prototype.bboxTo = function bboxTo (toSegment, matrix) {
 	        var segmentAnchor = this.anchor().transformCopy(matrix);
 	        var toSegmentAnchor = toSegment.anchor().transformCopy(matrix);
 	        var rect;
@@ -1789,13 +2575,13 @@ module.exports =
 	        }
 
 	        return rect;
-	    },
+	    };
 
-	    _lineBoundingBox: function(p1, p2) {
+	    Segment.prototype._lineBoundingBox = function _lineBoundingBox (p1, p2) {
 	        return Rect.fromPoints(p1, p2);
-	    },
+	    };
 
-	    _curveBoundingBox: function(p1, cp1, cp2, p2) {
+	    Segment.prototype._curveBoundingBox = function _curveBoundingBox (p1, cp1, cp2, p2) {
 	        var points = [ p1, cp1, cp2, p2 ];
 	        var extremesX = this._curveExtremesFor(points, "x");
 	        var extremesY = this._curveExtremesFor(points, "y");
@@ -1803,9 +2589,9 @@ module.exports =
 	        var yLimits = arrayLimits([ extremesY.min, extremesY.max, p1.y, p2.y ]);
 
 	        return Rect.fromPoints(new Point(xLimits.min, yLimits.min), new Point(xLimits.max, yLimits.max));
-	    },
+	    };
 
-	    _curveExtremesFor: function(points, field) {
+	    Segment.prototype._curveExtremesFor = function _curveExtremesFor (points, field) {
 	        var extremes = this._curveExtremes(
 	            points[0][field], points[1][field],
 	            points[2][field], points[3][field]
@@ -1815,9 +2601,9 @@ module.exports =
 	            min: calculateCurveAt(extremes.min, field, points),
 	            max: calculateCurveAt(extremes.max, field, points)
 	        };
-	    },
+	    };
 
-	    _curveExtremes: function(x1, x2, x3, x4) {
+	    Segment.prototype._curveExtremes = function _curveExtremes (x1, x2, x3, x4) {
 	        var a = x1 - 3 * x2 + 3 * x3 - x4;
 	        var b = - 2 * (x1 - 2 * x2 + x3);
 	        var c = x1 - x2;
@@ -1848,9 +2634,9 @@ module.exports =
 	            min: min,
 	            max: max
 	        };
-	    },
+	    };
 
-	    _intersectionsTo: function(segment, point) {
+	    Segment.prototype._intersectionsTo = function _intersectionsTo (segment, point) {
 	        var intersectionsCount;
 	        if (this.controlOut() && segment.controlIn()) {
 	            intersectionsCount = curveIntersectionsCount([ this.anchor(), this.controlOut(), segment.controlIn(), segment.anchor() ], point, this.bboxTo(segment));
@@ -1858,9 +2644,9 @@ module.exports =
 	            intersectionsCount = lineIntersectionsCount(this.anchor(), segment.anchor(), point);
 	        }
 	        return intersectionsCount;
-	    },
+	    };
 
-	    _isOnCurveTo: function(segment, point, width, endSegment) {
+	    Segment.prototype._isOnCurveTo = function _isOnCurveTo (segment, point, width, endSegment) {
 	        var bbox = this.bboxTo(segment).expand(width, width);
 	        if (bbox.containsPoint(point)) {
 	            var p1 = this.anchor();
@@ -1879,21 +2665,21 @@ module.exports =
 	            if (hasRootsInRange(points, point, "x", "y", width) || hasRootsInRange(points, point, "y", "x", width)) {
 	                return true;
 	            }
-	            var rotation = transform().rotate(45, point);
+	            var rotation = transform$1().rotate(45, point);
 	            var rotatedPoints = [ p1.transformCopy(rotation), p2.transformCopy(rotation), p3.transformCopy(rotation), p4.transformCopy(rotation) ];
 	            return hasRootsInRange(rotatedPoints, point, "x", "y", width) || hasRootsInRange(rotatedPoints, point, "y", "x", width);
 	        }
-	    },
+	    };
 
-	    _isOnLineTo: function(segment, point, width) {
+	    Segment.prototype._isOnLineTo = function _isOnLineTo (segment, point, width) {
 	        var p1 = this.anchor();
 	        var p2 = segment.anchor();
 	        var angle = deg(Math.atan2(p2.y - p1.y, p2.x - p1.x));
 	        var rect = new Rect([ p1.x, p1.y - width / 2 ], [ p1.distanceTo(p2), width ]);
-	        return rect.containsPoint(point.transformCopy(transform().rotate(-angle, p1)));
-	    },
+	        return rect.containsPoint(point.transformCopy(transform$1().rotate(-angle, p1)));
+	    };
 
-	    _isOnPathTo: function(segment, point, width, endSegment) {
+	    Segment.prototype._isOnPathTo = function _isOnPathTo (segment, point, width, endSegment) {
 	        var isOnPath;
 	        if (this.controlOut() && segment.controlIn()) {
 	            isOnPath = this._isOnCurveTo(segment, point, width / 2, endSegment);
@@ -1901,11 +2687,10 @@ module.exports =
 	            isOnPath = this._isOnLineTo(segment, point, width);
 	        }
 	        return isOnPath;
-	    }
-	});
+	    };
 
-	definePointAccessors(Segment.prototype, [ "anchor", "controlIn", "controlOut" ]);
-	ObserversMixin.extend(Segment.prototype);
+	    return Segment;
+	}(withPoints(HasObservers, points)));
 
 	function arrayLimits(arr) {
 	    var length = arr.length;
@@ -1922,745 +2707,6 @@ module.exports =
 	        max: max
 	    };
 	}
-
-	var geometry = {
-		Circle: Circle,
-		Arc: Arc,
-		Rect: Rect,
-		Point: Point,
-		Segment: Segment,
-		Matrix: Matrix,
-		Size: Size,
-		toMatrix: toMatrix,
-		Transformation: Transformation,
-		transform: transform
-	};
-
-	var matrixRegexp = /matrix\((.*)\)/;
-
-	function parseMatrix(matrixString) {
-	    var match = matrixString.match(matrixRegexp);
-	    if (match === null || match.length !== 2) {
-	        return Matrix.unit();
-	    }
-
-	    var members = match[1].split(',').map(function (x) { return parseFloat(x); });
-	    return new (Function.prototype.bind.apply( Matrix, [ null ].concat( members) ));
-	}
-
-	function transformMatrix(element) {
-	    var transform$$1 = getComputedStyle(element).transform;
-
-	    if (transform$$1 === 'none') {
-	        return Matrix.unit();
-	    }
-
-	    return parseMatrix(transform$$1);
-	}
-
-	function elementScale(element) {
-	    if (!element) {
-	        return Matrix.unit();
-	    }
-
-	    var matrix = transformMatrix(element);
-	    var parent = element.parentElement;
-	    while (parent) {
-	        var parentMatrix = transformMatrix(parent);
-	        matrix = matrix.multiplyCopy(parentMatrix);
-	        parent = parent.parentElement;
-	    }
-
-	    matrix.b = matrix.c = matrix.e = matrix.f = 0;
-	    return matrix;
-	}
-
-	var util = {
-		append: append,
-		arabicToRoman: arabicToRoman,
-		createPromise: createPromise,
-		defined: defined,
-		definitionId: definitionId,
-		deg: deg,
-		encodeBase64: encodeBase64,
-		eventCoordinates: eventCoordinates,
-		eventElement: eventElement,
-		isTransparent: isTransparent,
-		last: last,
-		limitValue: limitValue,
-		mergeSort: mergeSort,
-		promiseAll: promiseAll,
-		rad: rad,
-		round: round,
-		valueOrDefault: valueOrDefault,
-		bindEvents: bindEvents,
-		elementOffset: elementOffset,
-		elementSize: elementSize,
-		elementStyles: elementStyles,
-		unbindEvents: unbindEvents,
-		elementPadding: elementPadding,
-		elementScale: elementScale,
-		DEG_TO_RAD: DEG_TO_RAD,
-		MAX_NUM: MAX_NUM,
-		MIN_NUM: MIN_NUM
-	};
-
-	var toString = {}.toString;
-
-	var OptionsStore = Class.extend({
-	    init: function(options, prefix) {
-	        var this$1 = this;
-	        if (prefix === void 0) { prefix = ""; }
-
-	        this.prefix = prefix;
-
-	        for (var field in options) {
-	            var member = options[field];
-	            member = this$1._wrap(member, field);
-	            this$1[field] = member;
-	        }
-	    },
-
-	    get: function(field) {
-	        var parts = field.split(".");
-	        var result = this;
-
-	        while (parts.length && result) {
-	            var part = parts.shift();
-	            result = result[part];
-	        }
-
-	        return result;
-	    },
-
-	    set: function(field, value) {
-	        var current = this.get(field);
-
-	        if (current !== value) {
-	            this._set(field, this._wrap(value, field));
-	            this.optionsChange({
-	                field: this.prefix + field,
-	                value: value
-	            });
-	        }
-	    },
-
-	    _set: function(field, value) {
-	        var this$1 = this;
-
-	        var composite = field.indexOf(".") >= 0;
-	        var parentObj = this;
-	        var fieldName = field;
-
-	        if (composite) {
-	            var parts = fieldName.split(".");
-	            var prefix = this.prefix;
-
-	            while (parts.length > 1) {
-	                fieldName = parts.shift();
-	                prefix += fieldName + ".";
-
-	                var obj = parentObj[fieldName];
-
-	                if (!obj) {
-	                    obj = new OptionsStore({}, prefix);
-	                    obj.addObserver(this$1);
-	                    parentObj[fieldName] = obj;
-	                }
-	                parentObj = obj;
-	            }
-	            fieldName = parts[0];
-	        }
-
-	        parentObj._clear(fieldName);
-	        parentObj[fieldName] = value;
-	    },
-
-	    _clear: function(field) {
-	        var current = this[field];
-	        if (current && current.removeObserver) {
-	            current.removeObserver(this);
-	        }
-	    },
-
-	    _wrap: function(object, field) {
-	        var type = toString.call(object);
-	        var wrapped = object;
-
-	        if (wrapped !== null && defined(wrapped) && type === "[object Object]") {
-	            if (!(object instanceof OptionsStore) && !(object instanceof Class)) {
-	                wrapped = new OptionsStore(wrapped, this.prefix + field + ".");
-	            }
-
-	            wrapped.addObserver(this);
-	        }
-
-	        return wrapped;
-	    }
-	});
-
-	ObserversMixin.extend(OptionsStore.prototype);
-
-	var Element$1 = Class.extend({
-	    init: function(options) {
-
-	        this._initOptions(options);
-	    },
-
-	    _initOptions: function(options) {
-	        if (options === void 0) { options = {}; }
-
-	        var clip = options.clip;
-	        var transform$$1 = options.transform;
-
-	        if (transform$$1) {
-	            options.transform = transform(transform$$1);
-	        }
-
-	        if (clip && !clip.id) {
-	            clip.id = definitionId();
-	        }
-
-	        this.options = new OptionsStore(options);
-	        this.options.addObserver(this);
-	    },
-
-	    transform: function(value) {
-	        if (defined(value)) {
-	            this.options.set("transform", transform(value));
-	        } else {
-	            return this.options.get("transform");
-	        }
-	    },
-
-	    parentTransform: function() {
-	        var element = this;
-	        var parentMatrix;
-
-	        while (element.parent) {
-	            element = element.parent;
-	            var transformation = element.transform();
-	            if (transformation) {
-	                parentMatrix = transformation.matrix().multiplyCopy(parentMatrix || Matrix.unit());
-	            }
-	        }
-
-	        if (parentMatrix) {
-	            return transform(parentMatrix);
-	        }
-	    },
-
-	    currentTransform: function(parentTransform) {
-	        if (parentTransform === void 0) { parentTransform = this.parentTransform(); }
-
-	        var elementTransform = this.transform();
-	        var elementMatrix = toMatrix(elementTransform);
-
-	        var parentMatrix = toMatrix(parentTransform);
-	        var combinedMatrix;
-
-	        if (elementMatrix && parentMatrix) {
-	            combinedMatrix = parentMatrix.multiplyCopy(elementMatrix);
-	        } else {
-	            combinedMatrix = elementMatrix || parentMatrix;
-	        }
-
-	        if (combinedMatrix) {
-	            return transform(combinedMatrix);
-	        }
-	    },
-
-	    visible: function(value) {
-	        if (defined(value)) {
-	            this.options.set("visible", value);
-	            return this;
-	        }
-
-	        return this.options.get("visible") !== false;
-	    },
-
-	    clip: function(value) {
-	        var options = this.options;
-	        if (defined(value)) {
-	            if (value && !value.id) {
-	                value.id = definitionId();
-	            }
-	            options.set("clip", value);
-	            return this;
-	        }
-
-	        return options.get("clip");
-	    },
-
-	    opacity: function(value) {
-	        if (defined(value)) {
-	            this.options.set("opacity", value);
-	            return this;
-	        }
-
-	        return valueOrDefault(this.options.get("opacity"), 1);
-	    },
-
-	    clippedBBox: function(transformation) {
-	        var bbox = this._clippedBBox(transformation);
-	        if (bbox) {
-	            var clip = this.clip();
-	            return clip ? Rect.intersect(bbox, clip.bbox(transformation)) : bbox;
-	        }
-	    },
-
-	    containsPoint: function(point, parentTransform) {
-	        if (this.visible()) {
-	            var transform$$1 = this.currentTransform(parentTransform);
-	            var transformedPoint = point;
-	            if (transform$$1) {
-	                transformedPoint = point.transformCopy(transform$$1.matrix().invert());
-	            }
-	            return (this._hasFill() && this._containsPoint(transformedPoint)) || (this._isOnPath && this._hasStroke() && this._isOnPath(transformedPoint));
-	        }
-	        return false;
-	    },
-
-	    _hasFill: function() {
-	        var fill = this.options.fill;
-	        return fill && !isTransparent(fill.color);
-	    },
-
-	    _hasStroke: function() {
-	        var stroke = this.options.stroke;
-	        return stroke && stroke.width > 0 && !isTransparent(stroke.color);
-	    },
-
-	    _clippedBBox: function(transformation) {
-	        return this.bbox(transformation);
-	    }
-	});
-
-	Element$1.prototype.nodeType = "Element";
-
-	ObserversMixin.extend(Element$1.prototype);
-
-	var GRADIENT = "Gradient";
-
-	var Paintable = {
-	    extend: function(proto) {
-	        proto.fill = this.fill;
-	        proto.stroke = this.stroke;
-	    },
-
-	    fill: function(color, opacity) {
-	        var options = this.options;
-
-	        if (defined(color)) {
-	            if (color && color.nodeType !== GRADIENT) {
-	                var newFill = {
-	                    color: color
-	                };
-	                if (defined(opacity)) {
-	                    newFill.opacity = opacity;
-	                }
-	                options.set("fill", newFill);
-	            } else {
-	                options.set("fill", color);
-	            }
-
-	            return this;
-	        }
-
-	        return options.get("fill");
-	    },
-
-	    stroke: function(color, width, opacity) {
-	        if (defined(color)) {
-	            this.options.set("stroke.color", color);
-
-	            if (defined(width)) {
-	                this.options.set("stroke.width", width);
-	            }
-
-	            if (defined(opacity)) {
-	                this.options.set("stroke.opacity", opacity);
-	            }
-
-	            return this;
-	        }
-
-	        return this.options.get("stroke");
-	    }
-	};
-
-	var IDENTITY_MATRIX_HASH = Matrix.IDENTITY.toString();
-
-	var Measurable = {
-	    extend: function(proto) {
-	        proto.bbox = this.bbox;
-	        proto.geometryChange = this.geometryChange;
-	    },
-
-	    bbox: function(transformation) {
-	        var combinedMatrix = toMatrix(this.currentTransform(transformation));
-	        var matrixHash = combinedMatrix ? combinedMatrix.toString() : IDENTITY_MATRIX_HASH;
-	        var bbox;
-
-	        if (this._bboxCache && this._matrixHash === matrixHash) {
-	            bbox = this._bboxCache.clone();
-	        } else {
-	            bbox = this._bbox(combinedMatrix);
-	            this._bboxCache = bbox ? bbox.clone() : null;
-	            this._matrixHash = matrixHash;
-	        }
-
-	        var strokeWidth = this.options.get("stroke.width");
-	        if (strokeWidth && bbox) {
-	            bbox.expand(strokeWidth / 2);
-	        }
-
-	        return bbox;
-	    },
-
-	    geometryChange: function() {
-	        delete this._bboxCache;
-	        this.trigger("geometryChange", {
-	            element: this
-	        });
-	    }
-	};
-
-	function geometryAccessor(name) {
-	    var fieldName = "_" + name;
-	    return function(value) {
-	        if (defined(value)) {
-	            this._observerField(fieldName, value);
-	            this.geometryChange();
-	            return this;
-	        }
-
-	        return this[fieldName];
-	    };
-	}
-
-	function defineGeometryAccessors(fn, names) {
-	    for (var i = 0; i < names.length; i++) {
-	        fn[names[i]] = geometryAccessor(names[i]);
-	    }
-	}
-
-	var DEFAULT_STROKE = "#000";
-
-	var Circle$1 = Element$1.extend({
-	    init: function(geometry, options) {
-	        if (geometry === void 0) { geometry = new Circle(); }
-	        if (options === void 0) { options = {}; }
-
-	        Element$1.fn.init.call(this, options);
-	        this.geometry(geometry);
-
-	        if (!defined(this.options.stroke)) {
-	            this.stroke(DEFAULT_STROKE);
-	        }
-	    },
-
-	    rawBBox: function() {
-	        return this._geometry.bbox();
-	    },
-
-	    _bbox: function(matrix) {
-	        return this._geometry.bbox(matrix);
-	    },
-
-	    _containsPoint: function(point) {
-	        return this.geometry().containsPoint(point);
-	    },
-
-	    _isOnPath: function(point) {
-	        return this.geometry()._isOnPath(point, this.options.stroke.width / 2);
-	    }
-	});
-
-	Circle$1.prototype.nodeType = "Circle";
-
-	Paintable.extend(Circle$1.prototype);
-	Measurable.extend(Circle$1.prototype);
-	defineGeometryAccessors(Circle$1.prototype, [ "geometry" ]);
-
-	var push = [].push;
-	var pop = [].pop;
-	var splice = [].splice;
-	var shift = [].shift;
-	var slice = [].slice;
-	var unshift = [].unshift;
-
-	var ElementsArray = Class.extend({
-	    init: function(array) {
-	        if (array === void 0) { array = []; }
-
-	        this.length = 0;
-	        this._splice(0, array.length, array);
-	    },
-
-	    elements: function(value) {
-	        if (value) {
-	            this._splice(0, this.length, value);
-
-	            this._change();
-	            return this;
-	        }
-
-	        return this.slice(0);
-	    },
-
-	    push: function() {
-	        var elements = arguments;
-	        var result = push.apply(this, elements);
-
-	        this._add(elements);
-
-	        return result;
-	    },
-
-	    slice: function() {
-	        return slice.call(this);
-	    },
-
-	    pop: function() {
-	        var length = this.length;
-	        var result = pop.apply(this);
-
-	        if (length) {
-	            this._remove([ result ]);
-	        }
-
-	        return result;
-	    },
-
-	    splice: function(index, howMany) {
-	        var elements = slice.call(arguments, 2);
-	        var result = this._splice(index, howMany, elements);
-
-	        this._change();
-
-	        return result;
-	    },
-
-	    shift: function() {
-	        var length = this.length;
-	        var result = shift.apply(this);
-
-	        if (length) {
-	            this._remove([ result ]);
-	        }
-
-	        return result;
-	    },
-
-	    unshift: function() {
-	        var elements = arguments;
-	        var result = unshift.apply(this, elements);
-
-	        this._add(elements);
-
-	        return result;
-	    },
-
-	    indexOf: function(element) {
-	        var this$1 = this;
-
-	        var length = this.length;
-
-	        for (var idx = 0; idx < length; idx++) {
-	            if (this$1[idx] === element) {
-	                return idx;
-	            }
-	        }
-	        return -1;
-	    },
-
-	    _splice: function(index, howMany, elements) {
-	        var result = splice.apply(this, [ index, howMany ].concat(elements));
-
-	        this._clearObserver(result);
-	        this._setObserver(elements);
-
-	        return result;
-	    },
-
-	    _add: function(elements) {
-	        this._setObserver(elements);
-	        this._change();
-	    },
-
-	    _remove: function(elements) {
-	        this._clearObserver(elements);
-	        this._change();
-	    },
-
-	    _setObserver: function(elements) {
-	        var this$1 = this;
-
-	        for (var idx = 0; idx < elements.length; idx++) {
-	            elements[idx].addObserver(this$1);
-	        }
-	    },
-
-	    _clearObserver: function(elements) {
-	        var this$1 = this;
-
-	        for (var idx = 0; idx < elements.length; idx++) {
-	            elements[idx].removeObserver(this$1);
-	        }
-	    },
-
-	    _change: function() {}
-	});
-
-	ObserversMixin.extend(ElementsArray.prototype);
-
-	var GeometryElementsArray = ElementsArray.extend({
-	    _change: function() {
-	        this.geometryChange();
-	    }
-	});
-
-	function elementsBoundingBox(elements, applyTransform, transformation) {
-	    var boundingBox;
-
-	    for (var i = 0; i < elements.length; i++) {
-	        var element = elements[i];
-	        if (element.visible()) {
-	            var elementBoundingBox = applyTransform ? element.bbox(transformation) : element.rawBBox();
-	            if (elementBoundingBox) {
-	                if (boundingBox) {
-	                    boundingBox = Rect.union(boundingBox, elementBoundingBox);
-	                } else {
-	                    boundingBox = elementBoundingBox;
-	                }
-	            }
-	        }
-	    }
-
-	    return boundingBox;
-	}
-
-	function elementsClippedBoundingBox(elements, transformation) {
-	    var boundingBox;
-
-	    for (var i = 0; i < elements.length; i++) {
-	        var element = elements[i];
-	        if (element.visible()) {
-	            var elementBoundingBox = element.clippedBBox(transformation);
-	            if (elementBoundingBox) {
-	                if (boundingBox) {
-	                    boundingBox = Rect.union(boundingBox, elementBoundingBox);
-	                } else {
-	                    boundingBox = elementBoundingBox;
-	                }
-	            }
-	        }
-	    }
-
-	    return boundingBox;
-	}
-
-	var MultiPath = Element$1.extend({
-	    init: function(options) {
-	        Element$1.fn.init.call(this, options);
-	        this.paths = new GeometryElementsArray();
-	        this.paths.addObserver(this);
-
-	        if (!defined(this.options.stroke)) {
-	            this.stroke("#000");
-	        }
-	    },
-
-	    moveTo: function(x, y) {
-	        var path = new Path();
-	        path.moveTo(x, y);
-
-	        this.paths.push(path);
-
-	        return this;
-	    },
-
-	    lineTo: function(x, y) {
-	        if (this.paths.length > 0) {
-	            last(this.paths).lineTo(x, y);
-	        }
-
-	        return this;
-	    },
-
-	    curveTo: function(controlOut, controlIn, point) {
-	        if (this.paths.length > 0) {
-	            last(this.paths).curveTo(controlOut, controlIn, point);
-	        }
-
-	        return this;
-	    },
-
-	    arc: function(startAngle, endAngle, radiusX, radiusY, anticlockwise) {
-	        if (this.paths.length > 0) {
-	            last(this.paths).arc(startAngle, endAngle, radiusX, radiusY, anticlockwise);
-	        }
-
-	        return this;
-	    },
-
-	    arcTo: function(end, rx, ry, largeArc, swipe, rotation) {
-	        if (this.paths.length > 0) {
-	            last(this.paths).arcTo(end, rx, ry, largeArc, swipe, rotation);
-	        }
-
-	        return this;
-	    },
-
-	    close: function() {
-	        if (this.paths.length > 0) {
-	            last(this.paths).close();
-	        }
-
-	        return this;
-	    },
-
-	    _bbox: function(matrix) {
-	        return elementsBoundingBox(this.paths, true, matrix);
-	    },
-
-	    rawBBox: function() {
-	        return elementsBoundingBox(this.paths, false);
-	    },
-
-	    _containsPoint: function(point) {
-	        var paths = this.paths;
-
-	        for (var idx = 0; idx < paths.length; idx++) {
-	            if (paths[idx]._containsPoint(point)) {
-	                return true;
-	            }
-	        }
-	        return false;
-	    },
-
-	    _isOnPath: function(point) {
-	        var paths = this.paths;
-	        var width = this.options.stroke.width;
-
-	        for (var idx = 0; idx < paths.length; idx++) {
-	            if (paths[idx]._isOnPath(point, width)) {
-	                return true;
-	            }
-	        }
-	        return false;
-	    },
-
-	    _clippedBBox: function(transformation) {
-	        return elementsClippedBoundingBox(this.paths, this.currentTransform(transformation));
-	    }
-	});
-
-	MultiPath.prototype.nodeType = "MultiPath";
-
-	Paintable.extend(MultiPath.prototype);
-	Measurable.extend(MultiPath.prototype);
 
 	var ShapeMap = {
 	    l: function(path, options) {
@@ -2869,63 +2915,98 @@ module.exports =
 	    return parameters;
 	}
 
-	var PathParser = Class.extend({
-	    parse: function(str, options) {
-	        var multiPath = new MultiPath(options);
-	        var position = new Point();
-	        var previousCommand;
+	function parsePath(pathInstance, str) {
+	    var position = new Point();
+	    var previousCommand;
 
-	        str.replace(SEGMENT_REGEX, function (match, element, params, closePath) {
-	            var command = element.toLowerCase();
-	            var isRelative = command === element;
-	            var parameters = parseParameters(params.trim());
+	    str.replace(SEGMENT_REGEX, function (match, element, params, closePath) {
+	        var command = element.toLowerCase();
+	        var isRelative = command === element;
+	        var parameters = parseParameters(params.trim());
 
-	            if (command === MOVE) {
-	                if (isRelative) {
-	                    position.x += parameters[0];
-	                    position.y += parameters[1];
+	        if (command === MOVE) {
+	            if (isRelative) {
+	                position.x += parameters[0];
+	                position.y += parameters[1];
+	            } else {
+	                position.x = parameters[0];
+	                position.y = parameters[1];
+	            }
+
+	            pathInstance.moveTo(position.x, position.y);
+
+	            if (parameters.length > 2) {
+	                command = "l";
+	                parameters.splice(0, 2);
+	            }
+	        }
+
+	        if (ShapeMap[command]) {
+	            ShapeMap[command](
+	                pathInstance, {
+	                    parameters: parameters,
+	                    position: position,
+	                    isRelative: isRelative,
+	                    previousCommand: previousCommand
+	                }
+	            );
+
+	            if (closePath && closePath.toLowerCase() === CLOSE) {
+	                pathInstance.close();
+	            }
+	        } else if (command !== MOVE) {
+	            throw new Error("Error while parsing SVG path. Unsupported command: " + command);
+	        }
+
+	        previousCommand = command;
+	    });
+
+	    return pathInstance;
+	}
+
+	function elementsBoundingBox(elements, applyTransform, transformation) {
+	    var boundingBox;
+
+	    for (var i = 0; i < elements.length; i++) {
+	        var element = elements[i];
+	        if (element.visible()) {
+	            var elementBoundingBox = applyTransform ? element.bbox(transformation) : element.rawBBox();
+	            if (elementBoundingBox) {
+	                if (boundingBox) {
+	                    boundingBox = Rect.union(boundingBox, elementBoundingBox);
 	                } else {
-	                    position.x = parameters[0];
-	                    position.y = parameters[1];
-	                }
-
-	                multiPath.moveTo(position.x, position.y);
-
-	                if (parameters.length > 2) {
-	                    command = "l";
-	                    parameters.splice(0, 2);
+	                    boundingBox = elementBoundingBox;
 	                }
 	            }
-
-	            if (ShapeMap[command]) {
-	                ShapeMap[command](
-	                    multiPath, {
-	                        parameters: parameters,
-	                        position: position,
-	                        isRelative: isRelative,
-	                        previousCommand: previousCommand
-	                    }
-	                );
-
-	                if (closePath && closePath.toLowerCase() === CLOSE) {
-	                    multiPath.close();
-	                }
-	            } else if (command !== MOVE) {
-	                throw new Error("Error while parsing SVG path. Unsupported command: " + command);
-	            }
-
-	            previousCommand = command;
-	        });
-
-	        return multiPath;
+	        }
 	    }
-	});
 
-	PathParser.current = new PathParser();
+	    return boundingBox;
+	}
 
-	var Path = Element$1.extend({
-	    init: function(options) {
-	        Element$1.fn.init.call(this, options);
+	function elementsClippedBoundingBox(elements, transformation) {
+	    var boundingBox;
+
+	    for (var i = 0; i < elements.length; i++) {
+	        var element = elements[i];
+	        if (element.visible()) {
+	            var elementBoundingBox = element.clippedBBox(transformation);
+	            if (elementBoundingBox) {
+	                if (boundingBox) {
+	                    boundingBox = Rect.union(boundingBox, elementBoundingBox);
+	                } else {
+	                    boundingBox = elementBoundingBox;
+	                }
+	            }
+	        }
+	    }
+
+	    return boundingBox;
+	}
+
+	var Path = (function (superclass) {
+	    function Path(options) {
+	        superclass.call(this, options);
 	        this.segments = new GeometryElementsArray();
 	        this.segments.addObserver(this);
 
@@ -2936,9 +3017,25 @@ module.exports =
 	                this.options.set("stroke.lineJoin", "miter");
 	            }
 	        }
-	    },
+	    }
 
-	    moveTo: function(x, y) {
+	    extendStatic(Path, superclass);
+	    Path.prototype = Object.create( superclass && superclass.prototype );
+	    Path.prototype.constructor = Path;
+	    Path.fn = Path.prototype;
+	    Path.fn.init = Path.fn.constructor;
+
+	    var prototypeAccessors = { nodeType: {} };
+
+	    Path.parse = function parse (str, options) {
+	        return MultiPath.parse(str, options);
+	    };
+
+	    prototypeAccessors.nodeType.get = function () {
+	        return "Path";
+	    };
+
+	    Path.prototype.moveTo = function moveTo (x, y) {
 	        this.suspend();
 	        this.segments.elements([]);
 	        this.resume();
@@ -2946,18 +3043,18 @@ module.exports =
 	        this.lineTo(x, y);
 
 	        return this;
-	    },
+	    };
 
-	    lineTo: function(x, y) {
+	    Path.prototype.lineTo = function lineTo (x, y) {
 	        var point = defined(y) ? new Point(x, y) : x;
 	        var segment = new Segment(point);
 
 	        this.segments.push(segment);
 
 	        return this;
-	    },
+	    };
 
-	    curveTo: function(controlOut, controlIn, point) {
+	    Path.prototype.curveTo = function curveTo (controlOut, controlIn, point) {
 	        if (this.segments.length > 0) {
 	            var lastSegment = last(this.segments);
 	            var segment = new Segment(point, controlIn);
@@ -2969,16 +3066,16 @@ module.exports =
 	        }
 
 	        return this;
-	    },
+	    };
 
-	    arc: function(startAngle, endAngle, radiusX, radiusY, anticlockwise) {
+	    Path.prototype.arc = function arc (startAngle, endAngle, radiusX, radiusY, anticlockwise) {
 	        if (this.segments.length > 0) {
 	            var lastSegment = last(this.segments);
 	            var anchor = lastSegment.anchor();
 	            var start = rad(startAngle);
 	            var center = new Point(anchor.x - radiusX * Math.cos(start),
 	                anchor.y - radiusY * Math.sin(start));
-	            var arc = new Arc(center, {
+	            var arc = new Arc$2(center, {
 	                startAngle: startAngle,
 	                endAngle: endAngle,
 	                radiusX: radiusX,
@@ -2990,20 +3087,20 @@ module.exports =
 	        }
 
 	        return this;
-	    },
+	    };
 
-	    arcTo: function(end, rx, ry, largeArc, swipe, rotation) {
+	    Path.prototype.arcTo = function arcTo (end, rx, ry, largeArc, swipe, rotation) {
 	        if (this.segments.length > 0) {
 	            var lastSegment = last(this.segments);
 	            var anchor = lastSegment.anchor();
-	            var arc = Arc.fromPoints(anchor, end, rx, ry, largeArc, swipe, rotation);
+	            var arc = Arc$2.fromPoints(anchor, end, rx, ry, largeArc, swipe, rotation);
 
 	            this._addArcSegments(arc);
 	        }
 	        return this;
-	    },
+	    };
 
-	    _addArcSegments: function(arc) {
+	    Path.prototype._addArcSegments = function _addArcSegments (arc) {
 	        var this$1 = this;
 
 	        this.suspend();
@@ -3016,20 +3113,20 @@ module.exports =
 
 	        this.resume();
 	        this.geometryChange();
-	    },
+	    };
 
-	    close: function() {
+	    Path.prototype.close = function close () {
 	        this.options.closed = true;
 	        this.geometryChange();
 
 	        return this;
-	    },
+	    };
 
-	    rawBBox: function() {
+	    Path.prototype.rawBBox = function rawBBox () {
 	        return this._bbox();
-	    },
+	    };
 
-	    _containsPoint: function(point) {
+	    Path.prototype._containsPoint = function _containsPoint (point) {
 	        var segments = this.segments;
 	        var length = segments.length;
 	        var intersectionsCount = 0;
@@ -3046,9 +3143,9 @@ module.exports =
 	        }
 
 	        return intersectionsCount % 2 !== 0;
-	    },
+	    };
 
-	    _isOnPath: function(point, width) {
+	    Path.prototype._isOnPath = function _isOnPath (point, width) {
 	        var segments = this.segments;
 	        var length = segments.length;
 	        var pathWidth = width || this.options.stroke.width;
@@ -3069,9 +3166,9 @@ module.exports =
 	            }
 	        }
 	        return false;
-	    },
+	    };
 
-	    _bbox: function(matrix) {
+	    Path.prototype._bbox = function _bbox (matrix) {
 	        var segments = this.segments;
 	        var length = segments.length;
 	        var boundingBox;
@@ -3091,80 +3188,204 @@ module.exports =
 	        }
 
 	        return boundingBox;
-	    }
-	});
+	    };
 
-	Path.fromRect = function(rect, options) {
-	    return new Path(options)
-	        .moveTo(rect.topLeft())
-	        .lineTo(rect.topRight())
-	        .lineTo(rect.bottomRight())
-	        .lineTo(rect.bottomLeft())
-	        .close();
-	};
+	    Path.fromRect = function fromRect (rect, options) {
+	        return new Path(options)
+	            .moveTo(rect.topLeft())
+	            .lineTo(rect.topRight())
+	            .lineTo(rect.bottomRight())
+	            .lineTo(rect.bottomLeft())
+	            .close();
+	    };
 
-	Path.fromPoints = function(points, options) {
-	    if (points) {
-	        var path = new Path(options);
+	    Path.fromPoints = function fromPoints (points, options) {
+	        if (points) {
+	            var path = new Path(options);
 
-	        for (var i = 0; i < points.length; i++) {
-	            var point = Point.create(points[i]);
-	            if (point) {
-	                if (i === 0) {
-	                    path.moveTo(point);
-	                } else {
-	                    path.lineTo(point);
+	            for (var i = 0; i < points.length; i++) {
+	                var point = Point.create(points[i]);
+	                if (point) {
+	                    if (i === 0) {
+	                        path.moveTo(point);
+	                    } else {
+	                        path.lineTo(point);
+	                    }
 	                }
 	            }
+
+	            return path;
+	        }
+	    };
+
+	    Path.fromArc = function fromArc (arc, options) {
+	        var path = new Path(options);
+	        var startAngle = arc.startAngle;
+	        var start = arc.pointAt(startAngle);
+	        path.moveTo(start.x, start.y);
+	        path.arc(startAngle, arc.endAngle, arc.radiusX, arc.radiusY, arc.anticlockwise);
+	        return path;
+	    };
+
+	    Object.defineProperties( Path.prototype, prototypeAccessors );
+
+	    return Path;
+	}(paintable(measurable(Element$1))));
+
+	var MultiPath = (function (superclass) {
+	    function MultiPath(options) {
+	        superclass.call(this, options);
+	        this.paths = new GeometryElementsArray();
+	        this.paths.addObserver(this);
+
+	        if (!defined(this.options.stroke)) {
+	            this.stroke("#000");
+	        }
+	    }
+
+	    extendStatic(MultiPath, superclass);
+	    MultiPath.prototype = Object.create( superclass && superclass.prototype );
+	    MultiPath.prototype.constructor = MultiPath;
+	    MultiPath.fn = MultiPath.prototype;
+	    MultiPath.fn.init = MultiPath.fn.constructor;
+
+	    var prototypeAccessors$1 = { nodeType: {} };
+
+	    MultiPath.parse = function parse (str, options) {
+	        var instance = new MultiPath(options);
+	        return parsePath(instance, str);
+	    };
+
+	    prototypeAccessors$1.nodeType.get = function () {
+	        return "MultiPath";
+	    };
+
+	    MultiPath.prototype.moveTo = function moveTo (x, y) {
+	        var path = new Path();
+	        path.moveTo(x, y);
+
+	        this.paths.push(path);
+
+	        return this;
+	    };
+
+	    MultiPath.prototype.lineTo = function lineTo (x, y) {
+	        if (this.paths.length > 0) {
+	            last(this.paths).lineTo(x, y);
 	        }
 
-	        return path;
-	    }
-	};
+	        return this;
+	    };
 
-	Path.fromArc = function(arc, options) {
-	    var path = new Path(options);
-	    var startAngle = arc.startAngle;
-	    var start = arc.pointAt(startAngle);
-	    path.moveTo(start.x, start.y);
-	    path.arc(startAngle, arc.endAngle, arc.radiusX, arc.radiusY, arc.anticlockwise);
-	    return path;
-	};
+	    MultiPath.prototype.curveTo = function curveTo (controlOut, controlIn, point) {
+	        if (this.paths.length > 0) {
+	            last(this.paths).curveTo(controlOut, controlIn, point);
+	        }
 
-	Path.prototype.nodeType = "Path";
+	        return this;
+	    };
 
-	Paintable.extend(Path.prototype);
-	Measurable.extend(Path.prototype);
+	    MultiPath.prototype.arc = function arc (startAngle, endAngle, radiusX, radiusY, anticlockwise) {
+	        if (this.paths.length > 0) {
+	            last(this.paths).arc(startAngle, endAngle, radiusX, radiusY, anticlockwise);
+	        }
 
-	Path.parse = function(str, options) {
-	    return PathParser.current.parse(str, options);
-	};
+	        return this;
+	    };
+
+	    MultiPath.prototype.arcTo = function arcTo (end, rx, ry, largeArc, swipe, rotation) {
+	        if (this.paths.length > 0) {
+	            last(this.paths).arcTo(end, rx, ry, largeArc, swipe, rotation);
+	        }
+
+	        return this;
+	    };
+
+	    MultiPath.prototype.close = function close () {
+	        if (this.paths.length > 0) {
+	            last(this.paths).close();
+	        }
+
+	        return this;
+	    };
+
+	    MultiPath.prototype._bbox = function _bbox (matrix) {
+	        return elementsBoundingBox(this.paths, true, matrix);
+	    };
+
+	    MultiPath.prototype.rawBBox = function rawBBox () {
+	        return elementsBoundingBox(this.paths, false);
+	    };
+
+	    MultiPath.prototype._containsPoint = function _containsPoint (point) {
+	        var paths = this.paths;
+
+	        for (var idx = 0; idx < paths.length; idx++) {
+	            if (paths[idx]._containsPoint(point)) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    };
+
+	    MultiPath.prototype._isOnPath = function _isOnPath (point) {
+	        var paths = this.paths;
+	        var width = this.options.stroke.width;
+
+	        for (var idx = 0; idx < paths.length; idx++) {
+	            if (paths[idx]._isOnPath(point, width)) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    };
+
+	    MultiPath.prototype._clippedBBox = function _clippedBBox (transformation) {
+	        return elementsClippedBoundingBox(this.paths, this.currentTransform(transformation));
+	    };
+
+	    Object.defineProperties( MultiPath.prototype, prototypeAccessors$1 );
+
+	    return MultiPath;
+	}(paintable(measurable(Element$1))));
 
 	var DEFAULT_STROKE$1 = "#000";
 
-	var Arc$2 = Element$1.extend({
-	    init: function(geometry, options) {
-	        if (geometry === void 0) { geometry = new Arc(); }
+	var Arc = (function (superclass) {
+	    function Arc(geometry, options) {
+	        if (geometry === void 0) { geometry = new Arc$2(); }
 	        if (options === void 0) { options = {}; }
 
-	        Element$1.fn.init.call(this, options);
+	        superclass.call(this, options);
 
 	        this.geometry(geometry);
 
 	        if (!defined(this.options.stroke)) {
 	            this.stroke(DEFAULT_STROKE$1);
 	        }
-	    },
+	    }
 
-	    _bbox: function(matrix) {
+	    extendStatic(Arc, superclass);
+	    Arc.prototype = Object.create( superclass && superclass.prototype );
+	    Arc.prototype.constructor = Arc;
+	    Arc.fn = Arc.prototype;
+	    Arc.fn.init = Arc.fn.constructor;
+
+	    var prototypeAccessors = { nodeType: {} };
+
+	    prototypeAccessors.nodeType.get = function () {
+	        return "Arc";
+	    };
+
+	    Arc.prototype._bbox = function _bbox (matrix) {
 	        return this._geometry.bbox(matrix);
-	    },
+	    };
 
-	    rawBBox: function() {
+	    Arc.prototype.rawBBox = function rawBBox () {
 	        return this.geometry().bbox();
-	    },
+	    };
 
-	    toPath: function() {
+	    Arc.prototype.toPath = function toPath () {
 	        var path = new Path();
 	        var curvePoints = this.geometry().curvePoints();
 
@@ -3177,32 +3398,30 @@ module.exports =
 	        }
 
 	        return path;
-	    },
+	    };
 
-	    _containsPoint: function(point) {
+	    Arc.prototype._containsPoint = function _containsPoint (point) {
 	        return this.geometry().containsPoint(point);
-	    },
+	    };
 
-	    _isOnPath: function(point) {
+	    Arc.prototype._isOnPath = function _isOnPath (point) {
 	        return this.geometry()._isOnPath(point, this.options.stroke.width / 2);
-	    }
-	});
+	    };
 
-	Arc$2.prototype.nodeType = "Arc";
+	    Object.defineProperties( Arc.prototype, prototypeAccessors );
 
-	Paintable.extend(Arc$2.prototype);
-	Measurable.extend(Arc$2.prototype);
-	defineGeometryAccessors(Arc$2.prototype, [ "geometry" ]);
+	    return Arc;
+	}(paintable(measurable(withGeometry(Element$1)))));
 
 	var DEFAULT_FONT = "12px sans-serif";
 	var DEFAULT_FILL = "#000";
 
-	var Text = Element$1.extend({
-	    init: function(content, position, options) {
+	var Text = (function (superclass) {
+	    function Text(content, position, options) {
 	        if (position === void 0) { position = new Point(); }
 	        if (options === void 0) { options = {}; }
 
-	        Element$1.fn.init.call(this, options);
+	        superclass.call(this, options);
 
 	        this.content(content);
 	        this.position(position);
@@ -3214,96 +3433,128 @@ module.exports =
 	        if (!defined(this.options.fill)) {
 	            this.fill(DEFAULT_FILL);
 	        }
-	    },
+	    }
 
-	    content: function(value) {
+	    extendStatic(Text, superclass);
+	    Text.prototype = Object.create( superclass && superclass.prototype );
+	    Text.prototype.constructor = Text;
+	    Text.fn = Text.prototype;
+	    Text.fn.init = Text.fn.constructor;
+
+	    var prototypeAccessors = { nodeType: {} };
+
+	    prototypeAccessors.nodeType.get = function () {
+	        return "Text";
+	    };
+
+	    Text.prototype.content = function content (value) {
 	        if (defined(value)) {
 	            this.options.set("content", value);
 	            return this;
 	        }
 
 	        return this.options.get("content");
-	    },
+	    };
 
-	    measure: function() {
+	    Text.prototype.measure = function measure () {
 	        var metrics = kendoUtil.measureText(this.content(), {
 	            font: this.options.get("font")
 	        });
 
 	        return metrics;
-	    },
+	    };
 
-	    rect: function() {
+	    Text.prototype.rect = function rect () {
 	        var size = this.measure();
 	        var pos = this.position().clone();
 	        return new Rect(pos, [ size.width, size.height ]);
-	    },
+	    };
 
-	    bbox: function(transformation) {
+	    Text.prototype.bbox = function bbox (transformation) {
 	        var combinedMatrix = toMatrix(this.currentTransform(transformation));
 	        return this.rect().bbox(combinedMatrix);
-	    },
+	    };
 
-	    rawBBox: function() {
+	    Text.prototype.rawBBox = function rawBBox () {
 	        return this.rect().bbox();
-	    },
+	    };
 
-	    _containsPoint: function(point) {
+	    Text.prototype._containsPoint = function _containsPoint (point) {
 	        return this.rect().containsPoint(point);
-	    }
-	});
+	    };
 
-	Text.prototype.nodeType = "Text";
+	    Object.defineProperties( Text.prototype, prototypeAccessors );
 
-	Paintable.extend(Text.prototype);
+	    return Text;
+	}(paintable(withPoints(Element$1, [ "position" ]))));
 
-	definePointAccessors(Text.prototype, [ "position" ]);
-
-	var Image$1 = Element$1.extend({
-	    init: function(src, rect, options) {
+	var Image$1 = (function (superclass) {
+	    function Image(src, rect, options) {
 	        if (rect === void 0) { rect = new Rect(); }
 	        if (options === void 0) { options = {}; }
 
-	        Element$1.fn.init.call(this, options);
+	        superclass.call(this, options);
 
 	        this.src(src);
 	        this.rect(rect);
-	    },
+	    }
 
-	    src: function(value) {
+	    extendStatic(Image, superclass);
+	    Image.prototype = Object.create( superclass && superclass.prototype );
+	    Image.prototype.constructor = Image;
+	    Image.fn = Image.prototype;
+	    Image.fn.init = Image.fn.constructor;
+
+	    var prototypeAccessors = { nodeType: {} };
+
+	    prototypeAccessors.nodeType.get = function () {
+	        return "Image";
+	    };
+
+	    Image.prototype.src = function src (value) {
 	        if (defined(value)) {
 	            this.options.set("src", value);
 	            return this;
 	        }
 
 	        return this.options.get("src");
-	    },
+	    };
 
-	    bbox: function(transformation) {
+	    Image.prototype.bbox = function bbox (transformation) {
 	        var combinedMatrix = toMatrix(this.currentTransform(transformation));
 	        return this._rect.bbox(combinedMatrix);
-	    },
+	    };
 
-	    rawBBox: function() {
+	    Image.prototype.rawBBox = function rawBBox () {
 	        return this._rect.bbox();
-	    },
+	    };
 
-	    _containsPoint: function(point) {
+	    Image.prototype._containsPoint = function _containsPoint (point) {
 	        return this._rect.containsPoint(point);
-	    },
+	    };
 
-	    _hasFill: function() {
+	    Image.prototype._hasFill = function _hasFill () {
 	        return this.src();
-	    }
-	});
+	    };
 
-	Image$1.prototype.nodeType = "Image";
+	    Object.defineProperties( Image.prototype, prototypeAccessors );
 
-	defineGeometryAccessors(Image$1.prototype, [ "rect" ]);
+	    return Image;
+	}(withGeometry(Element$1, [ "rect" ])));
 
-	var Traversable = {
-	    extend: function(proto, childrenField) {
-	        proto.traverse = function(callback) {
+	var traversable = function (TBase, childrenField) { return (
+	    (function (TBase) {
+	        function anonymous () {
+	            TBase.apply(this, arguments);
+	        }
+
+	        extendStatic(anonymous, TBase);
+	        anonymous.prototype = Object.create( TBase && TBase.prototype );
+	        anonymous.prototype.constructor = anonymous;
+	        anonymous.fn = anonymous.prototype;
+	        anonymous.fn.init = anonymous.fn.constructor;
+
+	        anonymous.prototype.traverse = function traverse (callback) {
 	            var children = this[childrenField];
 
 	            for (var i = 0; i < children.length; i++) {
@@ -3318,46 +3569,60 @@ module.exports =
 
 	            return this;
 	        };
-	    }
-	};
 
-	var Group = Element$1.extend({
-	    init: function(options) {
-	        Element$1.fn.init.call(this, options);
+	        return anonymous;
+	    }(TBase))
+	); };
+
+	var Group = (function (superclass) {
+	    function Group(options) {
+	        superclass.call(this, options);
 	        this.children = [];
-	    },
+	    }
 
-	    childrenChange: function(action, items, index) {
+	    extendStatic(Group, superclass);
+	    Group.prototype = Object.create( superclass && superclass.prototype );
+	    Group.prototype.constructor = Group;
+	    Group.fn = Group.prototype;
+	    Group.fn.init = Group.fn.constructor;
+
+	    var prototypeAccessors = { nodeType: {} };
+
+	    prototypeAccessors.nodeType.get = function () {
+	        return "Group";
+	    };
+
+	    Group.prototype.childrenChange = function childrenChange (action, items, index) {
 	        this.trigger("childrenChange",{
 	            action: action,
 	            items: items,
 	            index: index
 	        });
-	    },
+	    };
 
-	    append: function() {
-	        append(this.children, arguments);
+	    Group.prototype.append = function append$1 () {
+	        append$1$1(this.children, arguments);
 	        this._reparent(arguments, this);
 
 	        this.childrenChange("add", arguments);
 
 	        return this;
-	    },
+	    };
 
-	    insert: function(index, element) {
+	    Group.prototype.insert = function insert (index, element) {
 	        this.children.splice(index, 0, element);
 	        element.parent = this;
 
 	        this.childrenChange("add", [ element ], index);
 
 	        return this;
-	    },
+	    };
 
-	    insertAt: function(element, index) {
+	    Group.prototype.insertAt = function insertAt (element, index) {
 	        return this.insert(index, element);
-	    },
+	    };
 
-	    remove: function(element) {
+	    Group.prototype.remove = function remove (element) {
 	        var index = this.children.indexOf(element);
 	        if (index >= 0) {
 	            this.children.splice(index, 1);
@@ -3366,9 +3631,9 @@ module.exports =
 	        }
 
 	        return this;
-	    },
+	    };
 
-	    removeAt: function(index) {
+	    Group.prototype.removeAt = function removeAt (index) {
 	        if (0 <= index && index < this.children.length) {
 	            var element = this.children[index];
 	            this.children.splice(index, 1);
@@ -3377,9 +3642,9 @@ module.exports =
 	        }
 
 	        return this;
-	    },
+	    };
 
-	    clear: function() {
+	    Group.prototype.clear = function clear () {
 	        var items = this.children;
 	        this.children = [];
 	        this._reparent(items, null);
@@ -3387,25 +3652,25 @@ module.exports =
 	        this.childrenChange("remove", items, 0);
 
 	        return this;
-	    },
+	    };
 
-	    bbox: function(transformation) {
+	    Group.prototype.bbox = function bbox (transformation) {
 	        return elementsBoundingBox(this.children, true, this.currentTransform(transformation));
-	    },
+	    };
 
-	    rawBBox: function() {
+	    Group.prototype.rawBBox = function rawBBox () {
 	        return elementsBoundingBox(this.children, false);
-	    },
+	    };
 
-	    _clippedBBox: function(transformation) {
+	    Group.prototype._clippedBBox = function _clippedBBox (transformation) {
 	        return elementsClippedBoundingBox(this.children, this.currentTransform(transformation));
-	    },
+	    };
 
-	    currentTransform: function(transformation) {
+	    Group.prototype.currentTransform = function currentTransform (transformation) {
 	        return Element$1.prototype.currentTransform.call(this, transformation) || null;
-	    },
+	    };
 
-	    containsPoint: function(point, parentTransform) {
+	    Group.prototype.containsPoint = function containsPoint (point, parentTransform) {
 	        if (this.visible()) {
 	            var children = this.children;
 	            var transform = this.currentTransform(parentTransform);
@@ -3416,9 +3681,9 @@ module.exports =
 	            }
 	        }
 	        return false;
-	    },
+	    };
 
-	    _reparent: function(elements, newParent) {
+	    Group.prototype._reparent = function _reparent (elements, newParent) {
 	        var this$1 = this;
 
 	        for (var i = 0; i < elements.length; i++) {
@@ -3430,15 +3695,15 @@ module.exports =
 
 	            child.parent = newParent;
 	        }
-	    }
-	});
+	    };
 
-	Group.prototype.nodeType = "Group";
+	    Object.defineProperties( Group.prototype, prototypeAccessors );
 
-	Traversable.extend(Group.prototype, "children");
+	    return Group;
+	}(traversable(Element$1, "children")));
 
 	function translateToPoint(point, bbox, element) {
-	    var transofrm = element.transform() || transform();
+	    var transofrm = element.transform() || transform$1();
 	    var matrix = transofrm.matrix();
 	    matrix.e += point.x - bbox.origin.x;
 	    matrix.f += point.y - bbox.origin.y;
@@ -3496,23 +3761,29 @@ module.exports =
 	    }
 	};
 
-	var Layout = Group.extend({
-	    init: function(rect, options) {
-	        Group.fn.init.call(this, $.extend({}, DEFAULT_OPTIONS, options));
+	var Layout = (function (Group$$1) {
+	    function Layout(rect, options) {
+	        Group$$1.call(this, $.extend({}, DEFAULT_OPTIONS, options));
 	        this._rect = rect;
 	        this._fieldMap = {};
-	    },
+	    }
 
-	    rect: function(value) {
+	    extendStatic(Layout, Group$$1);
+	    Layout.prototype = Object.create( Group$$1 && Group$$1.prototype );
+	    Layout.prototype.constructor = Layout;
+	    Layout.fn = Layout.prototype;
+	    Layout.fn.init = Layout.fn.constructor;
+
+	    Layout.prototype.rect = function rect (value) {
 	        if (value) {
 	            this._rect = value;
 	            return this;
 	        }
 
 	        return this._rect;
-	    },
+	    };
 
-	    _initMap: function() {
+	    Layout.prototype._initMap = function _initMap () {
 	        var options = this.options;
 	        var fieldMap = this._fieldMap;
 	        if (options.orientation === "horizontal") {
@@ -3534,9 +3805,9 @@ module.exports =
 	            this.forEach = forEach;
 	            this.justifyAlign = alignStart;
 	        }
-	    },
+	    };
 
-	    reflow: function() {
+	    Layout.prototype.reflow = function reflow () {
 	        var this$1 = this;
 
 	        if (!this._rect || this.children.length === 0) {
@@ -3590,19 +3861,19 @@ module.exports =
 	            var scaledStart = groupBox.topLeft().scale(scale, scale);
 	            var scaledSize = groupBox.size[groupsSizeField] * scale;
 	            var newStart = alignStart(scaledSize, rect, options.alignContent, groupsAxis, groupsSizeField);
-	            var transform$$1 = transform();
+	            var transform = transform$1();
 	            if (groupAxis === "x") {
-	                transform$$1.translate(rect.origin.x - scaledStart.x, newStart - scaledStart.y);
+	                transform.translate(rect.origin.x - scaledStart.x, newStart - scaledStart.y);
 	            } else {
-	                transform$$1.translate(newStart - scaledStart.x, rect.origin.y - scaledStart.y);
+	                transform.translate(newStart - scaledStart.x, rect.origin.y - scaledStart.y);
 	            }
-	            transform$$1.scale(scale, scale);
+	            transform.scale(scale, scale);
 
-	            this.transform(transform$$1);
+	            this.transform(transform);
 	        }
-	    },
+	    };
 
-	    _initGroups: function() {
+	    Layout.prototype._initGroups = function _initGroups () {
 	        var this$1 = this;
 
 	        var ref = this;
@@ -3648,60 +3919,73 @@ module.exports =
 	            groups: groups,
 	            groupsSize: groupsSize
 	        };
-	    },
+	    };
 
-	    _addToGroup: function(group, bbox, element) {
+	    Layout.prototype._addToGroup = function _addToGroup (group, bbox, element) {
 	        group.size += bbox.size[this._fieldMap.sizeField] + this.options.spacing;
 	        group.lineSize = Math.max(bbox.size[this._fieldMap.groupsSizeField], group.lineSize);
 	        group.bboxes.push(bbox);
 	        group.elements.push(element);
-	    },
+	    };
 
-	    _newGroup: function() {
+	    Layout.prototype._newGroup = function _newGroup () {
 	        return {
 	            lineSize: 0,
 	            size: -this.options.spacing,
 	            bboxes: [],
 	            elements: []
 	        };
-	    }
-	});
+	    };
 
-	var Rect$2 = Element$1.extend({
-	    init: function(geometry, options) {
+	    return Layout;
+	}(Group));
+
+	var Rect$2 = (function (superclass) {
+	    function Rect$$1(geometry, options) {
 	        if (geometry === void 0) { geometry = new Rect(); }
 	        if (options === void 0) { options = {}; }
 
-	        Element$1.fn.init.call(this, options);
+	        superclass.call(this, options);
+
 	        this.geometry(geometry);
 
 	        if (!defined(this.options.stroke)) {
 	            this.stroke("#000");
 	        }
-	    },
-
-	    _bbox: function(matrix) {
-	        return this._geometry.bbox(matrix);
-	    },
-
-	    rawBBox: function() {
-	        return this._geometry.bbox();
-	    },
-
-	    _containsPoint: function(point) {
-	        return this._geometry.containsPoint(point);
-	    },
-
-	    _isOnPath: function(point) {
-	        return this.geometry()._isOnPath(point, this.options.stroke.width / 2);
 	    }
-	});
 
-	Rect$2.prototype.nodeType = "Rect";
+	    extendStatic(Rect$$1, superclass);
+	    Rect$$1.prototype = Object.create( superclass && superclass.prototype );
+	    Rect$$1.prototype.constructor = Rect$$1;
+	    Rect$$1.fn = Rect$$1.prototype;
+	    Rect$$1.fn.init = Rect$$1.fn.constructor;
 
-	Paintable.extend(Rect$2.prototype);
-	Measurable.extend(Rect$2.prototype);
-	defineGeometryAccessors(Rect$2.prototype, [ "geometry" ]);
+	    var prototypeAccessors = { nodeType: {} };
+
+	    prototypeAccessors.nodeType.get = function () {
+	        return "Rect";
+	    };
+
+	    Rect$$1.prototype._bbox = function _bbox (matrix) {
+	        return this._geometry.bbox(matrix);
+	    };
+
+	    Rect$$1.prototype.rawBBox = function rawBBox () {
+	        return this._geometry.bbox();
+	    };
+
+	    Rect$$1.prototype._containsPoint = function _containsPoint (point) {
+	        return this._geometry.containsPoint(point);
+	    };
+
+	    Rect$$1.prototype._isOnPath = function _isOnPath (point) {
+	        return this.geometry()._isOnPath(point, this.options.stroke.width / 2);
+	    };
+
+	    Object.defineProperties( Rect$$1.prototype, prototypeAccessors );
+
+	    return Rect$$1;
+	}(paintable(measurable(withGeometry(Element$1)))));
 
 	function alignElements(elements, rect, alignment, axis, sizeField) {
 	    for (var idx = 0; idx < elements.length; idx++) {
@@ -3845,20 +4129,32 @@ module.exports =
 	        var rectSize = rect.size;
 	        if (rectSize.width < elementSize.width || rectSize.height < elementSize.height) {
 	            var scale = Math.min(rectSize.width / elementSize.width, rectSize.height / elementSize.height);
-	            var transform$$1 = element.transform() || transform();
-	            transform$$1.scale(scale, scale);
-	            element.transform(transform$$1);
+	            var transform = element.transform() || transform$1();
+	            transform.scale(scale, scale);
+	            element.transform(transform);
 	        }
 	    }
 	}
 
-	var StopsArray = ElementsArray.extend({
-	    _change: function() {
+	var StopsArray = (function (ElementsArray$$1) {
+	    function StopsArray () {
+	        ElementsArray$$1.apply(this, arguments);
+	    }
+
+	    extendStatic(StopsArray, ElementsArray$$1);
+	    StopsArray.prototype = Object.create( ElementsArray$$1 && ElementsArray$$1.prototype );
+	    StopsArray.prototype.constructor = StopsArray;
+	    StopsArray.fn = StopsArray.prototype;
+	    StopsArray.fn.init = StopsArray.fn.constructor;
+
+	    StopsArray.prototype._change = function _change () {
 	        this.optionsChange({
 	            field: "stops"
 	        });
-	    }
-	});
+	    };
+
+	    return StopsArray;
+	}(ElementsArray));
 
 	function optionsAccessor(name) {
 	    return function(value) {
@@ -3877,47 +4173,87 @@ module.exports =
 	    }
 	}
 
-	var GradientStop = Class.extend({
-	    init: function(offset, color, opacity) {
+	var withOptions = function (TBase, names) {
+	    var result = (function (TBase) {
+	        function result () {
+	            TBase.apply(this, arguments);
+	        }extendStatic(result, TBase);
+	        result.prototype = Object.create( TBase && TBase.prototype );
+	        result.prototype.constructor = result;
+	        result.fn = result.prototype;
+	        result.fn.init = result.fn.constructor;
+
+	        return result;
+	    }(TBase));
+	    defineOptionsAccessors(result.prototype, names);
+
+	    return result;
+	};
+
+	var options = [ "offset", "color", "opacity" ];
+
+	var GradientStop = (function (superclass) {
+	    function GradientStop(offset, color, opacity) {
+	        superclass.call(this);
 
 	        this.options = new OptionsStore({
 	            offset: offset,
 	            color: color,
 	            opacity: defined(opacity) ? opacity : 1
 	        });
+
 	        this.options.addObserver(this);
 	    }
-	});
 
-	GradientStop.create = function(arg) {
-	    if (defined(arg)) {
-	        var stop;
-	        if (arg instanceof GradientStop) {
-	            stop = arg;
-	        } else if (arg.length > 1) {
-	            stop = new GradientStop(arg[0], arg[1], arg[2]);
-	        } else {
-	            stop = new GradientStop(arg.offset, arg.color, arg.opacity);
+	    extendStatic(GradientStop, superclass);
+	    GradientStop.prototype = Object.create( superclass && superclass.prototype );
+	    GradientStop.prototype.constructor = GradientStop;
+	    GradientStop.fn = GradientStop.prototype;
+	    GradientStop.fn.init = GradientStop.fn.constructor;
+
+	    GradientStop.create = function create (arg) {
+	        if (defined(arg)) {
+	            var stop;
+	            if (arg instanceof GradientStop) {
+	                stop = arg;
+	            } else if (arg.length > 1) {
+	                stop = new GradientStop(arg[0], arg[1], arg[2]);
+	            } else {
+	                stop = new GradientStop(arg.offset, arg.color, arg.opacity);
+	            }
+
+	            return stop;
 	        }
+	    };
 
-	        return stop;
-	    }
-	};
+	    return GradientStop;
+	}(withOptions(HasObservers, options)));
 
-	defineOptionsAccessors(GradientStop.prototype, [ "offset", "color", "opacity" ]);
-	ObserversMixin.extend(GradientStop.prototype);
-
-	var Gradient = Class.extend({
-	    init: function(options) {
+	var Gradient = (function (HasObservers$$1) {
+	    function Gradient(options) {
 	        if (options === void 0) { options = {}; }
+
+	        HasObservers$$1.call(this);
 
 	        this.stops = new StopsArray(this._createStops(options.stops));
 	        this.stops.addObserver(this);
 	        this._userSpace = options.userSpace;
 	        this.id = definitionId();
-	    },
+	    }
 
-	    userSpace: function(value) {
+	    extendStatic(Gradient, HasObservers$$1);
+	    Gradient.prototype = Object.create( HasObservers$$1 && HasObservers$$1.prototype );
+	    Gradient.prototype.constructor = Gradient;
+	    Gradient.fn = Gradient.prototype;
+	    Gradient.fn.init = Gradient.fn.constructor;
+
+	    var prototypeAccessors = { nodeType: {} };
+
+	    prototypeAccessors.nodeType.get = function () {
+	        return "Gradient";
+	    };
+
+	    Gradient.prototype.userSpace = function userSpace (value) {
 	        if (defined(value)) {
 	            this._userSpace = value;
 	            this.optionsChange();
@@ -3925,9 +4261,9 @@ module.exports =
 	        }
 
 	        return this._userSpace;
-	    },
+	    };
 
-	    _createStops: function(stops) {
+	    Gradient.prototype._createStops = function _createStops (stops) {
 	        if (stops === void 0) { stops = []; }
 
 	        var result = [];
@@ -3936,63 +4272,74 @@ module.exports =
 	        }
 
 	        return result;
-	    },
+	    };
 
-	    addStop: function(offset, color, opacity) {
+	    Gradient.prototype.addStop = function addStop (offset, color, opacity) {
 	        this.stops.push(new GradientStop(offset, color, opacity));
-	    },
+	    };
 
-	    removeStop: function(stop) {
+	    Gradient.prototype.removeStop = function removeStop (stop) {
 	        var index = this.stops.indexOf(stop);
 	        if (index >= 0) {
 	            this.stops.splice(index, 1);
 	        }
-	    }
-	});
+	    };
 
-	Gradient.prototype.nodeType = "Gradient";
-
-	ObserversMixin.extend(Gradient.prototype);
-
-	$.extend(Gradient.prototype, {
-	    optionsChange: function(e) {
+	    Gradient.prototype.optionsChange = function optionsChange (e) {
 	        this.trigger("optionsChange", {
 	            field: "gradient" + (e ? "." + e.field : ""),
 	            value: this
 	        });
-	    },
+	    };
 
-	    geometryChange: function() {
+	    Gradient.prototype.geometryChange = function geometryChange () {
 	        this.optionsChange();
-	    }
-	});
+	    };
 
-	var LinearGradient = Gradient.extend({
-	    init: function(options) {
+	    Object.defineProperties( Gradient.prototype, prototypeAccessors );
+
+	    return Gradient;
+	}(HasObservers));
+
+	var points$1 = [ "start", "end" ];
+
+	var LinearGradient = (function (superclass) {
+	    function LinearGradient(options) {
 	        if (options === void 0) { options = {}; }
 
-	        Gradient.fn.init.call(this, options);
+	        superclass.call(this, options);
 
 	        this.start(options.start || new Point());
-
 	        this.end(options.end || new Point(1, 0));
 	    }
-	});
 
-	definePointAccessors(LinearGradient.prototype, [ "start", "end" ]);
+	    extendStatic(LinearGradient, superclass);
+	    LinearGradient.prototype = Object.create( superclass && superclass.prototype );
+	    LinearGradient.prototype.constructor = LinearGradient;
+	    LinearGradient.fn = LinearGradient.prototype;
+	    LinearGradient.fn.init = LinearGradient.fn.constructor;
 
-	var RadialGradient = Gradient.extend({
-	    init: function(options) {
+	    return LinearGradient;
+	}(withPoints(Gradient, points$1)));
+
+	var RadialGradient = (function (superclass) {
+	    function RadialGradient(options) {
 	        if (options === void 0) { options = {}; }
 
-	        Gradient.fn.init.call(this, options);
+	        superclass.call(this, options);
 
 	        this.center(options.center || new Point());
 	        this._radius = defined(options.radius) ? options.radius : 1;
 	        this._fallbackFill = options.fallbackFill;
-	    },
+	    }
 
-	    radius: function(value) {
+	    extendStatic(RadialGradient, superclass);
+	    RadialGradient.prototype = Object.create( superclass && superclass.prototype );
+	    RadialGradient.prototype.constructor = RadialGradient;
+	    RadialGradient.fn = RadialGradient.prototype;
+	    RadialGradient.fn.init = RadialGradient.fn.constructor;
+
+	    RadialGradient.prototype.radius = function radius (value) {
 	        if (defined(value)) {
 	            this._radius = value;
 	            this.geometryChange();
@@ -4000,9 +4347,9 @@ module.exports =
 	        }
 
 	        return this._radius;
-	    },
+	    };
 
-	    fallbackFill: function(value) {
+	    RadialGradient.prototype.fallbackFill = function fallbackFill (value) {
 	        if (defined(value)) {
 	            this._fallbackFill = value;
 	            this.optionsChange();
@@ -4010,10 +4357,10 @@ module.exports =
 	        }
 
 	        return this._fallbackFill;
-	    }
-	});
+	    };
 
-	definePointAccessors(RadialGradient.prototype, [ "center" ]);
+	    return RadialGradient;
+	}(withPoints(Gradient, [ "center" ])));
 
 	function swing(position) {
 	    return 0.5 - Math.cos(position * Math.PI) / 2;
@@ -4057,20 +4404,39 @@ module.exports =
 		easeOutElastic: easeOutElastic
 	};
 
-	var AnimationFactory = Class.extend({
-	    init: function() {
+	var instance;
+
+	var AnimationFactory = (function (Class$$1) {
+	    function AnimationFactory() {
+	        Class$$1.call(this);
 
 	        this._items = [];
-	    },
+	    }
 
-	    register: function(name, type) {
+	    extendStatic(AnimationFactory, Class$$1);
+	    AnimationFactory.prototype = Object.create( Class$$1 && Class$$1.prototype );
+	    AnimationFactory.prototype.constructor = AnimationFactory;
+	    AnimationFactory.fn = AnimationFactory.prototype;
+	    AnimationFactory.fn.init = AnimationFactory.fn.constructor;
+
+	    var staticAccessors = { current: {} };
+
+	    staticAccessors.current.get = function () {
+	        if (!instance) {
+	            instance = new AnimationFactory();
+	        }
+
+	        return instance;
+	    };
+
+	    AnimationFactory.prototype.register = function register (name, type) {
 	        this._items.push({
 	            name: name,
 	            type: type
 	        });
-	    },
+	    };
 
-	    create: function(element, options) {
+	    AnimationFactory.prototype.create = function create (element, options) {
 	        var items = this._items;
 	        var match;
 
@@ -4087,27 +4453,48 @@ module.exports =
 	        if (match) {
 	            return new match.type(element, options);
 	        }
-	    }
-	});
+	    };
 
-	AnimationFactory.current = new AnimationFactory();
+	    Object.defineProperties( AnimationFactory, staticAccessors );
 
-	var now = Date.now || function() {
-	    return new Date().getTime();
-	};
+	    return AnimationFactory;
+	}(Class));
 
-	var Animation = Class.extend({
-	    init: function(element, options) {
+	var Animation = (function (Class$$1) {
+	    function Animation(element, options) {
+	        Class$$1.call(this);
 
 	        this.options = $.extend({}, this.options, options);
 	        this.element = element;
-	    },
+	    }
 
-	    setup: function() {},
+	    extendStatic(Animation, Class$$1);
+	    Animation.prototype = Object.create( Class$$1 && Class$$1.prototype );
+	    Animation.prototype.constructor = Animation;
+	    Animation.fn = Animation.prototype;
+	    Animation.fn.init = Animation.fn.constructor;
 
-	    step: function() {},
+	    var prototypeAccessors = { options: {} };
 
-	    play: function() {
+	    Animation.create = function create (type, element, options) {
+	        return AnimationFactory.current.create(type, element, options);
+	    };
+
+	    prototypeAccessors.options.get = function () {
+	        return this._options || {
+	            duration: 500,
+	            easing: "swing"
+	        };
+	    };
+
+	    prototypeAccessors.options.set = function (value) {
+	        this._options = value;
+	    };
+
+	    Animation.prototype.setup = function setup () {};
+	    Animation.prototype.step = function step () {};
+
+	    Animation.prototype.play = function play () {
 	        var this$1 = this;
 
 	        var options = this.options;
@@ -4145,73 +4532,151 @@ module.exports =
 	                loop();
 	            }, delay);
 	        }
-	    },
+	    };
 
-	    abort: function() {
+	    Animation.prototype.abort = function abort () {
 	        this._stopped = true;
-	    },
+	    };
 
-	    destroy: function() {
+	    Animation.prototype.destroy = function destroy () {
 	        this.abort();
+	    };
+
+	    Object.defineProperties( Animation.prototype, prototypeAccessors );
+
+	    return Animation;
+	}(Class));
+
+	var instance$1;
+
+	var PathParser = (function (Class$$1) {
+	    function PathParser () {
+	        Class$$1.apply(this, arguments);
 	    }
-	});
 
-	Animation.prototype.options = {
-	    duration: 500,
-	    easing: "swing"
-	};
+	    extendStatic(PathParser, Class$$1);
+	    PathParser.prototype = Object.create( Class$$1 && Class$$1.prototype );
+	    PathParser.prototype.constructor = PathParser;
+	    PathParser.fn = PathParser.prototype;
+	    PathParser.fn.init = PathParser.fn.constructor;
 
-	Animation.create = function(type, element, options) {
-	    return AnimationFactory.current.create(type, element, options);
-	};
+	    var staticAccessors = { current: {} };
 
-	var SurfaceFactory = Class.extend({
-	    init: function() {
-
-	        this._items = [];
-	    },
-
-	    register: function(name, type, order) {
-	        var items = this._items;
-	        var first = items[0];
-	        var entry = {
-	            name: name,
-	            type: type,
-	            order: order
-	        };
-
-	        if (!first || order < first.order) {
-	            items.unshift(entry);
-	        } else {
-	            items.push(entry);
-	        }
-	    },
-
-	    create: function(element, options) {
-	        var items = this._items;
-	        var match = items[0];
-
-	        if (options && options.type) {
-	            var preferred = options.type.toLowerCase();
-	            for (var i = 0; i < items.length; i++) {
-	                if (items[i].name === preferred) {
-	                    match = items[i];
-	                    break;
-	                }
-	            }
+	    staticAccessors.current.get = function () {
+	        if (!instance$1) {
+	            instance$1 = new PathParser();
 	        }
 
-	        if (match) {
-	            return new match.type(element, options);
-	        }
+	        return instance$1;
+	    };
 
-	        kendo.logToConsole(
-	            "Warning: Unable to create Kendo UI Drawing Surface. Possible causes:\n" +
-	            "- The browser does not support SVG and Canvas. User agent: " + (navigator.userAgent));
+	    PathParser.prototype.parse = function parse (str, options) {
+	        var multiPath = new MultiPath(options);
+	        return parsePath(multiPath, str);
+	    };
+
+	    Object.defineProperties( PathParser, staticAccessors );
+
+	    return PathParser;
+	}(Class));
+
+	var BaseNode = (function (Class$$1) {
+	    function BaseNode(srcElement) {
+	        Class$$1.call(this);
+
+	        this.childNodes = [];
+	        this.parent = null;
+
+	        if (srcElement) {
+	            this.srcElement = srcElement;
+	            this.observe();
+	        }
 	    }
-	});
 
-	SurfaceFactory.current = new SurfaceFactory();
+	    extendStatic(BaseNode, Class$$1);
+	    BaseNode.prototype = Object.create( Class$$1 && Class$$1.prototype );
+	    BaseNode.prototype.constructor = BaseNode;
+	    BaseNode.fn = BaseNode.prototype;
+	    BaseNode.fn.init = BaseNode.fn.constructor;
+
+	    BaseNode.prototype.destroy = function destroy () {
+	        var this$1 = this;
+
+	        if (this.srcElement) {
+	            this.srcElement.removeObserver(this);
+	        }
+
+	        var children = this.childNodes;
+	        for (var i = 0; i < children.length; i++) {
+	            this$1.childNodes[i].destroy();
+	        }
+
+	        this.parent = null;
+	    };
+
+	    BaseNode.prototype.load = function load () {};
+
+	    BaseNode.prototype.observe = function observe () {
+	        if (this.srcElement) {
+	            this.srcElement.addObserver(this);
+	        }
+	    };
+
+	    BaseNode.prototype.append = function append (node) {
+	        this.childNodes.push(node);
+	        node.parent = this;
+	    };
+
+	    BaseNode.prototype.insertAt = function insertAt (node, pos) {
+	        this.childNodes.splice(pos, 0, node);
+	        node.parent = this;
+	    };
+
+	    BaseNode.prototype.remove = function remove (index, count) {
+	        var this$1 = this;
+
+	        var end = index + count;
+	        for (var i = index; i < end; i++) {
+	            this$1.childNodes[i].removeSelf();
+	        }
+	        this.childNodes.splice(index, count);
+	    };
+
+	    BaseNode.prototype.removeSelf = function removeSelf () {
+	        this.clear();
+	        this.destroy();
+	    };
+
+	    BaseNode.prototype.clear = function clear () {
+	        this.remove(0, this.childNodes.length);
+	    };
+
+	    BaseNode.prototype.invalidate = function invalidate () {
+	        if (this.parent) {
+	            this.parent.invalidate();
+	        }
+	    };
+
+	    BaseNode.prototype.geometryChange = function geometryChange () {
+	        this.invalidate();
+	    };
+
+	    BaseNode.prototype.optionsChange = function optionsChange () {
+	        this.invalidate();
+	    };
+
+	    BaseNode.prototype.childrenChange = function childrenChange (e) {
+	        if (e.action === "add") {
+	            this.load(e.items, e.index);
+	        } else if (e.action === "remove") {
+	            this.remove(e.index, e.items.length);
+	        }
+
+	        this.invalidate();
+	    };
+
+	    return BaseNode;
+	}(Class));
 
 	var events = [
 	    "click",
@@ -4221,9 +4686,9 @@ module.exports =
 	    "resize"
 	];
 
-	var Surface = kendo.Observable.extend({
-	    init: function(element, options) {
-	        kendo.Observable.fn.init.call(this);
+	var Surface$2 = (function (Observable$$1) {
+	    function Surface(element, options) {
+	        Observable$$1.call(this);
 
 	        this.options = $.extend({}, options);
 	        this.element = element;
@@ -4241,23 +4706,29 @@ module.exports =
 	        this.bind(events, this.options);
 
 	        this._enableTracking();
-	    },
+	    }
 
-	    draw: function(element) {
+	    extendStatic(Surface, Observable$$1);
+	    Surface.prototype = Object.create( Observable$$1 && Observable$$1.prototype );
+	    Surface.prototype.constructor = Surface;
+	    Surface.fn = Surface.prototype;
+	    Surface.fn.init = Surface.fn.constructor;
+
+	    Surface.prototype.draw = function draw (element) {
 	        this._visual.children.push(element);
-	    },
+	    };
 
-	    clear: function() {
+	    Surface.prototype.clear = function clear () {
 	        this._visual.children = [];
-	    },
+	    };
 
-	    destroy: function() {
+	    Surface.prototype.destroy = function destroy () {
 	        this._visual = null;
 	        this.element._kendoExportVisual = null;
 	        this.unbind();
-	    },
+	    };
 
-	    eventTarget: function(e) {
+	    Surface.prototype.eventTarget = function eventTarget (e) {
 	        var this$1 = this;
 
 	        var domNode = eventElement(e);
@@ -4275,32 +4746,32 @@ module.exports =
 	        if (node) {
 	            return node.srcElement;
 	        }
-	    },
+	    };
 
-	    exportVisual: function() {
+	    Surface.prototype.exportVisual = function exportVisual () {
 	        return this._visual;
-	    },
+	    };
 
-	    getSize: function() {
+	    Surface.prototype.getSize = function getSize () {
 	        return elementSize(this.element);
-	    },
+	    };
 
-	    currentSize: function(size) {
+	    Surface.prototype.currentSize = function currentSize (size) {
 	        if (size) {
 	            this._size = size;
 	        } else {
 	            return this._size;
 	        }
-	    },
+	    };
 
-	    setSize: function(size) {
+	    Surface.prototype.setSize = function setSize (size) {
 	        elementSize(this.element, size);
 
 	        this.currentSize(size);
 	        this._resize();
-	    },
+	    };
 
-	    resize: function(force) {
+	    Surface.prototype.resize = function resize (force) {
 	        var size = this.getSize();
 	        var currentSize = this.currentSize();
 
@@ -4309,29 +4780,29 @@ module.exports =
 	            this._resize(size, force);
 	            this.trigger("resize", size);
 	        }
-	    },
+	    };
 
-	    size: function(value) {
+	    Surface.prototype.size = function size (value) {
 	        if (!value) {
 	            return this.getSize();
 	        }
 
 	        this.setSize(value);
-	    },
+	    };
 
-	    suspendTracking: function() {
+	    Surface.prototype.suspendTracking = function suspendTracking () {
 	        this._suspendedTracking = true;
-	    },
+	    };
 
-	    resumeTracking: function() {
+	    Surface.prototype.resumeTracking = function resumeTracking () {
 	        this._suspendedTracking = false;
-	    },
+	    };
 
-	    _enableTracking: function() {},
+	    Surface.prototype._enableTracking = function _enableTracking () {};
 
-	    _resize: function() {},
+	    Surface.prototype._resize = function _resize () {};
 
-	    _handler: function(eventName) {
+	    Surface.prototype._handler = function _handler (eventName) {
 	        var this$1 = this;
 
 	        return function (e) {
@@ -4344,9 +4815,9 @@ module.exports =
 	                });
 	            }
 	        };
-	    },
+	    };
 
-	    _elementOffset: function() {
+	    Surface.prototype._elementOffset = function _elementOffset () {
 	        var element = this.element;
 	        var padding = elementPadding(element);
 	        var ref = elementOffset(element);
@@ -4357,9 +4828,9 @@ module.exports =
 	            left: left + padding.left,
 	            top: top + padding.top
 	        };
-	    },
+	    };
 
-	    _surfacePoint: function(e) {
+	    Surface.prototype._surfacePoint = function _surfacePoint (e) {
 	        var offset = this._elementOffset();
 	        var coord = eventCoordinates(e);
 	        var x = coord.x - offset.left;
@@ -4372,103 +4843,10 @@ module.exports =
 	        ).transform(inverseTransform);
 
 	        return point;
-	    }
-	});
+	    };
 
-	Surface.create = function(element, options) {
-	    return SurfaceFactory.current.create(element, options);
-	};
-
-	Surface.support = {};
-
-	var BaseNode = Class.extend({
-	    init: function(srcElement) {
-
-	        this.childNodes = [];
-	        this.parent = null;
-
-	        if (srcElement) {
-	            this.srcElement = srcElement;
-	            this.observe();
-	        }
-	    },
-
-	    destroy: function() {
-	        var this$1 = this;
-
-	        if (this.srcElement) {
-	            this.srcElement.removeObserver(this);
-	        }
-
-	        var children = this.childNodes;
-	        for (var i = 0; i < children.length; i++) {
-	            this$1.childNodes[i].destroy();
-	        }
-
-	        this.parent = null;
-	    },
-
-	    load: function() {},
-
-	    observe: function() {
-	        if (this.srcElement) {
-	            this.srcElement.addObserver(this);
-	        }
-	    },
-
-	    append: function(node) {
-	        this.childNodes.push(node);
-	        node.parent = this;
-	    },
-
-	    insertAt: function(node, pos) {
-	        this.childNodes.splice(pos, 0, node);
-	        node.parent = this;
-	    },
-
-	    remove: function(index, count) {
-	        var this$1 = this;
-
-	        var end = index + count;
-	        for (var i = index; i < end; i++) {
-	            this$1.childNodes[i].removeSelf();
-	        }
-	        this.childNodes.splice(index, count);
-	    },
-
-	    removeSelf: function() {
-	        this.clear();
-	        this.destroy();
-	    },
-
-	    clear: function() {
-	        this.remove(0, this.childNodes.length);
-	    },
-
-	    invalidate: function() {
-	        if (this.parent) {
-	            this.parent.invalidate();
-	        }
-	    },
-
-	    geometryChange: function() {
-	        this.invalidate();
-	    },
-
-	    optionsChange: function() {
-	        this.invalidate();
-	    },
-
-	    childrenChange: function(e) {
-	        if (e.action === "add") {
-	            this.load(e.items, e.index);
-	        } else if (e.action === "remove") {
-	            this.remove(e.index, e.items.length);
-	        }
-
-	        this.invalidate();
-	    }
-	});
+	    return Surface;
+	}(kendo.Observable));
 
 	function renderAttr(name, value) {
 	    return (defined(value) && value !== null) ? (" " + name + "=\"" + value + "\" ") : "";
@@ -4554,25 +4932,31 @@ module.exports =
 	    return url;
 	}
 
-	var Node = BaseNode.extend({
-	    init: function(srcElement, options) {
-	        BaseNode.fn.init.call(this, srcElement);
+	var Node = (function (BaseNode$$1) {
+	    function Node(srcElement, options) {
+	        BaseNode$$1.call(this, srcElement);
 	        this.definitions = {};
 
 	        this.options = options;
-	    },
+	    }
 
-	    destroy: function() {
+	    extendStatic(Node, BaseNode$$1);
+	    Node.prototype = Object.create( BaseNode$$1 && BaseNode$$1.prototype );
+	    Node.prototype.constructor = Node;
+	    Node.fn = Node.prototype;
+	    Node.fn.init = Node.fn.constructor;
+
+	    Node.prototype.destroy = function destroy () {
 	        if (this.element) {
 	            this.element._kendoNode = null;
 	            this.element = null;
 	        }
 
 	        this.clearDefinitions();
-	        BaseNode.fn.destroy.call(this);
-	    },
+	        BaseNode$$1.prototype.destroy.call(this);
+	    };
 
-	    load: function(elements, pos) {
+	    Node.prototype.load = function load (elements, pos) {
 	        var this$1 = this;
 
 	        for (var i = 0; i < elements.length; i++) {
@@ -4598,9 +4982,9 @@ module.exports =
 	                childNode.attachTo(element, pos);
 	            }
 	        }
-	    },
+	    };
 
-	    root: function() {
+	    Node.prototype.root = function root () {
 	        var root = this;
 
 	        while (root.parent) {
@@ -4608,9 +4992,9 @@ module.exports =
 	        }
 
 	        return root;
-	    },
+	    };
 
-	    attachTo: function(domElement, pos) {
+	    Node.prototype.attachTo = function attachTo (domElement, pos) {
 	        var container = document.createElement("div");
 	        renderSVG$1(container,
 	            "<svg xmlns='" + SVG_NS + "' version='1.1'>" +
@@ -4627,9 +5011,9 @@ module.exports =
 	            }
 	            this.setElement(element);
 	        }
-	    },
+	    };
 
-	    setElement: function(element) {
+	    Node.prototype.setElement = function setElement (element) {
 	        if (this.element) {
 	            this.element._kendoNode = null;
 	        }
@@ -4642,9 +5026,9 @@ module.exports =
 	            var childElement = element.childNodes[i];
 	            nodes[i].setElement(childElement);
 	        }
-	    },
+	    };
 
-	    clear: function() {
+	    Node.prototype.clear = function clear () {
 	        this.clearDefinitions();
 
 	        if (this.element) {
@@ -4657,9 +5041,9 @@ module.exports =
 	        }
 
 	        this.childNodes = [];
-	    },
+	    };
 
-	    removeSelf: function() {
+	    Node.prototype.removeSelf = function removeSelf () {
 	        if (this.element) {
 	            var parentNode = this.element.parentNode;
 	            if (parentNode) {
@@ -4668,18 +5052,18 @@ module.exports =
 	            this.element = null;
 	        }
 
-	        BaseNode.fn.removeSelf.call(this);
-	    },
+	        BaseNode$$1.prototype.removeSelf.call(this);
+	    };
 
-	    template: function() {
+	    Node.prototype.template = function template () {
 	        return this.renderChildren();
-	    },
+	    };
 
-	    render: function() {
+	    Node.prototype.render = function render () {
 	        return this.template();
-	    },
+	    };
 
-	    renderChildren: function() {
+	    Node.prototype.renderChildren = function renderChildren () {
 	        var nodes = this.childNodes;
 	        var output = "";
 
@@ -4688,9 +5072,9 @@ module.exports =
 	        }
 
 	        return output;
-	    },
+	    };
 
-	    optionsChange: function(e) {
+	    Node.prototype.optionsChange = function optionsChange (e) {
 	        var field = e.field;
 	        var value = e.value;
 
@@ -4710,44 +5094,44 @@ module.exports =
 	            }
 	        }
 
-	        BaseNode.fn.optionsChange.call(this, e);
-	    },
+	        BaseNode$$1.prototype.optionsChange.call(this, e);
+	    };
 
-	    attr: function(name, value) {
+	    Node.prototype.attr = function attr (name, value) {
 	        if (this.element) {
 	            this.element.setAttribute(name, value);
 	        }
-	    },
+	    };
 
-	    allAttr: function(attrs) {
+	    Node.prototype.allAttr = function allAttr (attrs) {
 	        var this$1 = this;
 
 	        for (var i = 0; i < attrs.length; i++) {
 	            this$1.attr(attrs[i][0], attrs[i][1]);
 	        }
-	    },
+	    };
 
-	    css: function(name, value) {
+	    Node.prototype.css = function css (name, value) {
 	        if (this.element) {
 	            this.element.style[name] = value;
 	        }
-	    },
+	    };
 
-	    allCss: function(styles) {
+	    Node.prototype.allCss = function allCss (styles) {
 	        var this$1 = this;
 
 	        for (var i = 0; i < styles.length; i++) {
 	            this$1.css(styles[i][0], styles[i][1]);
 	        }
-	    },
+	    };
 
-	    removeAttr: function(name) {
+	    Node.prototype.removeAttr = function removeAttr (name) {
 	        if (this.element) {
 	            this.element.removeAttribute(name);
 	        }
-	    },
+	    };
 
-	    mapTransform: function(transform) {
+	    Node.prototype.mapTransform = function mapTransform (transform) {
 	        var attrs = [];
 	        if (transform) {
 	            attrs.push([
@@ -4757,23 +5141,23 @@ module.exports =
 	        }
 
 	        return attrs;
-	    },
+	    };
 
-	    renderTransform: function() {
+	    Node.prototype.renderTransform = function renderTransform () {
 	        return renderAllAttr(
 	            this.mapTransform(this.srcElement.transform())
 	        );
-	    },
+	    };
 
-	    transformChange: function(value) {
+	    Node.prototype.transformChange = function transformChange (value) {
 	        if (value) {
 	            this.allAttr(this.mapTransform(value));
 	        } else {
 	            this.removeAttr(TRANSFORM);
 	        }
-	    },
+	    };
 
-	    mapStyle: function() {
+	    Node.prototype.mapStyle = function mapStyle () {
 	        var options = this.srcElement.options;
 	        var style = [ [ "cursor", options.cursor ] ];
 
@@ -4782,21 +5166,21 @@ module.exports =
 	        }
 
 	        return style;
-	    },
+	    };
 
-	    renderStyle: function() {
+	    Node.prototype.renderStyle = function renderStyle$1 () {
 	        return renderAttr("style", renderStyle(this.mapStyle(true)));
-	    },
+	    };
 
-	    renderOpacity: function() {
+	    Node.prototype.renderOpacity = function renderOpacity () {
 	        return renderAttr("opacity", this.srcElement.options.opacity);
-	    },
+	    };
 
-	    renderId: function() {
+	    Node.prototype.renderId = function renderId () {
 	        return renderAttr("id", this.srcElement.options.id);
-	    },
+	    };
 
-	    createDefinitions: function() {
+	    Node.prototype.createDefinitions = function createDefinitions () {
 	        var srcElement = this.srcElement;
 	        var definitions = this.definitions;
 	        if (srcElement) {
@@ -4817,15 +5201,15 @@ module.exports =
 	                });
 	            }
 	        }
-	    },
+	    };
 
-	    definitionChange: function(e) {
+	    Node.prototype.definitionChange = function definitionChange (e) {
 	        if (this.parent) {
 	            this.parent.definitionChange(e);
 	        }
-	    },
+	    };
 
-	    updateDefinition: function(type, value) {
+	    Node.prototype.updateDefinition = function updateDefinition (type, value) {
 	        var definitions = this.definitions;
 	        var current = definitions[type];
 	        var attr = DefinitionMap[type];
@@ -4852,9 +5236,9 @@ module.exports =
 	            definitions[type] = value;
 	            this.attr(attr, this.refUrl(value.id));
 	        }
-	    },
+	    };
 
-	    clearDefinitions: function() {
+	    Node.prototype.clearDefinitions = function clearDefinitions () {
 	        var definitions = this.definitions;
 
 	        this.definitionChange({
@@ -4862,13 +5246,13 @@ module.exports =
 	            definitions: definitions
 	        });
 	        this.definitions = {};
-	    },
+	    };
 
-	    renderDefinitions: function() {
+	    Node.prototype.renderDefinitions = function renderDefinitions () {
 	        return renderAllAttr(this.mapDefinitions());
-	    },
+	    };
 
-	    mapDefinitions: function() {
+	    Node.prototype.mapDefinitions = function mapDefinitions () {
 	        var this$1 = this;
 
 	        var definitions = this.definitions;
@@ -4879,56 +5263,76 @@ module.exports =
 	        }
 
 	        return attrs;
-	    },
+	    };
 
-	    refUrl: function(id) {
+	    Node.prototype.refUrl = function refUrl (id) {
 	        var skipBaseHref = (this.options || {}).skipBaseHref;
 	        var baseHref = this.baseUrl().replace(/'/g, "\\'");
 	        var base = skipBaseHref ? '' : baseHref;
 	        return ("url(" + base + "#" + id + ")");
-	    },
+	    };
 
-	    baseUrl: function() {
+	    Node.prototype.baseUrl = function baseUrl$1 () {
 	        return baseUrl();
+	    };
+
+	    return Node;
+	}(BaseNode));
+
+	var GradientStopNode = (function (Node$$1) {
+	    function GradientStopNode () {
+	        Node$$1.apply(this, arguments);
 	    }
-	});
 
-	var GradientStopNode = Node.extend({
-	    template: function() {
+	    extendStatic(GradientStopNode, Node$$1);
+	    GradientStopNode.prototype = Object.create( Node$$1 && Node$$1.prototype );
+	    GradientStopNode.prototype.constructor = GradientStopNode;
+	    GradientStopNode.fn = GradientStopNode.prototype;
+	    GradientStopNode.fn.init = GradientStopNode.fn.constructor;
+
+	    GradientStopNode.prototype.template = function template () {
 	        return ("<stop " + (this.renderOffset()) + " " + (this.renderStyle()) + " />");
-	    },
+	    };
 
-	    renderOffset: function() {
+	    GradientStopNode.prototype.renderOffset = function renderOffset () {
 	        return renderAttr("offset", this.srcElement.offset());
-	    },
+	    };
 
-	    mapStyle: function() {
+	    GradientStopNode.prototype.mapStyle = function mapStyle () {
 	        var srcElement = this.srcElement;
 	        return [
 	            [ "stop-color", srcElement.color() ],
 	            [ "stop-opacity", srcElement.opacity() ]
 	        ];
-	    },
+	    };
 
-	    optionsChange: function(e) {
+	    GradientStopNode.prototype.optionsChange = function optionsChange (e) {
 	        if (e.field === "offset") {
 	            this.attr(e.field, e.value);
 	        } else if (e.field === "color" || e.field === "opacity") {
 	            this.css("stop-" + e.field, e.value);
 	        }
-	    }
-	});
+	    };
 
-	var GradientNode = Node.extend({
-	    init: function(srcElement) {
-	        Node.fn.init.call(this, srcElement);
+	    return GradientStopNode;
+	}(Node));
+
+	var GradientNode = (function (Node$$1) {
+	    function GradientNode(srcElement) {
+	        Node$$1.call(this, srcElement);
 
 	        this.id = srcElement.id;
 
 	        this.loadStops();
-	    },
+	    }
 
-	    loadStops: function() {
+	    extendStatic(GradientNode, Node$$1);
+	    GradientNode.prototype = Object.create( Node$$1 && Node$$1.prototype );
+	    GradientNode.prototype.constructor = GradientNode;
+	    GradientNode.fn = GradientNode.prototype;
+	    GradientNode.fn.init = GradientNode.fn.constructor;
+
+	    GradientNode.prototype.loadStops = function loadStops () {
 	        var this$1 = this;
 
 	        var stops = this.srcElement.stops;
@@ -4941,32 +5345,44 @@ module.exports =
 	                stopNode.attachTo(element);
 	            }
 	        }
-	    },
+	    };
 
-	    optionsChange: function(e) {
+	    GradientNode.prototype.optionsChange = function optionsChange (e) {
 	        if (e.field === "gradient.stops") {
 	            BaseNode.prototype.clear.call(this);
 	            this.loadStops();
 	        } else if (e.field === "gradient") {
 	            this.allAttr(this.mapCoordinates());
 	        }
-	    },
+	    };
 
-	    renderCoordinates: function() {
+	    GradientNode.prototype.renderCoordinates = function renderCoordinates () {
 	        return renderAllAttr(this.mapCoordinates());
-	    },
+	    };
 
-	    mapSpace: function() {
+	    GradientNode.prototype.mapSpace = function mapSpace () {
 	        return [ "gradientUnits", this.srcElement.userSpace() ? "userSpaceOnUse" : "objectBoundingBox" ];
+	    };
+
+	    return GradientNode;
+	}(Node));
+
+	var LinearGradientNode = (function (GradientNode$$1) {
+	    function LinearGradientNode () {
+	        GradientNode$$1.apply(this, arguments);
 	    }
-	});
 
-	var LinearGradientNode = GradientNode.extend({
-	    template: function() {
+	    extendStatic(LinearGradientNode, GradientNode$$1);
+	    LinearGradientNode.prototype = Object.create( GradientNode$$1 && GradientNode$$1.prototype );
+	    LinearGradientNode.prototype.constructor = LinearGradientNode;
+	    LinearGradientNode.fn = LinearGradientNode.prototype;
+	    LinearGradientNode.fn.init = LinearGradientNode.fn.constructor;
+
+	    LinearGradientNode.prototype.template = function template () {
 	        return ("<linearGradient id='" + (this.id) + "' " + (this.renderCoordinates()) + ">" + (this.renderChildren()) + "</linearGradient>");
-	    },
+	    };
 
-	    mapCoordinates: function() {
+	    LinearGradientNode.prototype.mapCoordinates = function mapCoordinates () {
 	        var srcElement = this.srcElement;
 	        var start = srcElement.start();
 	        var end = srcElement.end();
@@ -4979,15 +5395,27 @@ module.exports =
 	        ];
 
 	        return attrs;
+	    };
+
+	    return LinearGradientNode;
+	}(GradientNode));
+
+	var RadialGradientNode = (function (GradientNode$$1) {
+	    function RadialGradientNode () {
+	        GradientNode$$1.apply(this, arguments);
 	    }
-	});
 
-	var RadialGradientNode = GradientNode.extend({
-	    template: function() {
+	    extendStatic(RadialGradientNode, GradientNode$$1);
+	    RadialGradientNode.prototype = Object.create( GradientNode$$1 && GradientNode$$1.prototype );
+	    RadialGradientNode.prototype.constructor = RadialGradientNode;
+	    RadialGradientNode.fn = RadialGradientNode.prototype;
+	    RadialGradientNode.fn.init = RadialGradientNode.fn.constructor;
+
+	    RadialGradientNode.prototype.template = function template () {
 	        return ("<radialGradient id='" + (this.id) + "' " + (this.renderCoordinates()) + ">" + (this.renderChildren()) + "</radialGradient>");
-	    },
+	    };
 
-	    mapCoordinates: function() {
+	    RadialGradientNode.prototype.mapCoordinates = function mapCoordinates () {
 	        var srcElement = this.srcElement;
 	        var center = srcElement.center();
 	        var radius = srcElement.radius();
@@ -4998,39 +5426,55 @@ module.exports =
 	            this.mapSpace()
 	        ];
 	        return attrs;
-	    }
-	});
+	    };
 
-	var ClipNode = Node.extend({
-	    init: function(srcElement) {
-	        Node.fn.init.call(this);
+	    return RadialGradientNode;
+	}(GradientNode));
+
+	var ClipNode = (function (Node$$1) {
+	    function ClipNode(srcElement) {
+	        Node$$1.call(this);
 
 	        this.srcElement = srcElement;
 	        this.id = srcElement.id;
 
 	        this.load([ srcElement ]);
-	    },
-
-	    template: function() {
-	        return ("<clipPath id='" + (this.id) + "'>" + (this.renderChildren()) + "</clipPath>");
 	    }
-	});
 
-	var DefinitionNode = Node.extend({
-	    init: function() {
-	        Node.fn.init.call(this);
+	    extendStatic(ClipNode, Node$$1);
+	    ClipNode.prototype = Object.create( Node$$1 && Node$$1.prototype );
+	    ClipNode.prototype.constructor = ClipNode;
+	    ClipNode.fn = ClipNode.prototype;
+	    ClipNode.fn.init = ClipNode.fn.constructor;
+
+	    ClipNode.prototype.template = function template () {
+	        return ("<clipPath id='" + (this.id) + "'>" + (this.renderChildren()) + "</clipPath>");
+	    };
+
+	    return ClipNode;
+	}(Node));
+
+	var DefinitionNode = (function (Node$$1) {
+	    function DefinitionNode() {
+	        Node$$1.call(this);
 	        this.definitionMap = {};
-	    },
+	    }
 
-	    attachTo: function(domElement) {
+	    extendStatic(DefinitionNode, Node$$1);
+	    DefinitionNode.prototype = Object.create( Node$$1 && Node$$1.prototype );
+	    DefinitionNode.prototype.constructor = DefinitionNode;
+	    DefinitionNode.fn = DefinitionNode.prototype;
+	    DefinitionNode.fn.init = DefinitionNode.fn.constructor;
+
+	    DefinitionNode.prototype.attachTo = function attachTo (domElement) {
 	        this.element = domElement;
-	    },
+	    };
 
-	    template: function() {
+	    DefinitionNode.prototype.template = function template () {
 	        return ("<defs>" + (this.renderChildren()) + "</defs>");
-	    },
+	    };
 
-	    definitionChange: function(e) {
+	    DefinitionNode.prototype.definitionChange = function definitionChange (e) {
 	        var definitions = e.definitions;
 	        var action = e.action;
 
@@ -5039,9 +5483,9 @@ module.exports =
 	        } else if (action === "remove") {
 	            this.removeDefinitions(definitions);
 	        }
-	    },
+	    };
 
-	    createDefinition: function(type, item) {
+	    DefinitionNode.prototype.createDefinition = function createDefinition (type, item) {
 	        var nodeType;
 	        if (type === "clip") {
 	            nodeType = ClipNode;
@@ -5053,17 +5497,17 @@ module.exports =
 	            }
 	        }
 	        return new nodeType(item);
-	    },
+	    };
 
-	    addDefinitions: function(definitions) {
+	    DefinitionNode.prototype.addDefinitions = function addDefinitions (definitions) {
 	        var this$1 = this;
 
 	        for (var field in definitions) {
 	            this$1.addDefinition(field, definitions[field]);
 	        }
-	    },
+	    };
 
-	    addDefinition: function(type, srcElement) {
+	    DefinitionNode.prototype.addDefinition = function addDefinition (type, srcElement) {
 	        var ref = this;
 	        var element = ref.element;
 	        var definitionMap = ref.definitionMap;
@@ -5082,17 +5526,17 @@ module.exports =
 	        } else {
 	            mapItem.count++;
 	        }
-	    },
+	    };
 
-	    removeDefinitions: function(definitions) {
+	    DefinitionNode.prototype.removeDefinitions = function removeDefinitions (definitions) {
 	        var this$1 = this;
 
 	        for (var field in definitions) {
 	            this$1.removeDefinition(definitions[field]);
 	        }
-	    },
+	    };
 
-	    removeDefinition: function(srcElement) {
+	    DefinitionNode.prototype.removeDefinition = function removeDefinition (srcElement) {
 	        var definitionMap = this.definitionMap;
 	        var id = srcElement.id;
 	        var mapItem = definitionMap[id];
@@ -5104,170 +5548,43 @@ module.exports =
 	                delete definitionMap[id];
 	            }
 	        }
-	    }
-	});
+	    };
 
-	var RootNode = Node.extend({
-	    init: function(options) {
-	        Node.fn.init.call(this);
+	    return DefinitionNode;
+	}(Node));
+
+	var RootNode = (function (Node$$1) {
+	    function RootNode(options) {
+	        Node$$1.call(this);
 	        this.options = options;
 	        this.defs = new DefinitionNode();
-	    },
+	    }
 
-	    attachTo: function(domElement) {
+	    extendStatic(RootNode, Node$$1);
+	    RootNode.prototype = Object.create( Node$$1 && Node$$1.prototype );
+	    RootNode.prototype.constructor = RootNode;
+	    RootNode.fn = RootNode.prototype;
+	    RootNode.fn.init = RootNode.fn.constructor;
+
+	    RootNode.prototype.attachTo = function attachTo (domElement) {
 	        this.element = domElement;
 	        this.defs.attachTo(domElement.firstElementChild);
-	    },
+	    };
 
-	    clear: function() {
+	    RootNode.prototype.clear = function clear () {
 	        BaseNode.prototype.clear.call(this);
-	    },
+	    };
 
-	    template: function() {
+	    RootNode.prototype.template = function template () {
 	        return this.defs.render() + this.renderChildren();
-	    },
+	    };
 
-	    definitionChange: function(e) {
+	    RootNode.prototype.definitionChange = function definitionChange (e) {
 	        this.defs.definitionChange(e);
-	    }
-	});
+	    };
 
-	var RTL = 'rtl';
-
-	function alignToScreen(element) {
-	    var ctm;
-
-	    try {
-	        ctm = element.getScreenCTM ? element.getScreenCTM() : null;
-	    } catch (e) { } // eslint-disable-line no-empty
-
-	    if (ctm) {
-	        var left = - ctm.e % 1;
-	        var top = - ctm.f % 1;
-	        var style = element.style;
-
-	        if (left !== 0 || top !== 0) {
-	            style.left = left + "px";
-	            style.top = top + "px";
-	        }
-	    }
-	}
-
-	var Surface$1 = Surface.extend({
-	    init: function(element, options) {
-	        Surface.fn.init.call(this, element, options);
-
-	        this._root = new RootNode($.extend({
-	            rtl: elementStyles(element, 'direction').direction === RTL
-	        }, this.options));
-
-	        renderSVG$1(this.element, this._template());
-
-	        this._rootElement = this.element.firstElementChild;
-
-	        alignToScreen(this._rootElement);
-
-	        this._root.attachTo(this._rootElement);
-
-	        bindEvents(this.element, {
-	            click: this._click,
-	            mouseover: this._mouseenter,
-	            mouseout: this._mouseleave,
-	            mousemove: this._mousemove
-	        });
-
-	        this.resize();
-	    },
-
-	    destroy: function() {
-	        if (this._root) {
-	            this._root.destroy();
-	            this._root = null;
-	            this._rootElement = null;
-	            unbindEvents(this.element, {
-	                click: this._click,
-	                mouseover: this._mouseenter,
-	                mouseout: this._mouseleave,
-	                mousemove: this._mousemove
-	            });
-	        }
-
-	        Surface.fn.destroy.call(this);
-	    },
-
-	    translate: function(offset) {
-	        var viewBox = (Math.round(offset.x)) + " " + (Math.round(offset.y)) + " " + (this._size.width) + " " + (this._size.height);
-
-	        this._offset = offset;
-	        this._rootElement.setAttribute("viewBox", viewBox);
-	    },
-
-	    draw: function(element) {
-	        Surface.fn.draw.call(this, element);
-	        this._root.load([ element ]);
-	    },
-
-	    clear: function() {
-	        Surface.fn.clear.call(this);
-	        this._root.clear();
-	    },
-
-	    svg: function() {
-	        return "<?xml version='1.0' ?>" + this._template();
-	    },
-
-	    exportVisual: function() {
-	        var ref = this;
-	        var visual = ref._visual;
-	        var offset = ref._offset;
-
-	        if (offset) {
-	            var wrap = new Group();
-	            wrap.children.push(visual);
-
-	            wrap.transform(
-	                transform().translate(-offset.x, -offset.y)
-	            );
-
-	            visual = wrap;
-	        }
-
-	        return visual;
-	    },
-
-	    _resize: function() {
-	        if (this._offset) {
-	            this.translate(this._offset);
-	        }
-	    },
-
-	    _template: function() {
-	        return ("<svg style='width: 100%; height: 100%; overflow: hidden;' xmlns='" + SVG_NS + "' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1'>" + (this._root.render()) + "</svg>");
-	    }
-	});
-
-	Surface$1.prototype.type = "svg";
-
-	if (typeof document !== "undefined" && document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1")) {
-	    Surface.support.svg = true;
-	    SurfaceFactory.current.register("svg", Surface$1, 10);
-	}
-
-	var GroupNode = Node.extend({
-	    template: function() {
-	        return ("<g" + (this.renderId() + this.renderTransform() + this.renderStyle() + this.renderOpacity() + this.renderDefinitions()) + ">" + (this.renderChildren()) + "</g>");
-	    },
-
-	    optionsChange: function(e) {
-	        if (e.field === "transform") {
-	            this.transformChange(e.value);
-	        }
-
-	        Node.fn.optionsChange.call(this, e);
-	    }
-	});
-
-	NODE_MAP.Group = GroupNode;
+	    return RootNode;
+	}(Node));
 
 	var DASH_ARRAYS = {
 	    dot: [ 1.5, 3.5 ],
@@ -5289,13 +5606,23 @@ module.exports =
 	};
 	var SPACE = " ";
 
-	var PathNode = Node.extend({
-	    geometryChange: function() {
+	var PathNode = (function (Node$$1) {
+	    function PathNode () {
+	        Node$$1.apply(this, arguments);
+	    }
+
+	    extendStatic(PathNode, Node$$1);
+	    PathNode.prototype = Object.create( Node$$1 && Node$$1.prototype );
+	    PathNode.prototype.constructor = PathNode;
+	    PathNode.fn = PathNode.prototype;
+	    PathNode.fn.init = PathNode.fn.constructor;
+
+	    PathNode.prototype.geometryChange = function geometryChange () {
 	        this.attr("d", this.renderData());
 	        this.invalidate();
-	    },
+	    };
 
-	    optionsChange: function(e) {
+	    PathNode.prototype.optionsChange = function optionsChange (e) {
 	        switch (e.field) {
 	            case "fill":
 	                if (e.value) {
@@ -5329,20 +5656,20 @@ module.exports =
 	                break;
 	        }
 
-	        Node.fn.optionsChange.call(this, e);
-	    },
+	        Node$$1.prototype.optionsChange.call(this, e);
+	    };
 
-	    content: function() {
+	    PathNode.prototype.content = function content () {
 	        if (this.element) {
 	            this.element.textContent = this.srcElement.content();
 	        }
-	    },
+	    };
 
-	    renderData: function() {
+	    PathNode.prototype.renderData = function renderData () {
 	        return this.printPath(this.srcElement);
-	    },
+	    };
 
-	    printPath: function(path) {
+	    PathNode.prototype.printPath = function printPath (path) {
 	        var this$1 = this;
 
 	        var segments = path.segments;
@@ -5372,9 +5699,9 @@ module.exports =
 
 	            return output;
 	        }
-	    },
+	    };
 
-	    printPoints: function() {
+	    PathNode.prototype.printPoints = function printPoints () {
 	        var points = arguments;
 	        var length = points.length;
 	        var result = [];
@@ -5384,13 +5711,13 @@ module.exports =
 	        }
 
 	        return result.join(" ");
-	    },
+	    };
 
-	    segmentType: function(segmentStart, segmentEnd) {
+	    PathNode.prototype.segmentType = function segmentType (segmentStart, segmentEnd) {
 	        return segmentStart.controlOut() && segmentEnd.controlIn() ? "C" : "L";
-	    },
+	    };
 
-	    mapStroke: function(stroke) {
+	    PathNode.prototype.mapStroke = function mapStroke (stroke) {
 	        var attrs = [];
 
 	        if (stroke && !isTransparent(stroke.color)) {
@@ -5411,15 +5738,15 @@ module.exports =
 	        }
 
 	        return attrs;
-	    },
+	    };
 
-	    renderStroke: function() {
+	    PathNode.prototype.renderStroke = function renderStroke () {
 	        return renderAllAttr(
 	            this.mapStroke(this.srcElement.options.stroke)
 	        );
-	    },
+	    };
 
-	    renderDashType: function(stroke) {
+	    PathNode.prototype.renderDashType = function renderDashType (stroke) {
 	        var dashType = stroke.dashType;
 	        var width = stroke.width; if (width === void 0) { width = 1; }
 
@@ -5433,16 +5760,16 @@ module.exports =
 
 	            return result.join(" ");
 	        }
-	    },
+	    };
 
-	    renderLinecap: function(stroke) {
+	    PathNode.prototype.renderLinecap = function renderLinecap (stroke) {
 	        var dashType = stroke.dashType;
 	        var lineCap = stroke.lineCap;
 
 	        return (dashType && dashType !== "solid") ? BUTT : lineCap;
-	    },
+	    };
 
-	    mapFill: function(fill) {
+	    PathNode.prototype.mapFill = function mapFill (fill) {
 	        var attrs = [];
 	        if (!(fill && fill.nodeType === "Gradient")) {
 	            if (fill && !isTransparent(fill.color)) {
@@ -5457,99 +5784,128 @@ module.exports =
 	        }
 
 	        return attrs;
-	    },
+	    };
 
-	    renderFill: function() {
+	    PathNode.prototype.renderFill = function renderFill () {
 	        return renderAllAttr(
 	            this.mapFill(this.srcElement.options.fill)
 	        );
-	    },
+	    };
 
-	    template: function() {
+	    PathNode.prototype.template = function template () {
 	        return "<path " + (this.renderId()) + " " + (this.renderStyle()) + " " + (this.renderOpacity()) + " " + (renderAttr('d', this.renderData())) +
 	                    "" + (this.renderStroke()) + (this.renderFill()) + (this.renderDefinitions()) + (this.renderTransform()) + "></path>";
+	    };
+
+	    return PathNode;
+	}(Node));
+
+	var ArcNode = (function (PathNode$$1) {
+	    function ArcNode () {
+	        PathNode$$1.apply(this, arguments);
 	    }
-	});
 
-	NODE_MAP.Path = PathNode;
+	    extendStatic(ArcNode, PathNode$$1);
+	    ArcNode.prototype = Object.create( PathNode$$1 && PathNode$$1.prototype );
+	    ArcNode.prototype.constructor = ArcNode;
+	    ArcNode.fn = ArcNode.prototype;
+	    ArcNode.fn.init = ArcNode.fn.constructor;
 
-	var ArcNode = PathNode.extend({
-	    renderData: function() {
+	    ArcNode.prototype.renderData = function renderData () {
 	        return this.printPath(this.srcElement.toPath());
+	    };
+
+	    return ArcNode;
+	}(PathNode));
+
+	var CircleNode = (function (PathNode$$1) {
+	    function CircleNode () {
+	        PathNode$$1.apply(this, arguments);
 	    }
-	});
 
-	NODE_MAP.Arc = ArcNode;
+	    extendStatic(CircleNode, PathNode$$1);
+	    CircleNode.prototype = Object.create( PathNode$$1 && PathNode$$1.prototype );
+	    CircleNode.prototype.constructor = CircleNode;
+	    CircleNode.fn = CircleNode.prototype;
+	    CircleNode.fn.init = CircleNode.fn.constructor;
 
-	var CircleNode = PathNode.extend({
-	    geometryChange: function() {
+	    CircleNode.prototype.geometryChange = function geometryChange () {
 	        var center = this.center();
 	        this.attr("cx", center.x);
 	        this.attr("cy", center.y);
 	        this.attr("r", this.radius());
 	        this.invalidate();
-	    },
+	    };
 
-	    center: function() {
+	    CircleNode.prototype.center = function center () {
 	        return this.srcElement.geometry().center;
-	    },
+	    };
 
-	    radius: function() {
+	    CircleNode.prototype.radius = function radius () {
 	        return this.srcElement.geometry().radius;
-	    },
+	    };
 
-	    template: function() {
+	    CircleNode.prototype.template = function template () {
 	        return "<circle " + (this.renderId()) + " " + (this.renderStyle()) + " " + (this.renderOpacity()) +
 	                    "cx='" + (this.center().x) + "' cy='" + (this.center().y) + "' r='" + (this.radius()) + "'" +
 	                    (this.renderStroke()) + " " + (this.renderFill()) + " " + (this.renderDefinitions()) +
 	                    (this.renderTransform()) + " ></circle>";
+	    };
+
+	    return CircleNode;
+	}(PathNode));
+
+	var GroupNode = (function (Node$$1) {
+	    function GroupNode () {
+	        Node$$1.apply(this, arguments);
 	    }
-	});
 
-	NODE_MAP.Circle = CircleNode;
+	    extendStatic(GroupNode, Node$$1);
+	    GroupNode.prototype = Object.create( Node$$1 && Node$$1.prototype );
+	    GroupNode.prototype.constructor = GroupNode;
+	    GroupNode.fn = GroupNode.prototype;
+	    GroupNode.fn.init = GroupNode.fn.constructor;
 
-	var RectNode = PathNode.extend({
-	    geometryChange: function() {
-	        var geometry = this.srcElement.geometry();
-	        this.attr("x", geometry.origin.x);
-	        this.attr("y", geometry.origin.y);
-	        this.attr("width", geometry.size.width);
-	        this.attr("height", geometry.size.height);
-	        this.invalidate();
-	    },
+	    GroupNode.prototype.template = function template () {
+	        return ("<g" + (this.renderId() + this.renderTransform() + this.renderStyle() + this.renderOpacity() + this.renderDefinitions()) + ">" + (this.renderChildren()) + "</g>");
+	    };
 
-	    size: function() {
-	        return this.srcElement.geometry().size;
-	    },
+	    GroupNode.prototype.optionsChange = function optionsChange (e) {
+	        if (e.field === "transform") {
+	            this.transformChange(e.value);
+	        }
 
-	    origin: function() {
-	        return this.srcElement.geometry().origin;
-	    },
+	        Node$$1.prototype.optionsChange.call(this, e);
+	    };
 
-	    template: function() {
-	        return "<rect " + (this.renderId()) + " " + (this.renderStyle()) + " " + (this.renderOpacity()) + " x='" + (this.origin().x) + "' y='" + (this.origin().y) + "' " +
-	                    "width='" + (this.size().width) + "' height='" + (this.size().height) + "' " + (this.renderStroke()) + " " +
-	                    (this.renderFill()) + " " + (this.renderDefinitions()) + " " + (this.renderTransform()) + " />";
+	    return GroupNode;
+	}(Node));
+
+	var ImageNode = (function (PathNode$$1) {
+	    function ImageNode () {
+	        PathNode$$1.apply(this, arguments);
 	    }
-	});
 
-	NODE_MAP.Rect = RectNode;
+	    extendStatic(ImageNode, PathNode$$1);
+	    ImageNode.prototype = Object.create( PathNode$$1 && PathNode$$1.prototype );
+	    ImageNode.prototype.constructor = ImageNode;
+	    ImageNode.fn = ImageNode.prototype;
+	    ImageNode.fn.init = ImageNode.fn.constructor;
 
-	var ImageNode = PathNode.extend({
-	    geometryChange: function() {
+	    ImageNode.prototype.geometryChange = function geometryChange () {
 	        this.allAttr(this.mapPosition());
 	        this.invalidate();
-	    },
+	    };
 
-	    optionsChange: function(e) {
+	    ImageNode.prototype.optionsChange = function optionsChange (e) {
 	        if (e.field === "src") {
 	            this.allAttr(this.mapSource());
 	        }
 
-	        PathNode.fn.optionsChange.call(this, e);
-	    },
+	        PathNode$$1.prototype.optionsChange.call(this, e);
+	    };
 
-	    mapPosition: function() {
+	    ImageNode.prototype.mapPosition = function mapPosition () {
 	        var rect = this.srcElement.rect();
 	        var tl = rect.topLeft();
 
@@ -5559,13 +5915,13 @@ module.exports =
 	            [ "width", rect.width() + "px" ],
 	            [ "height", rect.height() + "px" ]
 	        ];
-	    },
+	    };
 
-	    renderPosition: function() {
+	    ImageNode.prototype.renderPosition = function renderPosition () {
 	        return renderAllAttr(this.mapPosition());
-	    },
+	    };
 
-	    mapSource: function(encode) {
+	    ImageNode.prototype.mapSource = function mapSource (encode) {
 	        var src = this.srcElement.src();
 
 	        if (encode) {
@@ -5573,20 +5929,87 @@ module.exports =
 	        }
 
 	        return [ [ "xlink:href", src ] ];
-	    },
+	    };
 
-	    renderSource: function() {
+	    ImageNode.prototype.renderSource = function renderSource () {
 	        return renderAllAttr(this.mapSource(true));
-	    },
+	    };
 
-	    template: function() {
+	    ImageNode.prototype.template = function template () {
 	        return "<image preserveAspectRatio='none' " + (this.renderId()) + " " + (this.renderStyle()) + " " + (this.renderTransform()) + " " + (this.renderOpacity()) +
 	               (this.renderPosition()) + " " + (this.renderSource()) + " " + (this.renderDefinitions()) + ">" +
 	               "</image>";
-	    }
-	});
+	    };
 
-	NODE_MAP.Image = ImageNode;
+	    return ImageNode;
+	}(PathNode));
+
+	var MultiPathNode = (function (PathNode$$1) {
+	    function MultiPathNode () {
+	        PathNode$$1.apply(this, arguments);
+	    }
+
+	    extendStatic(MultiPathNode, PathNode$$1);
+	    MultiPathNode.prototype = Object.create( PathNode$$1 && PathNode$$1.prototype );
+	    MultiPathNode.prototype.constructor = MultiPathNode;
+	    MultiPathNode.fn = MultiPathNode.prototype;
+	    MultiPathNode.fn.init = MultiPathNode.fn.constructor;
+
+	    MultiPathNode.prototype.renderData = function renderData () {
+	        var this$1 = this;
+
+	        var paths = this.srcElement.paths;
+
+	        if (paths.length > 0) {
+	            var result = [];
+
+	            for (var i = 0; i < paths.length; i++) {
+	                result.push(this$1.printPath(paths[i]));
+	            }
+
+	            return result.join(" ");
+	        }
+	    };
+
+	    return MultiPathNode;
+	}(PathNode));
+
+	var RectNode = (function (PathNode$$1) {
+	    function RectNode () {
+	        PathNode$$1.apply(this, arguments);
+	    }
+
+	    extendStatic(RectNode, PathNode$$1);
+	    RectNode.prototype = Object.create( PathNode$$1 && PathNode$$1.prototype );
+	    RectNode.prototype.constructor = RectNode;
+	    RectNode.fn = RectNode.prototype;
+	    RectNode.fn.init = RectNode.fn.constructor;
+
+	    RectNode.prototype.geometryChange = function geometryChange () {
+	        var geometry = this.srcElement.geometry();
+	        this.attr("x", geometry.origin.x);
+	        this.attr("y", geometry.origin.y);
+	        this.attr("width", geometry.size.width);
+	        this.attr("height", geometry.size.height);
+	        this.invalidate();
+	    };
+
+	    RectNode.prototype.size = function size () {
+	        return this.srcElement.geometry().size;
+	    };
+
+	    RectNode.prototype.origin = function origin () {
+	        return this.srcElement.geometry().origin;
+	    };
+
+	    RectNode.prototype.template = function template () {
+	        return "<rect " + (this.renderId()) + " " + (this.renderStyle()) + " " + (this.renderOpacity()) + " x='" + (this.origin().x) + "' y='" + (this.origin().y) + "' " +
+	                    "width='" + (this.size().width) + "' height='" + (this.size().height) + "' " + (this.renderStroke()) + " " +
+	                    (this.renderFill()) + " " + (this.renderDefinitions()) + " " + (this.renderTransform()) + " />";
+	    };
+
+	    return RectNode;
+	}(PathNode));
 
 	var ENTITY_REGEX = /&(?:[a-zA-Z]+|#\d+);/g;
 
@@ -5609,27 +6032,37 @@ module.exports =
 	    decodeEntities._element = document.createElement("span");
 	}
 
-	var TextNode = PathNode.extend({
-	    geometryChange: function() {
+	var TextNode = (function (PathNode$$1) {
+	    function TextNode () {
+	        PathNode$$1.apply(this, arguments);
+	    }
+
+	    extendStatic(TextNode, PathNode$$1);
+	    TextNode.prototype = Object.create( PathNode$$1 && PathNode$$1.prototype );
+	    TextNode.prototype.constructor = TextNode;
+	    TextNode.fn = TextNode.prototype;
+	    TextNode.fn.init = TextNode.fn.constructor;
+
+	    TextNode.prototype.geometryChange = function geometryChange () {
 	        var pos = this.pos();
 	        this.attr("x", pos.x);
 	        this.attr("y", pos.y);
 	        this.invalidate();
-	    },
+	    };
 
-	    optionsChange: function(e) {
+	    TextNode.prototype.optionsChange = function optionsChange (e) {
 	        if (e.field === "font") {
 	            this.attr("style", renderStyle(this.mapStyle()));
 	            this.geometryChange();
 	        } else if (e.field === "content") {
-	            PathNode.fn.content.call(this, this.srcElement.content());
+	            PathNode$$1.prototype.content.call(this, this.srcElement.content());
 	        }
 
-	        PathNode.fn.optionsChange.call(this, e);
-	    },
+	        PathNode$$1.prototype.optionsChange.call(this, e);
+	    };
 
-	    mapStyle: function(encode) {
-	        var style = PathNode.fn.mapStyle.call(this, encode);
+	    TextNode.prototype.mapStyle = function mapStyle (encode) {
+	        var style = PathNode$$1.prototype.mapStyle.call(this, encode);
 	        var font = this.srcElement.options.font;
 
 	        if (encode) {
@@ -5639,23 +6072,23 @@ module.exports =
 	        style.push([ "font", font ], [ "white-space", "pre" ]);
 
 	        return style;
-	    },
+	    };
 
-	    pos: function() {
+	    TextNode.prototype.pos = function pos () {
 	        var pos = this.srcElement.position();
 	        var size = this.srcElement.measure();
 	        return pos.clone().setY(pos.y + size.baseline);
-	    },
+	    };
 
-	    renderContent: function() {
+	    TextNode.prototype.renderContent = function renderContent () {
 	        var content = this.srcElement.content();
 	        content = decodeEntities(content);
 	        content = kendo.htmlEncode(content);
 
 	        return kendoUtil.normalizeText(content);
-	    },
+	    };
 
-	    renderTextAnchor: function() {
+	    TextNode.prototype.renderTextAnchor = function renderTextAnchor () {
 	        var anchor;
 
 	        if ((this.options || {}).rtl && !(supportBrowser.msie || supportBrowser.edge)) {
@@ -5663,80 +6096,155 @@ module.exports =
 	        }
 
 	        return renderAttr("text-anchor", anchor);
-	    },
+	    };
 
-	    template: function() {
+	    TextNode.prototype.template = function template () {
 	        return "<text " + (this.renderId()) + " " + (this.renderTextAnchor()) + " " + (this.renderStyle()) + " " + (this.renderOpacity()) +
 	                    "x='" + (this.pos().x) + "' y='" + (this.pos().y) + "' " + (this.renderStroke()) + " " + (this.renderTransform()) + " " + (this.renderDefinitions()) +
 	                    (this.renderFill()) + ">" + (this.renderContent()) + "</text>";
-	    }
-	});
+	    };
 
+	    return TextNode;
+	}(PathNode));
+
+	NODE_MAP.Arc = ArcNode;
+	NODE_MAP.Circle = CircleNode;
+	NODE_MAP.Group = GroupNode;
+	NODE_MAP.Image = ImageNode;
+	NODE_MAP.MultiPath = MultiPathNode;
+	NODE_MAP.Path = PathNode;
+	NODE_MAP.Rect = RectNode;
 	NODE_MAP.Text = TextNode;
 
-	var MultiPathNode = PathNode.extend({
-	    renderData: function() {
-	        var this$1 = this;
+	var RTL = 'rtl';
 
-	        var paths = this.srcElement.paths;
+	function alignToScreen(element) {
+	    var ctm;
 
-	        if (paths.length > 0) {
-	            var result = [];
+	    try {
+	        ctm = element.getScreenCTM ? element.getScreenCTM() : null;
+	    } catch (e) { } // eslint-disable-line no-empty
 
-	            for (var i = 0; i < paths.length; i++) {
-	                result.push(this$1.printPath(paths[i]));
-	            }
+	    if (ctm) {
+	        var left = - ctm.e % 1;
+	        var top = - ctm.f % 1;
+	        var style = element.style;
 
-	            return result.join(" ");
+	        if (left !== 0 || top !== 0) {
+	            style.left = left + "px";
+	            style.top = top + "px";
 	        }
 	    }
-	});
-
-	NODE_MAP.MultiPath = MultiPathNode;
-
-	function exportGroup(group) {
-	    var root = new RootNode({
-	        skipBaseHref: true
-	    });
-	    var bbox = group.clippedBBox();
-	    var rootGroup = group;
-
-	    if (bbox) {
-	        var origin = bbox.getOrigin();
-	        var exportRoot = new Group();
-	        exportRoot.transform(transform().translate(-origin.x, -origin.y));
-	        exportRoot.children.push(group);
-	        rootGroup = exportRoot;
-	    }
-
-	    root.load([ rootGroup ]);
-
-	    var svg = "<?xml version='1.0' ?><svg xmlns='" + SVG_NS + "' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1'>" + (root.render()) + "</svg>";
-
-	    root.destroy();
-
-	    return svg;
 	}
 
-	var svg = {
-		Surface: Surface$1,
-		RootNode: RootNode,
-		Node: Node,
-		GroupNode: GroupNode,
-		ArcNode: ArcNode,
-		CircleNode: CircleNode,
-		RectNode: RectNode,
-		ImageNode: ImageNode,
-		TextNode: TextNode,
-		PathNode: PathNode,
-		MultiPathNode: MultiPathNode,
-		DefinitionNode: DefinitionNode,
-		ClipNode: ClipNode,
-		GradientStopNode: GradientStopNode,
-		LinearGradientNode: LinearGradientNode,
-		RadialGradientNode: RadialGradientNode,
-		exportGroup: exportGroup
-	};
+	var Surface$3 = (function (BaseSurface) {
+	    function Surface(element, options) {
+	        BaseSurface.call(this, element, options);
+
+	        this._root = new RootNode($.extend({
+	            rtl: elementStyles(element, 'direction').direction === RTL
+	        }, this.options));
+
+	        renderSVG$1(this.element, this._template());
+
+	        this._rootElement = this.element.firstElementChild;
+
+	        alignToScreen(this._rootElement);
+
+	        this._root.attachTo(this._rootElement);
+
+	        bindEvents(this.element, {
+	            click: this._click,
+	            mouseover: this._mouseenter,
+	            mouseout: this._mouseleave,
+	            mousemove: this._mousemove
+	        });
+
+	        this.resize();
+	    }
+
+	    extendStatic(Surface, BaseSurface);
+	    Surface.prototype = Object.create( BaseSurface && BaseSurface.prototype );
+	    Surface.prototype.constructor = Surface;
+	    Surface.fn = Surface.prototype;
+	    Surface.fn.init = Surface.fn.constructor;
+
+	    var prototypeAccessors = { type: {} };
+
+	    prototypeAccessors.type.get = function () {
+	        return "svg";
+	    };
+
+	    Surface.prototype.destroy = function destroy () {
+	        if (this._root) {
+	            this._root.destroy();
+	            this._root = null;
+	            this._rootElement = null;
+	            unbindEvents(this.element, {
+	                click: this._click,
+	                mouseover: this._mouseenter,
+	                mouseout: this._mouseleave,
+	                mousemove: this._mousemove
+	            });
+	        }
+
+	        BaseSurface.prototype.destroy.call(this);
+	    };
+
+	    Surface.prototype.translate = function translate (offset) {
+	        var viewBox = (Math.round(offset.x)) + " " + (Math.round(offset.y)) + " " + (this._size.width) + " " + (this._size.height);
+
+	        this._offset = offset;
+	        this._rootElement.setAttribute("viewBox", viewBox);
+	    };
+
+	    Surface.prototype.draw = function draw (element) {
+	        BaseSurface.prototype.draw.call(this, element);
+	        this._root.load([ element ]);
+	    };
+
+	    Surface.prototype.clear = function clear () {
+	        BaseSurface.prototype.clear.call(this);
+	        this._root.clear();
+	    };
+
+	    Surface.prototype.svg = function svg () {
+	        return "<?xml version='1.0' ?>" + this._template();
+	    };
+
+	    Surface.prototype.exportVisual = function exportVisual () {
+	        var ref = this;
+	        var visual = ref._visual;
+	        var offset = ref._offset;
+
+	        if (offset) {
+	            var wrap = new Group();
+	            wrap.children.push(visual);
+
+	            wrap.transform(
+	                transform$1().translate(-offset.x, -offset.y)
+	            );
+
+	            visual = wrap;
+	        }
+
+	        return visual;
+	    };
+
+	    Surface.prototype._resize = function _resize () {
+	        if (this._offset) {
+	            this.translate(this._offset);
+	        }
+	    };
+
+	    Surface.prototype._template = function _template () {
+	        return ("<svg style='width: 100%; height: 100%; overflow: hidden;' xmlns='" + SVG_NS + "' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1'>" + (this._root.render()) + "</svg>");
+	    };
+
+	    Object.defineProperties( Surface.prototype, prototypeAccessors );
+
+	    return Surface;
+	}(Surface$2));
 
 	var NODE_MAP$2 = {};
 
@@ -5773,66 +6281,72 @@ module.exports =
 	    }
 	}
 
-	var Node$2 = BaseNode.extend({
-	    init: function(srcElement) {
-	        BaseNode.fn.init.call(this, srcElement);
+	var Node$2 = (function (BaseNode$$1) {
+	    function Node(srcElement) {
+	        BaseNode$$1.call(this, srcElement);
 	        if (srcElement) {
 	            this.initClip();
 	        }
-	    },
+	    }
 
-	    initClip: function() {
+	    extendStatic(Node, BaseNode$$1);
+	    Node.prototype = Object.create( BaseNode$$1 && BaseNode$$1.prototype );
+	    Node.prototype.constructor = Node;
+	    Node.fn = Node.prototype;
+	    Node.fn.init = Node.fn.constructor;
+
+	    Node.prototype.initClip = function initClip () {
 	        var clip = this.srcElement.clip();
 	        if (clip) {
 	            this.clip = clip;
 	            clip.addObserver(this);
 	        }
-	    },
+	    };
 
-	    clear: function() {
+	    Node.prototype.clear = function clear () {
 	        if (this.srcElement) {
 	            this.srcElement.removeObserver(this);
 	        }
 
 	        this.clearClip();
 
-	        BaseNode.fn.clear.call(this);
-	    },
+	        BaseNode$$1.prototype.clear.call(this);
+	    };
 
-	    clearClip: function() {
+	    Node.prototype.clearClip = function clearClip () {
 	        if (this.clip) {
 	            this.clip.removeObserver(this);
 	            delete this.clip;
 	        }
-	    },
+	    };
 
-	    setClip: function(ctx) {
+	    Node.prototype.setClip = function setClip (ctx) {
 	        if (this.clip) {
 	            ctx.beginPath();
 	            renderPath(ctx, this.clip);
 	            ctx.clip();
 	        }
-	    },
+	    };
 
-	    optionsChange: function(e) {
+	    Node.prototype.optionsChange = function optionsChange (e) {
 	        if (e.field === "clip") {
 	            this.clearClip();
 	            this.initClip();
 	        }
 
-	        BaseNode.fn.optionsChange.call(this, e);
-	    },
+	        BaseNode$$1.prototype.optionsChange.call(this, e);
+	    };
 
-	    setTransform: function(ctx) {
+	    Node.prototype.setTransform = function setTransform (ctx) {
 	        if (this.srcElement) {
 	            var transform = this.srcElement.transform();
 	            if (transform) {
 	                ctx.transform.apply(ctx, transform.matrix().toArray(6));
 	            }
 	        }
-	    },
+	    };
 
-	    loadElements: function(elements, pos, cors) {
+	    Node.prototype.loadElements = function loadElements (elements, pos, cors) {
 	        var this$1 = this;
 
 	        for (var i = 0; i < elements.length; i++) {
@@ -5851,39 +6365,51 @@ module.exports =
 	                this$1.append(childNode);
 	            }
 	        }
-	    },
+	    };
 
-	    load: function(elements, pos, cors) {
+	    Node.prototype.load = function load (elements, pos, cors) {
 	        this.loadElements(elements, pos, cors);
 
 	        this.invalidate();
-	    },
+	    };
 
-	    setOpacity: function(ctx) {
+	    Node.prototype.setOpacity = function setOpacity (ctx) {
 	        if (this.srcElement) {
 	            var opacity = this.srcElement.opacity();
 	            if (defined(opacity)) {
 	                this.globalAlpha(ctx, opacity);
 	            }
 	        }
-	    },
+	    };
 
-	    globalAlpha: function(ctx, value) {
+	    Node.prototype.globalAlpha = function globalAlpha (ctx, value) {
 	        var opactity = value;
 	        if (opactity && ctx.globalAlpha) {
 	            opactity *= ctx.globalAlpha;
 	        }
 	        ctx.globalAlpha = opactity;
-	    },
+	    };
 
-	    visible: function() {
+	    Node.prototype.visible = function visible () {
 	        var src = this.srcElement;
 	        return !src || (src && src.options.visible !== false);
-	    }
-	});
+	    };
 
-	var GroupNode$2 = Node$2.extend({
-	    renderTo: function(ctx) {
+	    return Node;
+	}(BaseNode));
+
+	var GroupNode$2 = (function (superclass) {
+	    function GroupNode () {
+	        superclass.apply(this, arguments);
+	    }
+
+	    extendStatic(GroupNode, superclass);
+	    GroupNode.prototype = Object.create( superclass && superclass.prototype );
+	    GroupNode.prototype.constructor = GroupNode;
+	    GroupNode.fn = GroupNode.prototype;
+	    GroupNode.fn.init = GroupNode.fn.constructor;
+
+	    GroupNode.prototype.renderTo = function renderTo (ctx) {
 	        if (!this.visible()) {
 	            return;
 	        }
@@ -5903,18 +6429,16 @@ module.exports =
 	        }
 
 	        ctx.restore();
-	    }
-	});
+	    };
 
-	Traversable.extend(GroupNode$2.prototype, "childNodes");
-
-	NODE_MAP$2.Group = GroupNode$2;
+	    return GroupNode;
+	}(traversable(Node$2, "childNodes")));
 
 	var FRAME_DELAY = 1000 / 60;
 
-	var RootNode$2 = GroupNode$2.extend({
-	    init: function(canvas, size) {
-	        GroupNode$2.fn.init.call(this);
+	var RootNode$2 = (function (superclass) {
+	    function RootNode(canvas, size) {
+	        superclass.call(this);
 
 	        this.canvas = canvas;
 	        this.size = size;
@@ -5924,37 +6448,43 @@ module.exports =
 	        this.invalidate = kendo.throttle(function () {
 	            kendo.animationFrame(invalidateHandler);
 	        }, FRAME_DELAY);
-	    },
+	    }
 
-	    destroy: function() {
-	        GroupNode$2.fn.destroy.call(this);
+	    extendStatic(RootNode, superclass);
+	    RootNode.prototype = Object.create( superclass && superclass.prototype );
+	    RootNode.prototype.constructor = RootNode;
+	    RootNode.fn = RootNode.prototype;
+	    RootNode.fn.init = RootNode.fn.constructor;
+
+	    RootNode.prototype.destroy = function destroy () {
+	        superclass.prototype.destroy.call(this);
 	        this.canvas = null;
 	        this.ctx = null;
-	    },
+	    };
 
-	    load: function(elements, pos, cors) {
+	    RootNode.prototype.load = function load (elements, pos, cors) {
 	        this.loadElements(elements, pos, cors);
 	        this._invalidate();
-	    },
+	    };
 
-	    _rescale: function(scale) {
+	    RootNode.prototype._rescale = function _rescale (scale) {
 	        var ref = this;
 	        var canvas = ref.canvas;
 	        var size = ref.size;
 	        canvas.width = size.width * scale;
 	        canvas.height = size.height * scale;
 	        this.ctx.scale(scale, scale);
-	    },
+	    };
 
-	    _devicePixelRatio: function() {
-	        if (window.devicePixelRatio === 'number') {
+	    RootNode.prototype._devicePixelRatio = function _devicePixelRatio () {
+	        if (typeof window.devicePixelRatio === 'number') {
 	            return window.devicePixelRatio;
 	        }
 
 	        return 1;
-	    },
+	    };
 
-	    _invalidate: function(options) {
+	    RootNode.prototype._invalidate = function _invalidate (options) {
 	        if (!this.ctx) {
 	            return;
 	        }
@@ -5965,26 +6495,33 @@ module.exports =
 
 	        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	        this.renderTo(this.ctx);
-	    }
-	});
+	    };
 
-	Traversable.extend(RootNode$2.prototype, "childNodes");
+	    return RootNode;
+	}(traversable(GroupNode$2, "childNodes")));
 
-	var QuadRoot = Class.extend({
-	    init: function() {
+	var QuadRoot = (function (Class$$1) {
+	    function QuadRoot() {
+	        Class$$1.call(this);
 
 	        this.shapes = [];
-	    },
+	    }
 
-	    _add: function(shape, bbox) {
+	    extendStatic(QuadRoot, Class$$1);
+	    QuadRoot.prototype = Object.create( Class$$1 && Class$$1.prototype );
+	    QuadRoot.prototype.constructor = QuadRoot;
+	    QuadRoot.fn = QuadRoot.prototype;
+	    QuadRoot.fn.init = QuadRoot.fn.constructor;
+
+	    QuadRoot.prototype._add = function _add (shape, bbox) {
 	        this.shapes.push({
 	            bbox: bbox,
 	            shape: shape
 	        });
 	        shape._quadNode = this;
-	    },
+	    };
 
-	    pointShapes: function(point) {
+	    QuadRoot.prototype.pointShapes = function pointShapes (point) {
 	        var shapes = this.shapes;
 	        var length = shapes.length;
 	        var result = [];
@@ -5994,13 +6531,13 @@ module.exports =
 	            }
 	        }
 	        return result;
-	    },
+	    };
 
-	    insert: function(shape, bbox) {
+	    QuadRoot.prototype.insert = function insert (shape, bbox) {
 	        this._add(shape, bbox);
-	    },
+	    };
 
-	    remove: function(shape) {
+	    QuadRoot.prototype.remove = function remove (shape) {
 	        var shapes = this.shapes;
 	        var length = shapes.length;
 
@@ -6010,36 +6547,57 @@ module.exports =
 	                break;
 	            }
 	        }
-	    }
-	});
+	    };
 
-	var QuadNode = QuadRoot.extend({
-	    init: function(rect) {
-	        QuadRoot.fn.init.call(this);
+	    return QuadRoot;
+	}(Class));
+
+	var geometry = {
+		Circle: Circle$2,
+		Arc: Arc$2,
+		Rect: Rect,
+		Point: Point,
+		Segment: Segment,
+		Matrix: Matrix,
+		Size: Size,
+		toMatrix: toMatrix,
+		Transformation: Transformation,
+		transform: transform$1
+	};
+
+	var QuadNode = (function (QuadRoot$$1) {
+	    function QuadNode(rect) {
+	        QuadRoot$$1.call(this);
 	        this.children = [];
 	        this.rect = rect;
-	    },
+	    }
 
-	    inBounds: function(rect) {
+	    extendStatic(QuadNode, QuadRoot$$1);
+	    QuadNode.prototype = Object.create( QuadRoot$$1 && QuadRoot$$1.prototype );
+	    QuadNode.prototype.constructor = QuadNode;
+	    QuadNode.fn = QuadNode.prototype;
+	    QuadNode.fn.init = QuadNode.fn.constructor;
+
+	    QuadNode.prototype.inBounds = function inBounds (rect) {
 	        var nodeRect = this.rect;
 	        var nodeBottomRight = nodeRect.bottomRight();
 	        var bottomRight = rect.bottomRight();
 	        var inBounds = nodeRect.origin.x <= rect.origin.x && nodeRect.origin.y <= rect.origin.y && bottomRight.x <= nodeBottomRight.x &&
 	            bottomRight.y <= nodeBottomRight.y;
 	        return inBounds;
-	    },
+	    };
 
-	    pointShapes: function(point) {
+	    QuadNode.prototype.pointShapes = function pointShapes (point) {
 	        var children = this.children;
 	        var length = children.length;
-	        var result = QuadRoot.fn.pointShapes.call(this, point);
+	        var result = QuadRoot$$1.prototype.pointShapes.call(this, point);
 	        for (var idx = 0; idx < length; idx++) {
-	            append(result, children[idx].pointShapes(point));
+	            append$1$1(result, children[idx].pointShapes(point));
 	        }
 	        return result;
-	    },
+	    };
 
-	    insert: function(shape, bbox) {
+	    QuadNode.prototype.insert = function insert (shape, bbox) {
 	        var children = this.children;
 	        var inserted = false;
 
@@ -6066,9 +6624,9 @@ module.exports =
 	        }
 
 	        return inserted;
-	    },
+	    };
 
-	    _initChildren: function() {
+	    QuadNode.prototype._initChildren = function _initChildren () {
 	        var ref = this;
 	        var rect = ref.rect;
 	        var children = ref.children;
@@ -6082,26 +6640,35 @@ module.exports =
 	            new QuadNode(new Rect([ rect.origin.x, center.y ], [ halfWidth, halfHeight ])),
 	            new QuadNode(new Rect([ center.x, center.y ], [ halfWidth, halfHeight ]))
 	        );
-	    }
-	});
+	    };
+
+	    return QuadNode;
+	}(QuadRoot));
 
 	var ROOT_SIZE = 3000;
 	var LEVEL_STEP = 10000;
 	var MAX_LEVEL = 75;
 
-	var ShapesQuadTree = Class.extend({
-	    init: function() {
+	var ShapesQuadTree = (function (Class$$1) {
+	    function ShapesQuadTree() {
+	        Class$$1.call(this);
 
 	        this.initRoots();
-	    },
+	    }
 
-	    initRoots: function() {
+	    extendStatic(ShapesQuadTree, Class$$1);
+	    ShapesQuadTree.prototype = Object.create( Class$$1 && Class$$1.prototype );
+	    ShapesQuadTree.prototype.constructor = ShapesQuadTree;
+	    ShapesQuadTree.fn = ShapesQuadTree.prototype;
+	    ShapesQuadTree.fn.init = ShapesQuadTree.fn.constructor;
+
+	    ShapesQuadTree.prototype.initRoots = function initRoots () {
 	        this.rootMap = {};
 	        this.root = new QuadRoot();
 	        this.rootElements = [];
-	    },
+	    };
 
-	    clear: function() {
+	    ShapesQuadTree.prototype.clear = function clear () {
 	        var this$1 = this;
 
 	        var rootElements = this.rootElements;
@@ -6109,9 +6676,9 @@ module.exports =
 	            this$1.remove(rootElements[idx]);
 	        }
 	        this.initRoots();
-	    },
+	    };
 
-	    pointShape: function(point) {
+	    ShapesQuadTree.prototype.pointShape = function pointShape (point) {
 	        var sectorRoot = ( this.rootMap[ Math.floor( point.x / ROOT_SIZE ) ] || {} )[ Math.floor( point.y / ROOT_SIZE ) ];
 	        var result = this.root.pointShapes(point);
 
@@ -6127,9 +6694,9 @@ module.exports =
 	                return result[idx];
 	            }
 	        }
-	    },
+	    };
 
-	    assignZindex: function(elements) {
+	    ShapesQuadTree.prototype.assignZindex = function assignZindex (elements) {
 	        var this$1 = this;
 
 	        for (var idx = 0; idx < elements.length; idx++) {
@@ -6151,19 +6718,19 @@ module.exports =
 
 	            elements[idx]._zIndex = zIndex;
 	        }
-	    },
+	    };
 
-	    optionsChange: function(e) {
+	    ShapesQuadTree.prototype.optionsChange = function optionsChange (e) {
 	        if (e.field === "transform" || e.field === "stroke.width") {
 	            this.bboxChange(e.element);
 	        }
-	    },
+	    };
 
-	    geometryChange: function(e) {
+	    ShapesQuadTree.prototype.geometryChange = function geometryChange (e) {
 	        this.bboxChange(e.element);
-	    },
+	    };
 
-	    bboxChange: function(element) {
+	    ShapesQuadTree.prototype.bboxChange = function bboxChange (element) {
 	        var this$1 = this;
 
 	        if (element.nodeType === "Group") {
@@ -6176,16 +6743,16 @@ module.exports =
 	            }
 	            this._insertShape(element);
 	        }
-	    },
+	    };
 
-	    add: function(elements) {
+	    ShapesQuadTree.prototype.add = function add (elements) {
 	        var elementsArray = Array.isArray(elements) ? elements.slice(0) : [ elements ];
 
-	        append(this.rootElements, elementsArray);
+	        append$1$1(this.rootElements, elementsArray);
 	        this._insert(elementsArray);
-	    },
+	    };
 
-	    childrenChange: function(e) {
+	    ShapesQuadTree.prototype.childrenChange = function childrenChange (e) {
 	        var this$1 = this;
 
 	        if (e.action === "remove") {
@@ -6195,9 +6762,9 @@ module.exports =
 	        } else {
 	            this._insert(Array.prototype.slice.call(e.items, 0));
 	        }
-	    },
+	    };
 
-	    _insert: function(elements) {
+	    ShapesQuadTree.prototype._insert = function _insert (elements) {
 	        var this$1 = this;
 
 	        var element;
@@ -6206,14 +6773,14 @@ module.exports =
 	            element = elements.pop();
 	            element.addObserver(this$1);
 	            if (element.nodeType === "Group") {
-	                append(elements, element.children);
+	                append$1$1(elements, element.children);
 	            } else {
 	                this$1._insertShape(element);
 	            }
 	        }
-	    },
+	    };
 
-	    _insertShape: function(shape) {
+	    ShapesQuadTree.prototype._insertShape = function _insertShape (shape) {
 	        var bbox = shape.bbox();
 	        if (bbox) {
 	            var sectors = this.getSectors(bbox);
@@ -6237,9 +6804,9 @@ module.exports =
 	                rootMap[x][y].insert(shape, bbox);
 	            }
 	        }
-	    },
+	    };
 
-	    remove: function(element) {
+	    ShapesQuadTree.prototype.remove = function remove (element) {
 	        var this$1 = this;
 
 	        element.removeObserver(this);
@@ -6253,13 +6820,13 @@ module.exports =
 	            element._quadNode.remove(element);
 	            delete element._quadNode;
 	        }
-	    },
+	    };
 
-	    inRoot: function(sectors) {
+	    ShapesQuadTree.prototype.inRoot = function inRoot (sectors) {
 	        return sectors[0].length > 1 || sectors[1].length > 1;
-	    },
+	    };
 
-	    getSectors: function(rect) {
+	    ShapesQuadTree.prototype.getSectors = function getSectors (rect) {
 	        var bottomRight = rect.bottomRight();
 	        var bottomX = Math.floor(bottomRight.x / ROOT_SIZE);
 	        var bottomY = Math.floor(bottomRight.y / ROOT_SIZE);
@@ -6271,8 +6838,10 @@ module.exports =
 	            sectors[1].push(y);
 	        }
 	        return sectors;
-	    }
-	});
+	    };
+
+	    return ShapesQuadTree;
+	}(Class));
 
 	function zIndexComparer(x1, x2) {
 	    if (x1._zIndex < x2._zIndex) {
@@ -6285,77 +6854,438 @@ module.exports =
 	    return 0;
 	}
 
-	var SurfaceCursor = Class.extend({
-	    init: function(surface) {
-	        surface.bind("mouseenter", this._mouseenter.bind(this));
-	        surface.bind("mouseleave", this._mouseleave.bind(this));
+	var SurfaceCursor = function SurfaceCursor(surface) {
+	    surface.bind("mouseenter", this._mouseenter.bind(this));
+	    surface.bind("mouseleave", this._mouseleave.bind(this));
 
-	        this.element = surface.element;
-	    },
+	    this.element = surface.element;
+	};
 
-	    clear: function() {
+	SurfaceCursor.prototype.clear = function clear () {
+	    this._resetCursor();
+	};
+
+	SurfaceCursor.prototype.destroy = function destroy () {
+	    this._resetCursor();
+	    delete this.element;
+	};
+
+	SurfaceCursor.prototype._mouseenter = function _mouseenter (e) {
+	    var cursor = this._shapeCursor(e);
+
+	    if (!cursor) {
 	        this._resetCursor();
-	    },
+	    } else {
+	        if (!this._current) {
+	            this._defaultCursor = this._getCursor();
+	        }
 
-	    destroy: function() {
-	        this._resetCursor();
-	        delete this.element;
-	    },
+	        this._setCursor(cursor);
+	    }
+	};
 
-	    _mouseenter: function(e) {
-	        var cursor = this._shapeCursor(e);
+	SurfaceCursor.prototype._mouseleave = function _mouseleave () {
+	    this._resetCursor();
+	};
 
-	        if (!cursor) {
-	            this._resetCursor();
-	        } else {
-	            if (!this._current) {
-	                this._defaultCursor = this._getCursor();
+	SurfaceCursor.prototype._shapeCursor = function _shapeCursor (e) {
+	    var shape = e.element;
+
+	    while (shape && !defined(shape.options.cursor)) {
+	        shape = shape.parent;
+	    }
+
+	    if (shape) {
+	        return shape.options.cursor;
+	    }
+	};
+
+	SurfaceCursor.prototype._getCursor = function _getCursor () {
+	    if (this.element) {
+	        return this.element.style.cursor;
+	    }
+	};
+
+	SurfaceCursor.prototype._setCursor = function _setCursor (cursor) {
+	    if (this.element) {
+	        this.element.style.cursor = cursor;
+	        this._current = cursor;
+	    }
+	};
+
+	SurfaceCursor.prototype._resetCursor = function _resetCursor () {
+	    if (this._current) {
+	        this._setCursor(this._defaultCursor || "");
+	        delete this._current;
+	    }
+	};
+
+	function addGradientStops(gradient, stops) {
+	    for (var idx = 0; idx < stops.length; idx++) {
+	        var stop = stops[idx];
+	        var color = kendo.parseColor(stop.color());
+
+	        color.a *= stop.opacity();
+
+	        gradient.addColorStop(stop.offset(), color.toCssRgba());
+	    }
+	}
+
+	var PathNode$2 = (function (Node) {
+	    function PathNode () {
+	        Node.apply(this, arguments);
+	    }
+
+	    extendStatic(PathNode, Node);
+	    PathNode.prototype = Object.create( Node && Node.prototype );
+	    PathNode.prototype.constructor = PathNode;
+	    PathNode.fn = PathNode.prototype;
+	    PathNode.fn.init = PathNode.fn.constructor;
+
+	    PathNode.prototype.renderTo = function renderTo (ctx) {
+	        ctx.save();
+
+	        this.setTransform(ctx);
+	        this.setClip(ctx);
+	        this.setOpacity(ctx);
+
+	        ctx.beginPath();
+
+	        this.renderPoints(ctx, this.srcElement);
+
+	        this.setLineDash(ctx);
+	        this.setLineCap(ctx);
+	        this.setLineJoin(ctx);
+
+	        this.setFill(ctx);
+	        this.setStroke(ctx);
+
+	        ctx.restore();
+	    };
+
+	    PathNode.prototype.setFill = function setFill (ctx) {
+	        var fill = this.srcElement.options.fill;
+	        var hasFill = false;
+
+	        if (fill) {
+	            if (fill.nodeType === "Gradient") {
+	                this.setGradientFill(ctx, fill);
+	                hasFill = true;
+	            } else if (!isTransparent(fill.color)) {
+	                ctx.fillStyle = fill.color;
+
+	                ctx.save();
+	                this.globalAlpha(ctx, fill.opacity);
+	                ctx.fill();
+	                ctx.restore();
+
+	                hasFill = true;
 	            }
-
-	            this._setCursor(cursor);
-	        }
-	    },
-
-	    _mouseleave: function() {
-	        this._resetCursor();
-	    },
-
-	    _shapeCursor: function(e) {
-	        var shape = e.element;
-
-	        while (shape && !defined(shape.options.cursor)) {
-	            shape = shape.parent;
 	        }
 
-	        if (shape) {
-	            return shape.options.cursor;
-	        }
-	    },
+	        return hasFill;
+	    };
 
-	    _getCursor: function() {
-	        if (this.element) {
-	            return this.element.style.cursor;
-	        }
-	    },
+	    PathNode.prototype.setGradientFill = function setGradientFill (ctx, fill) {
+	        var bbox = this.srcElement.rawBBox();
+	        var gradient;
 
-	    _setCursor: function(cursor) {
-	        if (this.element) {
-	            this.element.style.cursor = cursor;
-	            this._current = cursor;
+	        if (fill instanceof LinearGradient) {
+	            var start = fill.start();
+	            var end = fill.end();
+	            gradient = ctx.createLinearGradient(start.x, start.y, end.x, end.y);
+	        } else if (fill instanceof RadialGradient) {
+	            var center = fill.center();
+	            gradient = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, fill.radius());
 	        }
-	    },
 
-	    _resetCursor: function() {
-	        if (this._current) {
-	            this._setCursor(this._defaultCursor || "");
-	            delete this._current;
+	        addGradientStops(gradient, fill.stops);
+
+	        ctx.save();
+
+	        if (!fill.userSpace()) {
+	            ctx.transform(bbox.width(), 0, 0, bbox.height(), bbox.origin.x, bbox.origin.y);
+	        }
+	        ctx.fillStyle = gradient;
+	        ctx.fill();
+
+	        ctx.restore();
+	    };
+
+	    PathNode.prototype.setStroke = function setStroke (ctx) {
+	        var stroke = this.srcElement.options.stroke;
+	        if (stroke && !isTransparent(stroke.color) && stroke.width > 0) {
+	            ctx.strokeStyle = stroke.color;
+	            ctx.lineWidth = valueOrDefault(stroke.width, 1);
+
+	            ctx.save();
+	            this.globalAlpha(ctx, stroke.opacity);
+	            ctx.stroke();
+	            ctx.restore();
+
+	            return true;
+	        }
+	    };
+
+	    PathNode.prototype.dashType = function dashType () {
+	        var stroke = this.srcElement.options.stroke;
+	        if (stroke && stroke.dashType) {
+	            return stroke.dashType.toLowerCase();
+	        }
+	    };
+
+	    PathNode.prototype.setLineDash = function setLineDash (ctx) {
+	        var dashType = this.dashType();
+	        if (dashType && dashType !== SOLID) {
+	            var dashArray = DASH_ARRAYS[dashType];
+	            if (ctx.setLineDash) {
+	                ctx.setLineDash(dashArray);
+	            } else {
+	                ctx.mozDash = dashArray;
+	                ctx.webkitLineDash = dashArray;
+	            }
+	        }
+	    };
+
+	    PathNode.prototype.setLineCap = function setLineCap (ctx) {
+	        var dashType = this.dashType();
+	        var stroke = this.srcElement.options.stroke;
+	        if (dashType && dashType !== SOLID) {
+	            ctx.lineCap = BUTT;
+	        } else if (stroke && stroke.lineCap) {
+	            ctx.lineCap = stroke.lineCap;
+	        }
+	    };
+
+	    PathNode.prototype.setLineJoin = function setLineJoin (ctx) {
+	        var stroke = this.srcElement.options.stroke;
+	        if (stroke && stroke.lineJoin) {
+	            ctx.lineJoin = stroke.lineJoin;
+	        }
+	    };
+
+	    PathNode.prototype.renderPoints = function renderPoints (ctx, path) {
+	        renderPath(ctx, path);
+	    };
+
+	    return PathNode;
+	}(Node$2));
+
+	var ArcNode$2 = (function (PathNode) {
+	    function ArcNode () {
+	        PathNode.apply(this, arguments);
+	    }
+
+	    extendStatic(ArcNode, PathNode);
+	    ArcNode.prototype = Object.create( PathNode && PathNode.prototype );
+	    ArcNode.prototype.constructor = ArcNode;
+	    ArcNode.fn = ArcNode.prototype;
+	    ArcNode.fn.init = ArcNode.fn.constructor;
+
+	    ArcNode.prototype.renderPoints = function renderPoints (ctx) {
+	        var path = this.srcElement.toPath();
+	        renderPath(ctx, path);
+	    };
+
+	    return ArcNode;
+	}(PathNode$2));
+
+	var CircleNode$2 = (function (PathNode) {
+	    function CircleNode () {
+	        PathNode.apply(this, arguments);
+	    }
+
+	    extendStatic(CircleNode, PathNode);
+	    CircleNode.prototype = Object.create( PathNode && PathNode.prototype );
+	    CircleNode.prototype.constructor = CircleNode;
+	    CircleNode.fn = CircleNode.prototype;
+	    CircleNode.fn.init = CircleNode.fn.constructor;
+
+	    CircleNode.prototype.renderPoints = function renderPoints (ctx) {
+	        var ref = this.srcElement.geometry();
+	        var center = ref.center;
+	        var radius = ref.radius;
+
+	        ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
+	    };
+
+	    return CircleNode;
+	}(PathNode$2));
+
+	var ImageNode$2 = (function (PathNode) {
+	    function ImageNode(srcElement, cors) {
+	        PathNode.call(this, srcElement);
+
+	        this.onLoad = this.onLoad.bind(this);
+	        this.onError = this.onError.bind(this);
+
+	        this.loading = createPromise();
+
+	        var img = this.img = new Image();
+
+	        if (cors && !(/^data:/i.test(srcElement.src()))) {
+	            img.crossOrigin = cors;
+	        }
+
+	        img.src = srcElement.src();
+
+	        if (img.complete) {
+	            this.onLoad();
+	        } else {
+	            img.onload = this.onLoad;
+	            img.onerror = this.onError;
 	        }
 	    }
-	});
 
-	var Surface$3 = Surface.extend({
-	    init: function(element, options) {
-	        Surface.fn.init.call(this, element, options);
+	    extendStatic(ImageNode, PathNode);
+	    ImageNode.prototype = Object.create( PathNode && PathNode.prototype );
+	    ImageNode.prototype.constructor = ImageNode;
+	    ImageNode.fn = ImageNode.prototype;
+	    ImageNode.fn.init = ImageNode.fn.constructor;
+
+	    ImageNode.prototype.renderTo = function renderTo (ctx) {
+	        if (this.loading.state() === "resolved") {
+	            ctx.save();
+
+	            this.setTransform(ctx);
+	            this.setClip(ctx);
+
+	            this.drawImage(ctx);
+
+	            ctx.restore();
+	        }
+	    };
+
+	    ImageNode.prototype.optionsChange = function optionsChange (e) {
+	        if (e.field === "src") {
+	            this.loading = createPromise();
+	            this.img.src = this.srcElement.src();
+	        } else {
+	            PathNode.prototype.optionsChange.call(this, e);
+	        }
+	    };
+
+	    ImageNode.prototype.onLoad = function onLoad () {
+	        this.loading.resolve();
+	        this.invalidate();
+	    };
+
+	    ImageNode.prototype.onError = function onError () {
+	        this.loading.reject(new Error(
+	            "Unable to load image '" + this.img.src +
+	            "'. Check for connectivity and verify CORS headers."
+	        ));
+	    };
+
+	    ImageNode.prototype.drawImage = function drawImage (ctx) {
+	        var rect = this.srcElement.rect();
+	        var topLeft = rect.topLeft();
+
+	        ctx.drawImage(
+	            this.img, topLeft.x, topLeft.y, rect.width(), rect.height()
+	        );
+	    };
+
+	    return ImageNode;
+	}(PathNode$2));
+
+	var MultiPathNode$2 = (function (PathNode) {
+	    function MultiPathNode () {
+	        PathNode.apply(this, arguments);
+	    }
+
+	    extendStatic(MultiPathNode, PathNode);
+	    MultiPathNode.prototype = Object.create( PathNode && PathNode.prototype );
+	    MultiPathNode.prototype.constructor = MultiPathNode;
+	    MultiPathNode.fn = MultiPathNode.prototype;
+	    MultiPathNode.fn.init = MultiPathNode.fn.constructor;
+
+	    MultiPathNode.prototype.renderPoints = function renderPoints (ctx) {
+	        var paths = this.srcElement.paths;
+	        for (var i = 0; i < paths.length; i++) {
+	            renderPath(ctx, paths[i]);
+	        }
+	    };
+
+	    return MultiPathNode;
+	}(PathNode$2));
+
+	var RectNode$2 = (function (PathNode) {
+	    function RectNode () {
+	        PathNode.apply(this, arguments);
+	    }
+
+	    extendStatic(RectNode, PathNode);
+	    RectNode.prototype = Object.create( PathNode && PathNode.prototype );
+	    RectNode.prototype.constructor = RectNode;
+	    RectNode.fn = RectNode.prototype;
+	    RectNode.fn.init = RectNode.fn.constructor;
+
+	    RectNode.prototype.renderPoints = function renderPoints (ctx) {
+	        var ref = this.srcElement.geometry();
+	        var origin = ref.origin;
+	        var size = ref.size;
+
+	        ctx.rect(origin.x, origin.y, size.width, size.height);
+	    };
+
+	    return RectNode;
+	}(PathNode$2));
+
+	var TextNode$2 = (function (PathNode) {
+	    function TextNode () {
+	        PathNode.apply(this, arguments);
+	    }
+
+	    extendStatic(TextNode, PathNode);
+	    TextNode.prototype = Object.create( PathNode && PathNode.prototype );
+	    TextNode.prototype.constructor = TextNode;
+	    TextNode.fn = TextNode.prototype;
+	    TextNode.fn.init = TextNode.fn.constructor;
+
+	    TextNode.prototype.renderTo = function renderTo (ctx) {
+	        var text = this.srcElement;
+	        var pos = text.position();
+	        var size = text.measure();
+
+	        ctx.save();
+
+	        this.setTransform(ctx);
+	        this.setClip(ctx);
+	        this.setOpacity(ctx);
+
+	        ctx.beginPath();
+
+	        ctx.font = text.options.font;
+	        ctx.textAlign = 'left';
+
+	        if (this.setFill(ctx)) {
+	            ctx.fillText(text.content(), pos.x, pos.y + size.baseline);
+	        }
+
+	        if (this.setStroke(ctx)) {
+	            this.setLineDash(ctx);
+	            ctx.strokeText(text.content(), pos.x, pos.y + size.baseline);
+	        }
+
+	        ctx.restore();
+	    };
+
+	    return TextNode;
+	}(PathNode$2));
+
+	NODE_MAP$2.Arc = ArcNode$2;
+	NODE_MAP$2.Circle = CircleNode$2;
+	NODE_MAP$2.Group = GroupNode$2;
+	NODE_MAP$2.Image = ImageNode$2;
+	NODE_MAP$2.MultiPath = MultiPathNode$2;
+	NODE_MAP$2.Path = PathNode$2;
+	NODE_MAP$2.Rect = RectNode$2;
+	NODE_MAP$2.Text = TextNode$2;
+
+	var Surface$4 = (function (BaseSurface) {
+	    function Surface(element, options) {
+	        BaseSurface.call(this, element, options);
 
 	        this.element.innerHTML = this._template(this);
 
@@ -6375,10 +7305,22 @@ module.exports =
 	            click: this._mouseTrackHandler,
 	            mousemove: this._mouseTrackHandler
 	        });
-	    },
+	    }
 
-	    destroy: function() {
-	        Surface.fn.destroy.call(this);
+	    extendStatic(Surface, BaseSurface);
+	    Surface.prototype = Object.create( BaseSurface && BaseSurface.prototype );
+	    Surface.prototype.constructor = Surface;
+	    Surface.fn = Surface.prototype;
+	    Surface.fn.init = Surface.fn.constructor;
+
+	    var prototypeAccessors = { type: {} };
+
+	    prototypeAccessors.type.get = function () {
+	        return "canvas";
+	    };
+
+	    Surface.prototype.destroy = function destroy () {
+	        BaseSurface.prototype.destroy.call(this);
 
 	        if (this._root) {
 	            this._root.destroy();
@@ -6399,19 +7341,19 @@ module.exports =
 	            click: this._mouseTrackHandler,
 	            mousemove: this._mouseTrackHandler
 	        });
-	    },
+	    };
 
-	    draw: function(element) {
-	        Surface.fn.draw.call(this, element);
+	    Surface.prototype.draw = function draw (element) {
+	        BaseSurface.prototype.draw.call(this, element);
 	        this._root.load([ element ], undefined, this.options.cors);
 
 	        if (this._searchTree) {
 	            this._searchTree.add([ element ]);
 	        }
-	    },
+	    };
 
-	    clear: function() {
-	        Surface.fn.clear.call(this);
+	    Surface.prototype.clear = function clear () {
+	        BaseSurface.prototype.clear.call(this);
 	        this._root.clear();
 
 	        if (this._searchTree) {
@@ -6421,17 +7363,17 @@ module.exports =
 	        if (this._cursor) {
 	            this._cursor.clear();
 	        }
-	    },
+	    };
 
-	    eventTarget: function(e) {
+	    Surface.prototype.eventTarget = function eventTarget (e) {
 	        if (this._searchTree) {
 	            var point = this._surfacePoint(e);
 	            var shape = this._searchTree.pointShape(point);
 	            return shape;
 	        }
-	    },
+	    };
 
-	    image: function() {
+	    Surface.prototype.image = function image () {
 	        var ref = this;
 	        var root = ref._root;
 	        var rootElement = ref._rootElement;
@@ -6458,18 +7400,18 @@ module.exports =
 	        promiseAll(loadingStates).then(resolveDataURL, resolveDataURL);
 
 	        return promise;
-	    },
+	    };
 
-	    suspendTracking: function() {
-	        Surface.fn.suspendTracking.call(this);
+	    Surface.prototype.suspendTracking = function suspendTracking () {
+	        BaseSurface.prototype.suspendTracking.call(this);
 	        if (this._searchTree) {
 	            this._searchTree.clear();
 	            delete this._searchTree;
 	        }
-	    },
+	    };
 
-	    resumeTracking: function() {
-	        Surface.fn.resumeTracking.call(this);
+	    Surface.prototype.resumeTracking = function resumeTracking () {
+	        BaseSurface.prototype.resumeTracking.call(this);
 	        if (!this._searchTree) {
 	            this._searchTree = new ShapesQuadTree();
 
@@ -6480,28 +7422,28 @@ module.exports =
 	            }
 	            this._searchTree.add(rootElements);
 	        }
-	    },
+	    };
 
-	    _resize: function() {
+	    Surface.prototype._resize = function _resize () {
 	        this._rootElement.width = this._size.width;
 	        this._rootElement.height = this._size.height;
 
 	        this._root.size = this._size;
 	        this._root.invalidate();
-	    },
+	    };
 
-	    _template: function() {
+	    Surface.prototype._template = function _template () {
 	        return "<canvas style='width: 100%; height: 100%;'></canvas>";
-	    },
+	    };
 
-	    _enableTracking: function() {
+	    Surface.prototype._enableTracking = function _enableTracking () {
 	        this._searchTree = new ShapesQuadTree();
 	        this._cursor = new SurfaceCursor(this);
 
-	        Surface.fn._enableTracking.call(this);
-	    },
+	        BaseSurface.prototype._enableTracking.call(this);
+	    };
 
-	    _trackMouse: function(e) {
+	    Surface.prototype._trackMouse = function _trackMouse (e) {
 	        if (this._suspendedTracking) {
 	            return;
 	        }
@@ -6540,306 +7482,164 @@ module.exports =
 	                type: "click"
 	            });
 	        }
+	    };
+
+	    Object.defineProperties( Surface.prototype, prototypeAccessors );
+
+	    return Surface;
+	}(Surface$2));
+
+	var instance$2;
+	var support$1;
+
+	var hasDocument = function () { return typeof document !== "undefined"; };
+
+	var supportsCanvas = function () { return hasDocument() &&
+	    document.createElement("canvas").getContext; };
+
+	var supportsSVG = function () { return hasDocument() &&
+	    document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"); };
+
+	var SurfaceFactory = (function (Class$$1) {
+	    function SurfaceFactory() {
+	        Class$$1.call(this);
+
+	        this._items = [ {
+	            name: "svg",
+	            type: Surface$3
+	        }, {
+	            name: "canvas",
+	            type: Surface$4
+	        } ];
 	    }
-	});
 
-	Surface$3.prototype.type = "canvas";
+	    extendStatic(SurfaceFactory, Class$$1);
+	    SurfaceFactory.prototype = Object.create( Class$$1 && Class$$1.prototype );
+	    SurfaceFactory.prototype.constructor = SurfaceFactory;
+	    SurfaceFactory.fn = SurfaceFactory.prototype;
+	    SurfaceFactory.fn.init = SurfaceFactory.fn.constructor;
 
-	if (typeof document !== "undefined" && document.createElement("canvas").getContext) {
-	    Surface.support.canvas = true;
-	    SurfaceFactory.current.register("canvas", Surface$3, 20);
-	}
+	    var staticAccessors = { support: {},current: {} };
 
-	function addGradientStops(gradient, stops) {
-	    for (var idx = 0; idx < stops.length; idx++) {
-	        var stop = stops[idx];
-	        var color = kendo.parseColor(stop.color());
+	    staticAccessors.support.get = function () {
+	        if (!support$1) {
+	            support$1 = {
+	                canvas: supportsCanvas(),
+	                svg: supportsSVG()
+	            };
+	        }
 
-	        color.a *= stop.opacity();
+	        return support$1;
+	    };
 
-	        gradient.addColorStop(stop.offset(), color.toCssRgba());
-	    }
-	}
+	    staticAccessors.current.get = function () {
+	        if (!instance$2) {
+	            instance$2 = new SurfaceFactory();
+	        }
 
-	var PathNode$2 = Node$2.extend({
-	    renderTo: function(ctx) {
-	        ctx.save();
+	        return instance$2;
+	    };
 
-	        this.setTransform(ctx);
-	        this.setClip(ctx);
-	        this.setOpacity(ctx);
+	    SurfaceFactory.prototype.create = function create (element, options) {
+	        var items = this._items;
+	        var match = items[0];
 
-	        ctx.beginPath();
-
-	        this.renderPoints(ctx, this.srcElement);
-
-	        this.setLineDash(ctx);
-	        this.setLineCap(ctx);
-	        this.setLineJoin(ctx);
-
-	        this.setFill(ctx);
-	        this.setStroke(ctx);
-
-	        ctx.restore();
-	    },
-
-	    setFill: function(ctx) {
-	        var fill = this.srcElement.options.fill;
-	        var hasFill = false;
-
-	        if (fill) {
-	            if (fill.nodeType === "Gradient") {
-	                this.setGradientFill(ctx, fill);
-	                hasFill = true;
-	            } else if (!isTransparent(fill.color)) {
-	                ctx.fillStyle = fill.color;
-
-	                ctx.save();
-	                this.globalAlpha(ctx, fill.opacity);
-	                ctx.fill();
-	                ctx.restore();
-
-	                hasFill = true;
+	        if (options && options.type) {
+	            var preferred = options.type.toLowerCase();
+	            for (var i = 0; i < items.length; i++) {
+	                if (items[i].name === preferred) {
+	                    match = items[i];
+	                    break;
+	                }
 	            }
 	        }
 
-	        return hasFill;
-	    },
-
-	    setGradientFill: function(ctx, fill) {
-	        var bbox = this.srcElement.rawBBox();
-	        var gradient;
-
-	        if (fill instanceof LinearGradient) {
-	            var start = fill.start();
-	            var end = fill.end();
-	            gradient = ctx.createLinearGradient(start.x, start.y, end.x, end.y);
-	        } else if (fill instanceof RadialGradient) {
-	            var center = fill.center();
-	            gradient = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, fill.radius());
+	        if (match) {
+	            return new match.type(element, options);
 	        }
 
-	        addGradientStops(gradient, fill.stops);
+	        kendo.logToConsole(
+	            "Warning: Unable to create Kendo UI Drawing Surface. Possible causes:\n" +
+	            "- The browser does not support SVG and Canvas. User agent: " + (navigator.userAgent));
+	    };
 
-	        ctx.save();
+	    Object.defineProperties( SurfaceFactory, staticAccessors );
 
-	        if (!fill.userSpace()) {
-	            ctx.transform(bbox.width(), 0, 0, bbox.height(), bbox.origin.x, bbox.origin.y);
-	        }
-	        ctx.fillStyle = gradient;
-	        ctx.fill();
+	    return SurfaceFactory;
+	}(Class));
 
-	        ctx.restore();
-	    },
-
-	    setStroke: function(ctx) {
-	        var stroke = this.srcElement.options.stroke;
-	        if (stroke && !isTransparent(stroke.color) && stroke.width > 0) {
-	            ctx.strokeStyle = stroke.color;
-	            ctx.lineWidth = valueOrDefault(stroke.width, 1);
-
-	            ctx.save();
-	            this.globalAlpha(ctx, stroke.opacity);
-	            ctx.stroke();
-	            ctx.restore();
-
-	            return true;
-	        }
-	    },
-
-	    dashType: function() {
-	        var stroke = this.srcElement.options.stroke;
-	        if (stroke && stroke.dashType) {
-	            return stroke.dashType.toLowerCase();
-	        }
-	    },
-
-	    setLineDash: function(ctx) {
-	        var dashType = this.dashType();
-	        if (dashType && dashType !== SOLID) {
-	            var dashArray = DASH_ARRAYS[dashType];
-	            if (ctx.setLineDash) {
-	                ctx.setLineDash(dashArray);
-	            } else {
-	                ctx.mozDash = dashArray;
-	                ctx.webkitLineDash = dashArray;
-	            }
-	        }
-	    },
-
-	    setLineCap: function(ctx) {
-	        var dashType = this.dashType();
-	        var stroke = this.srcElement.options.stroke;
-	        if (dashType && dashType !== SOLID) {
-	            ctx.lineCap = BUTT;
-	        } else if (stroke && stroke.lineCap) {
-	            ctx.lineCap = stroke.lineCap;
-	        }
-	    },
-
-	    setLineJoin: function(ctx) {
-	        var stroke = this.srcElement.options.stroke;
-	        if (stroke && stroke.lineJoin) {
-	            ctx.lineJoin = stroke.lineJoin;
-	        }
-	    },
-
-	    renderPoints: function(ctx, path) {
-	        renderPath(ctx, path);
+	var Surface = (function (BaseSurface) {
+	    function Surface () {
+	        BaseSurface.apply(this, arguments);
 	    }
-	});
 
-	NODE_MAP$2.Path = PathNode$2;
+	    extendStatic(Surface, BaseSurface);
+	    Surface.prototype = Object.create( BaseSurface && BaseSurface.prototype );
+	    Surface.prototype.constructor = Surface;
+	    Surface.fn = Surface.prototype;
+	    Surface.fn.init = Surface.fn.constructor;
 
-	var ArcNode$2 = PathNode$2.extend({
-	    renderPoints: function(ctx) {
-	        var path = this.srcElement.toPath();
-	        renderPath(ctx, path);
+	    var staticAccessors = { support: {} };
+
+	    staticAccessors.support.get = function () {
+	        return SurfaceFactory.support;
+	    };
+
+	    Surface.create = function create (element, options) {
+	        return SurfaceFactory.current.create(element, options);
+	    };
+
+	    Object.defineProperties( Surface, staticAccessors );
+
+	    return Surface;
+	}(Surface$2));
+
+	function exportGroup(group) {
+	    var root = new RootNode({
+	        skipBaseHref: true
+	    });
+	    var bbox = group.clippedBBox();
+	    var rootGroup = group;
+
+	    if (bbox) {
+	        var origin = bbox.getOrigin();
+	        var exportRoot = new Group();
+	        exportRoot.transform(transform$1().translate(-origin.x, -origin.y));
+	        exportRoot.children.push(group);
+	        rootGroup = exportRoot;
 	    }
-	});
 
-	NODE_MAP$2.Arc = ArcNode$2;
+	    root.load([ rootGroup ]);
 
-	var CircleNode$2 = PathNode$2.extend({
-	    renderPoints: function(ctx) {
-	        var ref = this.srcElement.geometry();
-	        var center = ref.center;
-	        var radius = ref.radius;
+	    var svg = "<?xml version='1.0' ?><svg xmlns='" + SVG_NS + "' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1'>" + (root.render()) + "</svg>";
 
-	        ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
-	    }
-	});
+	    root.destroy();
 
-	NODE_MAP$2.Circle = CircleNode$2;
+	    return svg;
+	}
 
-	var RectNode$2 = PathNode$2.extend({
-	    renderPoints: function(ctx) {
-	        var ref = this.srcElement.geometry();
-	        var origin = ref.origin;
-	        var size = ref.size;
-
-	        ctx.rect(origin.x, origin.y, size.width, size.height);
-	    }
-	});
-
-	NODE_MAP$2.Rect = RectNode$2;
-
-	var ImageNode$2 = PathNode$2.extend({
-	    init: function(srcElement, cors) {
-	        PathNode$2.fn.init.call(this, srcElement);
-
-	        this.onLoad = this.onLoad.bind(this);
-	        this.onError = this.onError.bind(this);
-
-	        this.loading = createPromise();
-
-	        var img = this.img = new Image();
-
-	        if (cors && !(/^data:/i.test(srcElement.src()))) {
-	            img.crossOrigin = cors;
-	        }
-
-	        img.src = srcElement.src();
-
-	        if (img.complete) {
-	            this.onLoad();
-	        } else {
-	            img.onload = this.onLoad;
-	            img.onerror = this.onError;
-	        }
-	    },
-
-	    renderTo: function(ctx) {
-	        if (this.loading.state() === "resolved") {
-	            ctx.save();
-
-	            this.setTransform(ctx);
-	            this.setClip(ctx);
-
-	            this.drawImage(ctx);
-
-	            ctx.restore();
-	        }
-	    },
-
-	    optionsChange: function(e) {
-	        if (e.field === "src") {
-	            this.loading = createPromise();
-	            this.img.src = this.srcElement.src();
-	        } else {
-	            PathNode$2.fn.optionsChange.call(this, e);
-	        }
-	    },
-
-	    onLoad: function() {
-	        this.loading.resolve();
-	        this.invalidate();
-	    },
-
-	    onError: function() {
-	        this.loading.reject(new Error(
-	            "Unable to load image '" + this.img.src +
-	            "'. Check for connectivity and verify CORS headers."
-	        ));
-	    },
-
-	    drawImage: function(ctx) {
-	        var rect = this.srcElement.rect();
-	        var topLeft = rect.topLeft();
-
-	        ctx.drawImage(
-	            this.img, topLeft.x, topLeft.y, rect.width(), rect.height()
-	        );
-	    }
-	});
-
-	NODE_MAP$2.Image = ImageNode$2;
-
-	var TextNode$2 = PathNode$2.extend({
-	    renderTo: function(ctx) {
-	        var text = this.srcElement;
-	        var pos = text.position();
-	        var size = text.measure();
-
-	        ctx.save();
-
-	        this.setTransform(ctx);
-	        this.setClip(ctx);
-	        this.setOpacity(ctx);
-
-	        ctx.beginPath();
-
-	        ctx.font = text.options.font;
-	        ctx.textAlign = 'left';
-
-	        if (this.setFill(ctx)) {
-	            ctx.fillText(text.content(), pos.x, pos.y + size.baseline);
-	        }
-
-	        if (this.setStroke(ctx)) {
-	            this.setLineDash(ctx);
-	            ctx.strokeText(text.content(), pos.x, pos.y + size.baseline);
-	        }
-
-	        ctx.restore();
-	    }
-	});
-
-	NODE_MAP$2.Text = TextNode$2;
-
-	var MultiPathNode$2 = PathNode$2.extend({
-	    renderPoints: function(ctx) {
-	        var paths = this.srcElement.paths;
-	        for (var i = 0; i < paths.length; i++) {
-	            renderPath(ctx, paths[i]);
-	        }
-	    }
-	});
-
-	NODE_MAP$2.MultiPath = MultiPathNode$2;
+	var svg$1 = {
+		Surface: Surface$3,
+		RootNode: RootNode,
+		Node: Node,
+		GroupNode: GroupNode,
+		ArcNode: ArcNode,
+		CircleNode: CircleNode,
+		RectNode: RectNode,
+		ImageNode: ImageNode,
+		TextNode: TextNode,
+		PathNode: PathNode,
+		MultiPathNode: MultiPathNode,
+		DefinitionNode: DefinitionNode,
+		ClipNode: ClipNode,
+		GradientStopNode: GradientStopNode,
+		LinearGradientNode: LinearGradientNode,
+		RadialGradientNode: RadialGradientNode,
+		exportGroup: exportGroup
+	};
 
 	var canvas = {
-		Surface: Surface$3,
+		Surface: Surface$4,
 		RootNode: RootNode$2,
 		Node: Node$2,
 		GroupNode: GroupNode$2,
@@ -6864,7 +7664,7 @@ module.exports =
 	    if (bbox) {
 	        var origin = bbox.getOrigin();
 	        exportRoot = new Group();
-	        exportRoot.transform(transform().translate(-origin.x, -origin.y));
+	        exportRoot.transform(transform$1().translate(-origin.x, -origin.y));
 	        exportRoot.children.push(group);
 
 	        var size = bbox.getSize();
@@ -6882,7 +7682,7 @@ module.exports =
 	    style.height = surfaceOptions.height;
 	    document.body.appendChild(container);
 
-	    var surface = new Surface$3(container, surfaceOptions);
+	    var surface = new Surface$4(container, surfaceOptions);
 	    surface.suspendTracking();
 	    surface.draw(exportRoot);
 
@@ -6931,7 +7731,7 @@ module.exports =
 
 	/* -----[ local vars ]----- */
 
-	function slice$1(thing) {
+	function slice$1$1(thing) {
 	    return Array.prototype.slice.call(thing);
 	}
 
@@ -6947,24 +7747,30 @@ module.exports =
 	var inBrowser = typeof window !== 'undefined';
 	var microsoft = inBrowser ? browser.msie || browser.edge : false;
 
-	var TextRect = Text.extend({
-	    init: function(str, rect, options) {
-	        Text.fn.init.call(this, str, rect.getOrigin(), options);
+	var TextRect = (function (Text$$1) {
+	  function TextRect(str, rect, options) {
+	        Text$$1.call(this, str, rect.getOrigin(), options);
 	        this._pdfRect = rect;
-	    },
+	    }
 
-	    rect: function() {
+	  extendStatic(TextRect, Text$$1);
+	  TextRect.prototype = Object.create( Text$$1 && Text$$1.prototype );
+	  TextRect.prototype.constructor = TextRect;
+	  TextRect.fn = TextRect.prototype;
+	  TextRect.fn.init = TextRect.fn.constructor;
+	    TextRect.prototype.rect = function rect () {
 	        // this is the crux of it: we can avoid a call to
 	        // measure(), which is what the base class does, since we
 	        // already know the rect.  measure() is s-l-o-w.
 	        return this._pdfRect;
-	    },
-
-	    rawBBox: function() {
+	    };
+	    TextRect.prototype.rawBBox = function rawBBox () {
 	        // also let's avoid creating a new rectangle.
 	        return this._pdfRect;
-	    }
-	});
+	    };
+
+	  return TextRect;
+	}(Text));
 
 	function addClass(el, cls) {
 	    if (el.classList) {
@@ -7080,7 +7886,7 @@ module.exports =
 	            // re-draw canvases - https://github.com/telerik/kendo/issues/4872
 	            var canvases = el.querySelectorAll("canvas");
 	            if (canvases.length) {
-	                slice$1(clone.querySelectorAll("canvas")).forEach(function (canvas$$1, i) {
+	                slice$1$1(clone.querySelectorAll("canvas")).forEach(function (canvas$$1, i) {
 	                    canvas$$1.getContext("2d").drawImage(canvases[i], 0, 0);
 	                });
 	            }
@@ -7088,7 +7894,7 @@ module.exports =
 	            // remove "name" attributes from <input> elements -
 	            // https://github.com/telerik/kendo/issues/5409
 	            var orig = el.querySelectorAll("input, select, textarea, option");
-	            slice$1(clone.querySelectorAll("input, select, textarea, option")).forEach(function (el, i) {
+	            slice$1$1(clone.querySelectorAll("input, select, textarea, option")).forEach(function (el, i) {
 	                el.removeAttribute("id");
 	                el.removeAttribute("name");
 	                if (!/^textarea$/i.test(el.tagName)) {
@@ -7136,7 +7942,7 @@ module.exports =
 
 	        // translate to start of page
 	        var pos = element.getBoundingClientRect();
-	        setTransform(group, [
+	        setTransform$1(group, [
 	            scale.x,
 	            0,
 	            0,
@@ -7249,14 +8055,14 @@ module.exports =
 	        }
 	    });
 
-	    function makeTemplate(template$$1) {
-	        if (template$$1 != null) {
-	            if (typeof template$$1 == "string") {
-	                template$$1 = kendo.template(template$$1.replace(/^\s+|\s+$/g, ""));
+	    function makeTemplate(template) {
+	        if (template != null) {
+	            if (typeof template == "string") {
+	                template = kendo.template(template.replace(/^\s+|\s+$/g, ""));
 	            }
-	            if (typeof template$$1 == "function") {
+	            if (typeof template == "function") {
 	                return function(data) {
-	                    var el = template$$1(data);
+	                    var el = template(data);
 	                    if (el && typeof el == "string") {
 	                        var div = document.createElement("div");
 	                        div.innerHTML = el;
@@ -7267,13 +8073,13 @@ module.exports =
 	            }
 	            // assumed DOM element
 	            return function() {
-	                return template$$1.cloneNode(true);
+	                return template.cloneNode(true);
 	            };
 	        }
 	    }
 
 	    function handlePageBreaks(callback, element, forceBreak, pageWidth, pageHeight, margin, options) {
-	        var template$$1 = makeTemplate(options.template);
+	        var template = makeTemplate(options.template);
 	        var doc = element.ownerDocument;
 	        var pages = [];
 	        var copy = options._destructive ? element : cloneNodes(element);
@@ -7284,14 +8090,14 @@ module.exports =
 	        // places TFOOT before TBODY, tricking our algorithm to
 	        // insert a page break right after the header).
 	        // https://github.com/telerik/kendo/issues/4699
-	        slice$1(copy.querySelectorAll("tfoot")).forEach(function(tfoot){
+	        slice$1$1(copy.querySelectorAll("tfoot")).forEach(function(tfoot){
 	            tfoot.parentNode.appendChild(tfoot);
 	        });
 
 	        // remember the index of each LI from an ordered list.
 	        // we'll use it to reconstruct the proper numbering.
-	        slice$1(copy.querySelectorAll("ol")).forEach(function(ol){
-	            slice$1(ol.children).forEach(function(li, index){
+	        slice$1$1(copy.querySelectorAll("ol")).forEach(function(ol){
+	            slice$1$1(ol.children).forEach(function(li, index){
 	                li.setAttribute("kendo-split-index", index);
 	            });
 	        });
@@ -7358,9 +8164,9 @@ module.exports =
 	                page.appendChild(copy);
 	            }
 
-	            if (template$$1) {
+	            if (template) {
 	                pages.forEach(function(page, i){
-	                    var el = template$$1({
+	                    var el = template({
 	                        element    : page,
 	                        pageNum    : i + 1,
 	                        totalPages : pages.length
@@ -7635,12 +8441,10 @@ module.exports =
 	    return promise;
 	}
 
-	drawDOM.getFontFaces = getFontFaces;
-
 	// This is needed for the Spreadsheet print functionality.  Since
 	// there we only need to draw text, this cuts through the ceremony
 	// of drawDOM/renderElement and renders the text node directly.
-	drawDOM.drawText = function(element) {
+	function drawText(element) {
 	    var group = new Group();
 	    nodeInfo._clipbox = false;
 	    nodeInfo._matrix = Matrix.unit();
@@ -7657,7 +8461,7 @@ module.exports =
 	    }
 	    popNodeInfo();
 	    return group;
-	};
+	}
 
 	var parseBackgroundImage = (function(){
 	    var tok_linear_gradient  = /^((-webkit-|-moz-|-o-|-ms-)?linear-gradient\s*)\(/;
@@ -8101,7 +8905,7 @@ module.exports =
 	        });
 
 	        if (element.children) {
-	            slice$1(element.children).forEach(dive);
+	            slice$1$1(element.children).forEach(dive);
 	        }
 	    }
 
@@ -8338,7 +9142,7 @@ module.exports =
 	    }
 	}
 
-	function setTransform(shape, m) {
+	function setTransform$1(shape, m) {
 	    m = new Matrix(m[0], m[1], m[2], m[3], m[4], m[5]);
 	    shape.transform(m);
 	    return m;
@@ -8349,7 +9153,7 @@ module.exports =
 	}
 
 	function addArcToPath(path, x, y, options) {
-	    var points = new Arc([ x, y ], options).curvePoints(), i = 1;
+	    var points = new Arc$2([ x, y ], options).curvePoints(), i = 1;
 	    while (i < points.length) {
 	        path.curveTo(points[i++], points[i++], points[i++]);
 	    }
@@ -8707,7 +9511,7 @@ module.exports =
 	        if (!nodeInfo._avoidLinks || !matches(element, nodeInfo._avoidLinks)) {
 	            var r = document.createRange();
 	            r.selectNodeContents(element);
-	            slice$1(r.getClientRects()).forEach(function(box){
+	            slice$1$1(r.getClientRects()).forEach(function(box){
 	                var g = new Group();
 	                g._pdfLink = {
 	                    url    : element.href,
@@ -8771,7 +9575,7 @@ module.exports =
 	                var firstCell = table.element.rows[0].cells[0];
 	                var firstCellBox = firstCell.getBoundingClientRect();
 	                if (firstCellBox.top == tableBox.top || firstCellBox.left == tableBox.left) {
-	                    return slice$1(boxes).map(function(box){
+	                    return slice$1$1(boxes).map(function(box){
 	                        return {
 	                            left   : box.left + tableBorderLeft,
 	                            top    : box.top + tableBorderTop,
@@ -8807,7 +9611,7 @@ module.exports =
 	        }
 
 	        var path, edge = new Group();
-	        setTransform(edge, transform$$1);
+	        setTransform$1(edge, transform$$1);
 	        group.append(edge);
 
 	        sanitizeRadius(rl);
@@ -8850,7 +9654,7 @@ module.exports =
 	                stroke: null
 	            }).moveTo(0, 0);
 
-	            setTransform(path, transform$$1);
+	            setTransform$1(path, transform$$1);
 
 	            addArcToPath(path, 0, r.y, {
 	                startAngle: -90,
@@ -9488,7 +10292,7 @@ module.exports =
 	    wrap$$1.children.push(visual);
 
 	    var bbox = element.getBoundingClientRect();
-	    wrap$$1.transform(transform().translate(bbox.left, bbox.top));
+	    wrap$$1.transform(transform$1().translate(bbox.left, bbox.top));
 
 	    group.append(wrap$$1);
 
@@ -9576,8 +10380,8 @@ module.exports =
 	        }
 	    } else {
 	        group.append(
-	            new Circle$1(
-	                new Circle([
+	            new Circle(
+	                new Circle$2([
 	                    (box.left + box.right) / 2,
 	                    (box.top + box.bottom) / 2
 	                ], Math.min(box.width-2, box.height-2) / 2)
@@ -9585,8 +10389,8 @@ module.exports =
 	        );
 	        if (element.checked) {
 	            group.append(
-	                new Circle$1(
-	                    new Circle([
+	                new Circle(
+	                    new Circle$2([
 	                        (box.left + box.right) / 2,
 	                        (box.top + box.bottom) / 2
 	                    ], Math.min(box.width-8, box.height-8) / 2)
@@ -9769,7 +10573,7 @@ module.exports =
 
 	    if (hasDecoration) {
 	        range.selectNode(node);
-	        slice$1(range.getClientRects()).forEach(decorate);
+	        slice$1$1(range.getClientRects()).forEach(decorate);
 	    }
 
 	    return;                 // only function declarations after this line
@@ -10138,7 +10942,7 @@ module.exports =
 	            var m = [ 1, 0, 0, 1, -x, -y ];
 	            m = mmul(m, tr.matrix);
 	            m = mmul(m, [ 1, 0, 0, 1, x, y ]);
-	            m = setTransform(group, m);
+	            m = setTransform$1(group, m);
 
 	            nodeInfo._matrix = nodeInfo._matrix.multiplyCopy(m);
 
@@ -10179,22 +10983,23 @@ module.exports =
 	}
 
 	var drawing = {
-		svg: svg,
+		svg: svg$1,
 		canvas: canvas,
 		util: util,
+		HasObservers: HasObservers,
 		PathParser: PathParser,
-		Surface: Surface,
+		parsePath: parsePath,
 		BaseNode: BaseNode,
-		SurfaceFactory: SurfaceFactory,
 		OptionsStore: OptionsStore,
+		Surface: Surface,
+		SurfaceFactory: SurfaceFactory,
 		exportImage: exportImage,
 		exportSVG: exportSVG,
 		QuadNode: QuadNode,
 		ShapesQuadTree: ShapesQuadTree,
-		ObserversMixin: ObserversMixin,
 		Element: Element$1,
-		Circle: Circle$1,
-		Arc: Arc$2,
+		Circle: Circle,
+		Arc: Arc,
 		Path: Path,
 		MultiPath: MultiPath,
 		Text: Text,
@@ -10215,7 +11020,9 @@ module.exports =
 		Gradient: Gradient,
 		Animation: Animation,
 		AnimationFactory: AnimationFactory,
-		drawDOM: drawDOM
+		drawDOM: drawDOM,
+		drawText: drawText,
+		getFontFaces: getFontFaces
 	};
 
 	kendo.deepExtend(kendo, {

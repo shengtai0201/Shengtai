@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1257);
+	module.exports = __webpack_require__(1258);
 
 
 /***/ }),
@@ -59,25 +59,25 @@ module.exports =
 
 /***/ }),
 
-/***/ 1059:
+/***/ 1061:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.data");
 
 /***/ }),
 
-/***/ 1194:
+/***/ 1195:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.resizable");
 
 /***/ }),
 
-/***/ 1257:
+/***/ 1258:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1059), __webpack_require__(1194), __webpack_require__(1258), __webpack_require__(1259), __webpack_require__(1260), __webpack_require__(1261), __webpack_require__(1262), __webpack_require__(1263)], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1061), __webpack_require__(1195), __webpack_require__(1259), __webpack_require__(1260), __webpack_require__(1261), __webpack_require__(1262), __webpack_require__(1263), __webpack_require__(1264)], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -2567,42 +2567,42 @@ module.exports =
 
 /***/ }),
 
-/***/ 1258:
+/***/ 1259:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.switch");
 
 /***/ }),
 
-/***/ 1259:
+/***/ 1260:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.gantt.data");
 
 /***/ }),
 
-/***/ 1260:
+/***/ 1261:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.gantt.editors");
 
 /***/ }),
 
-/***/ 1261:
+/***/ 1262:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.gantt.list");
 
 /***/ }),
 
-/***/ 1262:
+/***/ 1263:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.gantt.timeline");
 
 /***/ }),
 
-/***/ 1263:
+/***/ 1264:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.pdf");

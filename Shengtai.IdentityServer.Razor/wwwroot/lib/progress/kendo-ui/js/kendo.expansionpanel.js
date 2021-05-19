@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1235);
+	module.exports = __webpack_require__(1236);
 
 
 /***/ }),
@@ -59,18 +59,18 @@ module.exports =
 
 /***/ }),
 
-/***/ 1049:
+/***/ 1042:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.core");
 
 /***/ }),
 
-/***/ 1235:
+/***/ 1236:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (f, define) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1049)], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1042)], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function () {
 
 	var __meta__ = {// jshint ignore:line
@@ -99,7 +99,7 @@ module.exports =
 	        EXPANDER_CONTENT = "k-expander-content",
 	        EXPANDER_CONTENT_WRAPPER = "k-expander-content-wrapper",
 	        INDICATOR = ".k-expander-indicator",
-	        FOCUSED = "k-state-focused",
+	        FOCUSED = "k-state-focus",
 	        CLICK = "click",
 	        KEYDOWN = "keydown",
 	        HEIGHT = "height",
@@ -137,8 +137,8 @@ module.exports =
 
 	            that.wrapper
 	                .on(CLICK + NS, '[' + headerAttribute + ']', proxy(that._click, that))
-	                .on("focus" + NS, '[' + headerAttribute + ']', proxy(that._focus, that))
-	                .on("focusout" + NS, '[' + headerAttribute + ']', proxy(that._blur, that))
+	                .on("focusin" + NS, proxy(that._focus, that))
+	                .on("focusout" + NS, proxy(that._blur, that))
 	                .on(KEYDOWN + NS, proxy(that._keydown, that));
 
 	            that.toggle(that.options.expanded, false);
@@ -313,15 +313,15 @@ module.exports =
 	            var that = this;
 
 	            if (that.header) {
-	                that.header.removeClass(FOCUSED);
+	                that.wrapper.removeClass(FOCUSED);
 	            }
 	        },
 
 	        _focus: function () {
 	            var that = this;
 
-	            if (that.header) {
-	                that.header.addClass(FOCUSED);
+	            if (that.wrapper) {
+	                that.wrapper.addClass(FOCUSED);
 	            }
 	        }
 	    });

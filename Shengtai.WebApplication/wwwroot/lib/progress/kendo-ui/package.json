@@ -1,7 +1,7 @@
 {
   "name": "@progress/kendo-ui",
   "license": "LicenseRef-LICENSE",
-  "version": "2021.1.330",
+  "version": "2021.2.511",
   "dependencies": {
     "jquery": "3.5.1"
   },

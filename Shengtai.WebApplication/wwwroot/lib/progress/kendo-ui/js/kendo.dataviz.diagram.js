@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1133);
+	module.exports = __webpack_require__(1134);
 
 
 /***/ }),
@@ -59,55 +59,55 @@ module.exports =
 
 /***/ }),
 
-/***/ 1045:
+/***/ 1048:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.drawing");
 
 /***/ }),
 
-/***/ 1059:
+/***/ 1061:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.data");
 
 /***/ }),
 
-/***/ 1069:
+/***/ 1071:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.mobile.scroller");
 
 /***/ }),
 
-/***/ 1091:
+/***/ 1092:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.userevents");
 
 /***/ }),
 
-/***/ 1113:
+/***/ 1114:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.draganddrop");
 
 /***/ }),
 
-/***/ 1133:
+/***/ 1134:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
 	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(1059), __webpack_require__(1113), __webpack_require__(1091), __webpack_require__(1069),
-	        __webpack_require__(1045),
+	        __webpack_require__(1061), __webpack_require__(1114), __webpack_require__(1092), __webpack_require__(1071),
+	        __webpack_require__(1048),
 
-	       __webpack_require__(1134),
 	       __webpack_require__(1135),
 	       __webpack_require__(1136),
 	       __webpack_require__(1137),
 	       __webpack_require__(1138),
-	       __webpack_require__(1139)
+	       __webpack_require__(1139),
+	       __webpack_require__(1140)
 	    ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
@@ -137,42 +137,42 @@ module.exports =
 
 /***/ }),
 
-/***/ 1134:
+/***/ 1135:
 /***/ (function(module, exports) {
 
 	module.exports = require("./dataviz/diagram/utils");
 
 /***/ }),
 
-/***/ 1135:
+/***/ 1136:
 /***/ (function(module, exports) {
 
 	module.exports = require("./dataviz/diagram/math");
 
 /***/ }),
 
-/***/ 1136:
+/***/ 1137:
 /***/ (function(module, exports) {
 
 	module.exports = require("./dataviz/diagram/svg");
 
 /***/ }),
 
-/***/ 1137:
+/***/ 1138:
 /***/ (function(module, exports) {
 
 	module.exports = require("./dataviz/diagram/services");
 
 /***/ }),
 
-/***/ 1138:
+/***/ 1139:
 /***/ (function(module, exports) {
 
 	module.exports = require("./dataviz/diagram/layout");
 
 /***/ }),
 
-/***/ 1139:
+/***/ 1140:
 /***/ (function(module, exports) {
 
 	module.exports = require("./dataviz/diagram/dom");

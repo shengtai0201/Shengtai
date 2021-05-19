@@ -46,7 +46,7 @@ module.exports =
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1100);
+	module.exports = __webpack_require__(1101);
 
 
 /***/ }),
@@ -59,18 +59,18 @@ module.exports =
 
 /***/ }),
 
-/***/ 1049:
+/***/ 1042:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.core");
 
 /***/ }),
 
-/***/ 1100:
+/***/ 1101:
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f, define){
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1049), __webpack_require__(1101), __webpack_require__(1102) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1042), __webpack_require__(1102), __webpack_require__(1103) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (f), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	})(function(){
 
 	var __meta__ = { // jshint ignore:line
@@ -2370,7 +2370,7 @@ module.exports =
 
 	        if (newGroup.items && newGroup.items.length) {
 	            for (var i = 0; i < newGroup.items.length; i++) {
-	                currOriginal = originalGroup.items[i];
+	                currOriginal = originalGroup.items[originalGroup.items.length - 1];
 	                currentNew = newGroup.items[i];
 	                if (currOriginal && currentNew) {
 	                    if (currOriginal.hasSubgroups && currOriginal.value == currentNew.value) {
@@ -6582,14 +6582,14 @@ module.exports =
 
 /***/ }),
 
-/***/ 1101:
+/***/ 1102:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.data.odata");
 
 /***/ }),
 
-/***/ 1102:
+/***/ 1103:
 /***/ (function(module, exports) {
 
 	module.exports = require("./kendo.data.xml");

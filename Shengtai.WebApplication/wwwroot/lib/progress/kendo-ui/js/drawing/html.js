@@ -68,7 +68,7 @@ module.exports =
 	})(function(){
 
 	(function ($) {
-	    
+
 	    var kendo = window.kendo;
 	    var drawing = kendo.drawing;
 	    var drawDOM = drawing.drawDOM;
@@ -77,8 +77,9 @@ module.exports =
 	        return drawDOM($(element)[0], options);
 	    };
 
-	    drawing.drawDOM.drawText = drawDOM.drawText;
-	    drawing.drawDOM.getFontFaces = drawDOM.getFontFaces;
+	    // Aliases used by spreadsheet/print.js
+	    drawing.drawDOM.drawText = drawing.drawText;
+	    drawing.drawDOM.getFontFaces = drawing.getFontFaces;
 
 	})(window.kendo.jQuery);
 
