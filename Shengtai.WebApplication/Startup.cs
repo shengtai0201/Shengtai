@@ -36,7 +36,7 @@ namespace Shengtai.WebApplication
             services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityServer.Models.Account.ApplicationUser>(options =>
+            var builder = services.AddDefaultIdentity<IdentityServer.Models.Account.ApplicationUser>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = true;
                 options.SignIn.RequireConfirmedEmail = true;
@@ -51,7 +51,7 @@ namespace Shengtai.WebApplication
             services.AddControllersWithViews();
 
             // Identity Server 4
-            services.AddIdentityServer<IdentityServer.Models.Account.ApplicationUser, IdentityServer.Data.DatabaseStrategy, CustomMenuBuilder>(appSettings.ConnectionStrings.DefaultConnection, assemblyName);
+            services.AddIdentityServer<IdentityServer.Models.Account.ApplicationUser, IdentityServer.Data.DatabaseStrategy, CustomMenuBuilder>(builder, appSettings.ConnectionStrings.DefaultConnection, assemblyName);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

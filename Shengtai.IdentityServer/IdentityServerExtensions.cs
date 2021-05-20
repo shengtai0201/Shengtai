@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using PwnedPasswords.Validator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +16,18 @@ namespace Shengtai.IdentityServer
 {
     public static class IdentityServerExtensions
     {
+        private class CustomErrorDescriber : PwnedPasswordErrorDescriber
+        {
+            public override IdentityError PwnedPassword()
+            {
+                return new IdentityError
+                {
+                    Code = nameof(PwnedPassword),
+                    Description = "The password you entered has appeared in a data breach. Please choose a different password."
+                };
+            }
+        }
+
         public static void AddIdentityServer<TUser>(this IServiceCollection services, string connectionString, string assemblyName) where TUser : Models.Account.ApplicationUser
         {
             #region default service
@@ -47,7 +62,7 @@ namespace Shengtai.IdentityServer
             builder.AddDeveloperSigningCredential();
         }
 
-        public static void AddIdentityServer<TUser, TDataStrategy, TMenuBuilder>(this IServiceCollection services, string connectionString, string assemblyName) 
+        public static void AddIdentityServer<TUser, TDataStrategy, TMenuBuilder>(this IServiceCollection services, IdentityBuilder builder, string connectionString, string assemblyName) 
             where TUser : Models.Account.ApplicationUser
             where TDataStrategy : class, Data.IDataStrategy
             where TMenuBuilder : MenuBuilder
@@ -63,7 +78,22 @@ namespace Shengtai.IdentityServer
             services.AddScoped<MenuBuilder, TMenuBuilder>();
             #endregion
 
-            var builder = services.AddIdentityServer(options =>
+            #region 密碼
+            /* 額外裝的套件
+             * Microsoft.Extensions.Http.Polly
+             * Polly
+             * PwnedPasswords.Validator
+             */
+            // Explicitly configure the PwnedPassword client to timeout after 2 seconds, and retry 3 times
+            // The pwnedpassword API achieves 99% percentile of <1s, so this should be sufficient!
+            services.AddPwnedPasswordHttpClient(minimumFrequencyToConsiderPwned: 20)
+                .AddTransientHttpErrorPolicy(p => p.RetryAsync(3))
+                .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(2)));
+
+            builder.AddPwnedPasswordValidator<TUser>().AddPwnedPasswordErrorDescriber<CustomErrorDescriber>();
+            #endregion
+
+            var serverBuilder = services.AddIdentityServer(options =>
             {
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
@@ -84,7 +114,7 @@ namespace Shengtai.IdentityServer
             }).AddAspNetIdentity<TUser>();
 
             // not recommended for production - you need to store your key material somewhere secure
-            builder.AddDeveloperSigningCredential();
+            serverBuilder.AddDeveloperSigningCredential();
 
             services.AddSignalR();
         }

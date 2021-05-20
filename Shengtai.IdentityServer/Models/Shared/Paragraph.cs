@@ -30,7 +30,7 @@ namespace Shengtai.IdentityServer.Models.Shared
                 }
                 else if (another.Parent != null && this.Parent != null)
                 {
-                    if (another.Parent.Text == this.Parent.Text && another.Parent.Small == this.Parent.Parent.Small && another.Text == this.Text && another.Small == this.Small)
+                    if (another.Parent.Text == this.Parent.Text && another.Parent.Small == this.Parent.Small && another.Text == this.Text && another.Small == this.Small)
                         return true;
                 }
             }
