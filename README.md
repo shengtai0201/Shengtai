@@ -19,7 +19,7 @@ Shengtai.IdentityServer.Razor => Razor 類別庫(.NET 5.0)<br/>
 ## 其他注意事項
 - 參考網站之appsettings.json必須用"具有BOM的UTF-8"的編碼儲存
 - database first 語法
-Scaffold-DbContext "Host=127.0.0.1;Database=Land;Username=postgres" Npgsql.EntityFrameworkCore.PostgreSQL -Tables "Menu","MenuItem" -UseDatabaseNames -Context NavDbContext -Force
+Scaffold-DbContext "Host=127.0.0.1;Database=Land;Username=postgres" Npgsql.EntityFrameworkCore.PostgreSQL -Tables "Menu","MenuUser","MenuRole" -UseDatabaseNames -Context NavDbContext -Force
 ## 已知缺陷
 ## 待辦事項
 - 使用者管理

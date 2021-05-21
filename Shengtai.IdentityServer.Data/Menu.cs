@@ -10,7 +10,8 @@ namespace Shengtai.IdentityServer.Data
         public Menu()
         {
             InverseParent = new HashSet<Menu>();
-            MenuItems = new HashSet<MenuItem>();
+            MenuRoles = new HashSet<MenuRole>();
+            MenuUsers = new HashSet<MenuUser>();
         }
 
         public int Id { get; set; }
@@ -22,6 +23,7 @@ namespace Shengtai.IdentityServer.Data
 
         public virtual Menu Parent { get; set; }
         public virtual ICollection<Menu> InverseParent { get; set; }
-        public virtual ICollection<MenuItem> MenuItems { get; set; }
+        public virtual ICollection<MenuRole> MenuRoles { get; set; }
+        public virtual ICollection<MenuUser> MenuUsers { get; set; }
     }
 }

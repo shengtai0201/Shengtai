@@ -5,11 +5,10 @@ using System.Collections.Generic;
 
 namespace Shengtai.IdentityServer.Data
 {
-    public partial class MenuItem
+    public partial class MenuRole
     {
         public int MenuId { get; set; }
-        public string UserId { get; set; }
-        public int Push { get; set; }
+        public string RoleId { get; set; }
 
         public virtual Menu Menu { get; set; }
     }

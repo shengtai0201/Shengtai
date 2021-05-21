@@ -13,5 +13,7 @@ namespace Shengtai.IdentityServer.Data
         void ReadBreadcrumbs(IList<Models.Shared.IMenu> menus, int key);
 
         IDictionary<Models.Shared.Paragraph, int> Read();
+
+        Task<IList<string>> GetRolesAsync(int menuId);
     }
 }

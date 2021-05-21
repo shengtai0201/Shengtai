@@ -70,7 +70,7 @@ namespace Shengtai.IdentityServer.Data
                         menu.Url = entity.Url;
                         menu.Icon = entity.Icon;
                         menu.ShowEvent += showStrategy;
-                        menu.Roles = await _roleService.GetRolesAsync(entity.Id);
+                        menu.Roles = await this.GetRolesAsync(entity.Id);
                     }
 
                     parent.ViewModel.Menus.Add(menu);
@@ -141,6 +141,21 @@ namespace Shengtai.IdentityServer.Data
             var menus = dbContext.Menus.Include("Parent").Where(m => m.Type == MenuTypes.Item).ToList();
             foreach (var menu in menus)
                 result.Add(new Paragraph { Text = menu.Text, Small = menu.Small, Parent = new Paragraph { Text = menu.Parent.Text, Small = menu.Parent.Small } }, menu.Id);
+
+            return result;
+        }
+
+        public async Task<IList<string>> GetRolesAsync(int menuId)
+        {
+            IList<string> result = new List<string>();
+
+            var dbContext = new NavDbContext(_connectionStrings.DefaultConnection);
+            var roleIds = await dbContext.MenuRoles.Where(x => x.MenuId == menuId).Select(x => x.RoleId).ToListAsync();
+            foreach (var roleId in roleIds)
+            {
+                var role = await _roleService.FindByIdAsync(roleId);
+                result.Add(role.Name);
+            }
 
             return result;
         }

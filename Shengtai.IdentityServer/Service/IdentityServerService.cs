@@ -17,26 +17,20 @@ using System.Threading.Tasks;
 
 namespace Shengtai.IdentityServer.Service
 {
-    public class IdentityServerService<TUser> : ISignInService, IUserService, IRoleService, IEmailService, IIdentityServerService where TUser : ApplicationUser
+    public class IdentityServerService<TUser> : IEmailService, IIdentityServerService where TUser : ApplicationUser
     {
         private readonly ILogger<IdentityServerService<TUser>> _logger;
         private readonly IAppSettings _appSettings;
-        private readonly SignInManager<TUser> _signInManager;
-        private readonly UserManager<TUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUserService _userService;
         private readonly IdentityServer4.EntityFramework.DbContexts.ConfigurationDbContext _configurationDbContext;
 
-        public IdentityServerService(ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings, SignInManager<TUser> signInManager, UserManager<TUser> userManager, RoleManager<IdentityRole> roleManager, IdentityServer4.EntityFramework.DbContexts.ConfigurationDbContext configurationDbContext)
+        public IdentityServerService(ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings, IUserService userService, IdentityServer4.EntityFramework.DbContexts.ConfigurationDbContext configurationDbContext)
         {
             _logger = logger;
             _appSettings = appSettings;
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _userService = userService;
             _configurationDbContext = configurationDbContext;
         }
-
-        public bool RequireConfirmedAccount => _userManager.Options.SignIn.RequireConfirmedAccount;
 
         public async Task<(string ClientId, string ClientSecret, string Scope)> AddClientAsync(ApplicationUser user)
         {
@@ -47,14 +41,21 @@ namespace Shengtai.IdentityServer.Service
             {
                 ClientId = result.ClientId,
                 ClientSecrets = { new Secret(result.ClientSecret.Sha256()) },
-                AllowedGrantTypes = GrantTypes.ClientCredentials,
-                AllowedScopes = { result.Scope }
+                //AllowedGrantTypes = GrantTypes.ClientCredentials,
+                AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                AllowedScopes = { result.Scope },
+                // todo: 以下新增, 有待測試
+                RequirePkce = true,
+                RequireConsent = false,
+                AllowOfflineAccess = true,
+                RedirectUris = { $"{_appSettings.IdentityServer.Configuration.Uri}/signin-oidc" },
+                PostLogoutRedirectUris = { $"{_appSettings.IdentityServer.Configuration.Uri}/signout-callback-oidc" }
             }.ToEntity();
 
             await _configurationDbContext.Clients.AddAsync(client);
             try
             {
-                await _userManager.AddToRolesAsync(user as TUser, _appSettings.IdentityServer.Roles);
+                await _userService.AddToRolesAsync(user as TUser, _appSettings.IdentityServer.Roles);
 
                 await _configurationDbContext.SaveChangesAsync();
 
@@ -66,108 +67,8 @@ namespace Shengtai.IdentityServer.Service
 
                 result = (null, null, null);
             }
-
+            
             return result;
-        }
-
-        public Task<IdentityResult> ConfirmEmailAsync(ApplicationUser user, string token)
-        {
-            return _userManager.ConfirmEmailAsync(user as TUser, token);
-        }
-
-        public Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
-        {
-            return _userManager.CreateAsync(user as TUser, password);
-        }
-
-        public async Task<ApplicationUser> FindByAccountAsync(string account)
-        {
-            return await _userManager.Users.SingleOrDefaultAsync(u => u.Account == account);
-        }
-
-        public async Task<ApplicationUser> FindByEmailAsync(string email)
-        {
-            return await _userManager.FindByEmailAsync(email);
-        }
-
-        public async Task<ApplicationUser> FindByIdAsync(string userId)
-        {
-            return await _userManager.FindByIdAsync(userId);
-        }
-
-        public Task<string> GenerateEmailConfirmationTokenAsync(ApplicationUser user)
-        {
-            return _userManager.GenerateEmailConfirmationTokenAsync(user as TUser);
-        }
-
-        public Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user)
-        {
-            return _userManager.GeneratePasswordResetTokenAsync(user as TUser);
-        }
-
-        public Task<IEnumerable<AuthenticationScheme>> GetExternalAuthenticationSchemesAsync()
-        {
-            return _signInManager.GetExternalAuthenticationSchemesAsync();
-        }
-
-        public async Task<IList<string>> GetRolesAsync(ClaimsPrincipal principal)
-        {
-            var user = await _userManager.GetUserAsync(principal);
-            IList<string> roles = null;
-            if (user != null)
-                roles = await _userManager.GetRolesAsync(user);
-
-            return roles;
-        }
-
-        public async Task<IList<string>> GetRolesAsync(int menuId)
-        {
-            IList<string> result = new List<string>();
-
-            var roles = await _roleManager.Roles.ToListAsync();
-            foreach (var role in roles)
-            {
-                var claims = await _roleManager.GetClaimsAsync(role);
-                foreach (var claim in claims)
-                {
-                    if (claim.Type == "Menu.Id")
-                    {
-                        var id = Convert.ToInt32(claim.Value);
-                        if (menuId == id)
-                        {
-                            result.Add(role.Name);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        public Task<string> GetUserIdAsync(ApplicationUser user)
-        {
-            return _userManager.GetUserIdAsync(user as TUser);
-        }
-
-        public Task<bool> IsEmailConfirmedAsync(ApplicationUser user)
-        {
-            return _userManager.IsEmailConfirmedAsync(user as TUser);
-        }
-
-        public bool IsSignedIn(ClaimsPrincipal principal)
-        {
-            return _signInManager.IsSignedIn(principal);
-        }
-
-        public Task<SignInResult> PasswordSignInAsync(ApplicationUser user, string password, bool isPersistent, bool lockoutOnFailure)
-        {
-            return _signInManager.PasswordSignInAsync(user as TUser, password, isPersistent, lockoutOnFailure);
-        }
-
-        public Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string token, string newPassword)
-        {
-            return _userManager.ResetPasswordAsync(user as TUser, token, newPassword);
         }
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
@@ -207,16 +108,6 @@ namespace Shengtai.IdentityServer.Service
             }
 
             return result;
-        }
-
-        public Task SignInAsync(ApplicationUser user, bool isPersistent, string authenticationMethod = null)
-        {
-            return _signInManager.SignInAsync(user as TUser, isPersistent, authenticationMethod);
-        }
-
-        public Task SignOutAsync()
-        {
-            return _signInManager.SignOutAsync();
         }
     }
 }

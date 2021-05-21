@@ -31,10 +31,10 @@ namespace Shengtai.IdentityServer
         public static void AddIdentityServer<TUser>(this IServiceCollection services, string connectionString, string assemblyName) where TUser : Models.Account.ApplicationUser
         {
             #region default service
+            services.AddScoped<ISignInService, Service.SignInService<TUser>>();
+            services.AddScoped<IUserService, Service.UserService<TUser>>();
+            services.AddScoped<IRoleService, Service.RoleService>();
             services.AddScoped<Service.IdentityServerService<TUser>>();
-            services.AddScoped<ISignInService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
-            services.AddScoped<IUserService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
-            services.AddScoped<IRoleService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
             services.AddScoped<IEmailService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
             #endregion
 
@@ -68,10 +68,10 @@ namespace Shengtai.IdentityServer
             where TMenuBuilder : MenuBuilder
         {
             #region default service
+            services.AddScoped<ISignInService, Service.SignInService<TUser>>();
+            services.AddScoped<IUserService, Service.UserService<TUser>>();
+            services.AddScoped<IRoleService, Service.RoleService>();
             services.AddScoped<Service.IdentityServerService<TUser>>();
-            services.AddScoped<ISignInService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
-            services.AddScoped<IUserService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
-            services.AddScoped<IRoleService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
             services.AddScoped<IEmailService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
             services.AddScoped<IIdentityServerService>(x => x.GetRequiredService<Service.IdentityServerService<TUser>>());
             services.AddScoped<Data.IDataStrategy, TDataStrategy>();
