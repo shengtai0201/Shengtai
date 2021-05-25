@@ -12,10 +12,12 @@ namespace Shengtai.IdentityServer.Service
 {
     public class UserService<TUser> : IUserService where TUser : ApplicationUser
     {
+        private readonly AutoMapper.IMapper _mapper;
         private readonly UserManager<TUser> _userManager;
 
-        public UserService(UserManager<TUser> userManager)
+        public UserService(AutoMapper.IMapper mapper, UserManager<TUser> userManager)
         {
+            _mapper = mapper;
             _userManager = userManager;
         }
 
@@ -23,17 +25,17 @@ namespace Shengtai.IdentityServer.Service
 
         public Task<IdentityResult> AddToRolesAsync(ApplicationUser user, IEnumerable<string> roles)
         {
-            return _userManager.AddToRolesAsync(user as TUser, roles);
+            return _userManager.AddToRolesAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), roles);
         }
 
         public Task<IdentityResult> ConfirmEmailAsync(ApplicationUser user, string token)
         {
-            return _userManager.ConfirmEmailAsync(user as TUser, token);
+            return _userManager.ConfirmEmailAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), token);
         }
 
         public Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
         {
-            return _userManager.CreateAsync(user as TUser, password);
+            return _userManager.CreateAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), password);
         }
 
         public async Task<ApplicationUser> FindByAccountAsync(string account)
@@ -53,12 +55,12 @@ namespace Shengtai.IdentityServer.Service
 
         public Task<string> GenerateEmailConfirmationTokenAsync(ApplicationUser user)
         {
-            return _userManager.GenerateEmailConfirmationTokenAsync(user as TUser);
+            return _userManager.GenerateEmailConfirmationTokenAsync(_mapper.ChangeType<ApplicationUser, TUser>(user));
         }
 
         public Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user)
         {
-            return _userManager.GeneratePasswordResetTokenAsync(user as TUser);
+            return _userManager.GeneratePasswordResetTokenAsync(_mapper.ChangeType<ApplicationUser, TUser>(user));
         }
 
         public async Task<IList<string>> GetRolesAsync(ClaimsPrincipal principal)
@@ -73,17 +75,17 @@ namespace Shengtai.IdentityServer.Service
 
         public Task<string> GetUserIdAsync(ApplicationUser user)
         {
-            return _userManager.GetUserIdAsync(user as TUser);
+            return _userManager.GetUserIdAsync(_mapper.ChangeType<ApplicationUser, TUser>(user));
         }
 
         public Task<bool> IsEmailConfirmedAsync(ApplicationUser user)
         {
-            return _userManager.IsEmailConfirmedAsync(user as TUser);
+            return _userManager.IsEmailConfirmedAsync(_mapper.ChangeType<ApplicationUser, TUser>(user));
         }
 
         public Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string token, string newPassword)
         {
-            return _userManager.ResetPasswordAsync(user as TUser, token, newPassword);
+            return _userManager.ResetPasswordAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), token, newPassword);
         }
     }
 }

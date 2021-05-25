@@ -30,7 +30,11 @@ namespace Shengtai.IdentityServer
 
         public static void AddIdentityServer<TUser>(this IServiceCollection services, string connectionString, string assemblyName) where TUser : Models.Account.ApplicationUser
         {
+            // AutoMapper
+            var config = new AutoMapper.MapperConfiguration(cfg => cfg.CreateMap<Models.Account.ApplicationUser, TUser>());
+
             #region default service
+            services.AddSingleton(provider => config.CreateMapper());
             services.AddScoped<ISignInService, Service.SignInService<TUser>>();
             services.AddScoped<IUserService, Service.UserService<TUser>>();
             services.AddScoped<IRoleService, Service.RoleService>();
@@ -67,7 +71,11 @@ namespace Shengtai.IdentityServer
             where TDataStrategy : class, Data.IDataStrategy
             where TMenuBuilder : MenuBuilder
         {
+            // AutoMapper
+            var config = new AutoMapper.MapperConfiguration(cfg => cfg.CreateMap<Models.Account.ApplicationUser, TUser>());
+
             #region default service
+            services.AddSingleton(provider => config.CreateMapper());
             services.AddScoped<ISignInService, Service.SignInService<TUser>>();
             services.AddScoped<IUserService, Service.UserService<TUser>>();
             services.AddScoped<IRoleService, Service.RoleService>();

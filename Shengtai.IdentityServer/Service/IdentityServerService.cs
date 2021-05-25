@@ -19,13 +19,15 @@ namespace Shengtai.IdentityServer.Service
 {
     public class IdentityServerService<TUser> : IEmailService, IIdentityServerService where TUser : ApplicationUser
     {
+        private readonly AutoMapper.IMapper _mapper;
         private readonly ILogger<IdentityServerService<TUser>> _logger;
         private readonly IAppSettings _appSettings;
         private readonly IUserService _userService;
         private readonly IdentityServer4.EntityFramework.DbContexts.ConfigurationDbContext _configurationDbContext;
 
-        public IdentityServerService(ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings, IUserService userService, IdentityServer4.EntityFramework.DbContexts.ConfigurationDbContext configurationDbContext)
+        public IdentityServerService(AutoMapper.IMapper mapper, ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings, IUserService userService, IdentityServer4.EntityFramework.DbContexts.ConfigurationDbContext configurationDbContext)
         {
+            _mapper = mapper;
             _logger = logger;
             _appSettings = appSettings;
             _userService = userService;
@@ -55,7 +57,7 @@ namespace Shengtai.IdentityServer.Service
             await _configurationDbContext.Clients.AddAsync(client);
             try
             {
-                await _userService.AddToRolesAsync(user as TUser, _appSettings.IdentityServer.Roles);
+                await _userService.AddToRolesAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), _appSettings.IdentityServer.Roles);
 
                 await _configurationDbContext.SaveChangesAsync();
 

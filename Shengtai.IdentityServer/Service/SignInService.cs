@@ -12,10 +12,12 @@ namespace Shengtai.IdentityServer.Service
 {
     public class SignInService<TUser> : ISignInService where TUser : ApplicationUser
     {
+        private readonly AutoMapper.IMapper _mapper;
         private readonly SignInManager<TUser> _signInManager;
 
-        public SignInService(SignInManager<TUser> signInManager)
+        public SignInService(AutoMapper.IMapper mapper, SignInManager<TUser> signInManager)
         {
+            _mapper = mapper;
             _signInManager = signInManager;
         }
 
@@ -31,12 +33,12 @@ namespace Shengtai.IdentityServer.Service
 
         public Task<SignInResult> PasswordSignInAsync(ApplicationUser user, string password, bool isPersistent, bool lockoutOnFailure)
         {
-            return _signInManager.PasswordSignInAsync(user as TUser, password, isPersistent, lockoutOnFailure);
+            return _signInManager.PasswordSignInAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), password, isPersistent, lockoutOnFailure);
         }
 
         public Task SignInAsync(ApplicationUser user, bool isPersistent, string authenticationMethod = null)
         {
-            return _signInManager.SignInAsync(user as TUser, isPersistent, authenticationMethod);
+            return _signInManager.SignInAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), isPersistent, authenticationMethod);
         }
 
         public Task SignOutAsync()
