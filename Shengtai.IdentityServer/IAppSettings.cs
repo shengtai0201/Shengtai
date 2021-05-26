@@ -35,7 +35,9 @@ namespace Shengtai.IdentityServer
                 public string ApiScopeDisplayName { get; set; }
 
                 public string ClientId { get; set; }
-                public string SecretValue { get; set; }
+                public string ClientIdClaimType { get; set; }
+                public string ClientSecret { get; set; }
+                public string ClientSecretClaimType { get; set; }
                 public string Uri { get; set; }
             }
             public _Configuration Configuration { get; set; }

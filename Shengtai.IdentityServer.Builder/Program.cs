@@ -72,7 +72,7 @@ namespace Shengtai.IdentityServer.Builder
             var client = new Client
             {
                 ClientId = appSettings.IdentityServer.Configuration.ClientId,
-                ClientSecrets = { new Secret(appSettings.IdentityServer.Configuration.SecretValue.Sha256()) },
+                ClientSecrets = { new Secret(appSettings.IdentityServer.Configuration.ClientSecret.Sha256()) },
                 AllowedGrantTypes = GrantTypes.Code,
                 RedirectUris = { $"{appSettings.IdentityServer.Configuration.Uri}/signin-oidc" },
                 PostLogoutRedirectUris = { $"{appSettings.IdentityServer.Configuration.Uri}/signout-callback-oidc" },

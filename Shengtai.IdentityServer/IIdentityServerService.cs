@@ -8,6 +8,6 @@ namespace Shengtai.IdentityServer
 {
     public interface IIdentityServerService
     {
-        Task<(string ClientId, string ClientSecret, string Scope)> AddClientAsync(Models.Account.ApplicationUser user);
+        Task<(string ClientId, string ClientSecret)> AddClientAsync(Models.Account.ApplicationUser user);
     }
 }

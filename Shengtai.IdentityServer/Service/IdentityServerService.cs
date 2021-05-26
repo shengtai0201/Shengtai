@@ -34,40 +34,58 @@ namespace Shengtai.IdentityServer.Service
             _configurationDbContext = configurationDbContext;
         }
 
-        public async Task<(string ClientId, string ClientSecret, string Scope)> AddClientAsync(ApplicationUser user)
+        public async Task<(string ClientId, string ClientSecret)> AddClientAsync(ApplicationUser user)
         {
-            (string ClientId, string ClientSecret, string Scope) result = (user.Account + "-" + Security.Membership.GeneratePassword(4, 4),
-                Security.Membership.GeneratePassword(8, 1), _appSettings.IdentityServer.Configuration.ApiScopeName);
+            (string ClientId, string ClientSecret) result = (user.Account + "-" + Security.Membership.GeneratePassword(4, 4), Security.Membership.GeneratePassword(8, 1));
 
-            var client = new Client
+            var identityResult = await _userService.AddClaimAsync(user, _appSettings.IdentityServer.Configuration.ClientIdClaimType, result.ClientId);
+            if (identityResult.Succeeded)
             {
-                ClientId = result.ClientId,
-                ClientSecrets = { new Secret(result.ClientSecret.Sha256()) },
-                //AllowedGrantTypes = GrantTypes.ClientCredentials,
-                AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
-                AllowedScopes = { result.Scope },
-                // todo: 以下新增, 有待測試
-                RequirePkce = true,
-                RequireConsent = false,
-                AllowOfflineAccess = true,
-                RedirectUris = { $"{_appSettings.IdentityServer.Configuration.Uri}/signin-oidc" },
-                PostLogoutRedirectUris = { $"{_appSettings.IdentityServer.Configuration.Uri}/signout-callback-oidc" }
-            }.ToEntity();
+                identityResult = await _userService.AddClaimAsync(user, _appSettings.IdentityServer.Configuration.ClientSecretClaimType, result.ClientSecret);
+                if (identityResult.Succeeded)
+                {
+                    var client = new Client
+                    {
+                        ClientId = result.ClientId,
+                        ClientSecrets = { new Secret(result.ClientSecret.Sha256()) },
+                        //AllowedGrantTypes = GrantTypes.ClientCredentials,
+                        AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                        AllowedScopes = { _appSettings.IdentityServer.Configuration.ApiScopeName },
+                        // todo: 以下新增, 有待測試
+                        RequirePkce = true,
+                        RequireConsent = false,
+                        AllowOfflineAccess = true,
+                        RedirectUris = { $"{_appSettings.IdentityServer.Configuration.Uri}/signin-oidc" },
+                        PostLogoutRedirectUris = { $"{_appSettings.IdentityServer.Configuration.Uri}/signout-callback-oidc" }
+                    }.ToEntity();
 
-            await _configurationDbContext.Clients.AddAsync(client);
-            try
-            {
-                await _userService.AddToRolesAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), _appSettings.IdentityServer.Roles);
+                    await _configurationDbContext.Clients.AddAsync(client);
+                    try
+                    {
+                        await _userService.AddToRolesAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), _appSettings.IdentityServer.Roles);
 
-                await _configurationDbContext.SaveChangesAsync();
+                        await _configurationDbContext.SaveChangesAsync();
 
-                await this.SendEmailAsync(user.Email, "API 帳密", $"<p>Your ClientId:{result.ClientId}</p><br /><p>Your ClientSecret:{result.ClientSecret}</p><br /><p>Your Scope:{result.Scope}</p>");
+                        await this.SendEmailAsync(user.Email, "API 帳密", $"<p>Your ClientId:{result.ClientId}</p><br /><p>Your ClientSecret:{result.ClientSecret}</p><br /><p>Your Scope:{_appSettings.IdentityServer.Configuration.ApiScopeName}</p>");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+
+                        result.ClientId = null;
+                        result.ClientSecret = null;
+                    }
+                }
+                else
+                {
+                    result.ClientId = null;
+                    result.ClientSecret = null;
+                }
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e.Message);
-
-                result = (null, null, null);
+                result.ClientId = null;
+                result.ClientSecret = null;
             }
             
             return result;

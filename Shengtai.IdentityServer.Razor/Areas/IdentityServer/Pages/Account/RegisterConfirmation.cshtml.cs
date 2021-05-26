@@ -15,11 +15,13 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel
     {
+        private readonly IAppSettings _appSettings;
         private readonly IUserService _userService;
         private readonly IIdentityServerService _identityServerService;
 
-        public RegisterConfirmationModel(IUserService userService, IIdentityServerService identityServerService)
+        public RegisterConfirmationModel(IAppSettings appSettings, IUserService userService, IIdentityServerService identityServerService)
         {
+            _appSettings = appSettings;
             _userService = userService;
             _identityServerService = identityServerService;
         }
@@ -48,7 +50,7 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
             var result = await _identityServerService.AddClientAsync(user);
             ClientId = result.ClientId;
             ClientSecret = result.ClientSecret;
-            Scope = result.Scope;
+            Scope = _appSettings.IdentityServer.Configuration.ApiScopeName;
 
             return Page();
         }

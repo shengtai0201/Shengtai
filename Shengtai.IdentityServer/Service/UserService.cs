@@ -23,6 +23,13 @@ namespace Shengtai.IdentityServer.Service
 
         public bool RequireConfirmedAccount => _userManager.Options.SignIn.RequireConfirmedAccount;
 
+        public Task<IdentityResult> AddClaimAsync(ApplicationUser user, string type, string value)
+        {
+            value = Cryptography.AES.Encrypt(value, type);
+
+            return _userManager.AddClaimAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), new Claim(type, value));
+        }
+
         public Task<IdentityResult> AddToRolesAsync(ApplicationUser user, IEnumerable<string> roles)
         {
             return _userManager.AddToRolesAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), roles);
@@ -63,6 +70,16 @@ namespace Shengtai.IdentityServer.Service
             return _userManager.GeneratePasswordResetTokenAsync(_mapper.ChangeType<ApplicationUser, TUser>(user));
         }
 
+        public async Task<string> GetClaimValueAsync(ApplicationUser user, string type)
+        {
+            var claims = await _userManager.GetClaimsAsync(_mapper.ChangeType<ApplicationUser, TUser>(user));
+            var claim = claims.SingleOrDefault(x => x.Type == type);
+            if (claim != null)
+                return Cryptography.AES.Decrypt(claim.Value, type);
+
+            return null;
+        }
+
         public async Task<IList<string>> GetRolesAsync(ClaimsPrincipal principal)
         {
             var user = await _userManager.GetUserAsync(principal);
@@ -76,6 +93,15 @@ namespace Shengtai.IdentityServer.Service
         public Task<string> GetUserIdAsync(ApplicationUser user)
         {
             return _userManager.GetUserIdAsync(_mapper.ChangeType<ApplicationUser, TUser>(user));
+        }
+
+        public async Task<string> GetUserIdAsync(string account)
+        {
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.Account == account);
+            if (user != null)
+                return user.Id;
+
+            return null;
         }
 
         public Task<bool> IsEmailConfirmedAsync(ApplicationUser user)
