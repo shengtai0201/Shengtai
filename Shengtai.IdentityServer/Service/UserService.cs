@@ -15,7 +15,7 @@ namespace Shengtai.IdentityServer.Service
         private readonly AutoMapper.IMapper _mapper;
         private readonly UserManager<TUser> _userManager;
 
-        public UserService(AutoMapper.IMapper mapper, UserManager<TUser> userManager)
+        public UserService(AutoMapper.IMapper mapper,  UserManager<TUser> userManager)
         {
             _mapper = mapper;
             _userManager = userManager;
@@ -23,26 +23,30 @@ namespace Shengtai.IdentityServer.Service
 
         public bool RequireConfirmedAccount => _userManager.Options.SignIn.RequireConfirmedAccount;
 
-        public Task<IdentityResult> AddClaimAsync(ApplicationUser user, string type, string value)
+        public async Task<IdentityResult> AddClaimAsync(ApplicationUser user, string type, string value)
         {
             value = Cryptography.AES.Encrypt(value, type);
 
-            return _userManager.AddClaimAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), new Claim(type, value));
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.AddClaimAsync(identityUser as TUser, new Claim(type, value));
         }
 
-        public Task<IdentityResult> AddToRolesAsync(ApplicationUser user, IEnumerable<string> roles)
+        public async Task<IdentityResult> AddToRolesAsync(ApplicationUser user, IEnumerable<string> roles)
         {
-            return _userManager.AddToRolesAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), roles);
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.AddToRolesAsync(identityUser as TUser, roles);
         }
 
-        public Task<IdentityResult> ConfirmEmailAsync(ApplicationUser user, string token)
+        public async Task<IdentityResult> ConfirmEmailAsync(ApplicationUser user, string token)
         {
-            return _userManager.ConfirmEmailAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), token);
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.ConfirmEmailAsync(identityUser as TUser, token);
         }
 
-        public Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
+        public async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
         {
-            return _userManager.CreateAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), password);
+            var identityUser = _mapper.Map<TUser>(user);
+            return await _userManager.CreateAsync(identityUser, password);
         }
 
         public async Task<ApplicationUser> FindByAccountAsync(string account)
@@ -60,19 +64,22 @@ namespace Shengtai.IdentityServer.Service
             return await _userManager.FindByIdAsync(userId);
         }
 
-        public Task<string> GenerateEmailConfirmationTokenAsync(ApplicationUser user)
+        public async Task<string> GenerateEmailConfirmationTokenAsync(ApplicationUser user)
         {
-            return _userManager.GenerateEmailConfirmationTokenAsync(_mapper.ChangeType<ApplicationUser, TUser>(user));
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.GenerateEmailConfirmationTokenAsync(identityUser as TUser);
         }
 
-        public Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user)
+        public async Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user)
         {
-            return _userManager.GeneratePasswordResetTokenAsync(_mapper.ChangeType<ApplicationUser, TUser>(user));
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.GeneratePasswordResetTokenAsync(identityUser as TUser);
         }
 
         public async Task<string> GetClaimValueAsync(ApplicationUser user, string type)
         {
-            var claims = await _userManager.GetClaimsAsync(_mapper.ChangeType<ApplicationUser, TUser>(user));
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            var claims = await _userManager.GetClaimsAsync(identityUser as TUser);
             var claim = claims.SingleOrDefault(x => x.Type == type);
             if (claim != null)
                 return Cryptography.AES.Decrypt(claim.Value, type);
@@ -90,9 +97,10 @@ namespace Shengtai.IdentityServer.Service
             return roles;
         }
 
-        public Task<string> GetUserIdAsync(ApplicationUser user)
+        public async Task<string> GetUserIdAsync(ApplicationUser user)
         {
-            return _userManager.GetUserIdAsync(_mapper.ChangeType<ApplicationUser, TUser>(user));
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.GetUserIdAsync(identityUser as TUser);
         }
 
         public async Task<string> GetUserIdAsync(string account)
@@ -104,14 +112,16 @@ namespace Shengtai.IdentityServer.Service
             return null;
         }
 
-        public Task<bool> IsEmailConfirmedAsync(ApplicationUser user)
+        public async Task<bool> IsEmailConfirmedAsync(ApplicationUser user)
         {
-            return _userManager.IsEmailConfirmedAsync(_mapper.ChangeType<ApplicationUser, TUser>(user));
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.IsEmailConfirmedAsync(identityUser as TUser);
         }
 
-        public Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string token, string newPassword)
+        public async Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string token, string newPassword)
         {
-            return _userManager.ResetPasswordAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), token, newPassword);
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.ResetPasswordAsync(identityUser as TUser, token, newPassword);
         }
     }
 }

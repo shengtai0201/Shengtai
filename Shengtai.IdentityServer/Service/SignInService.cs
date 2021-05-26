@@ -12,13 +12,13 @@ namespace Shengtai.IdentityServer.Service
 {
     public class SignInService<TUser> : ISignInService where TUser : ApplicationUser
     {
-        private readonly AutoMapper.IMapper _mapper;
         private readonly SignInManager<TUser> _signInManager;
+        private readonly IUserService _userService;
 
-        public SignInService(AutoMapper.IMapper mapper, SignInManager<TUser> signInManager)
+        public SignInService(SignInManager<TUser> signInManager, IUserService userService)
         {
-            _mapper = mapper;
             _signInManager = signInManager;
+            _userService = userService;
         }
 
         public Task<IEnumerable<AuthenticationScheme>> GetExternalAuthenticationSchemesAsync()
@@ -31,14 +31,16 @@ namespace Shengtai.IdentityServer.Service
             return _signInManager.IsSignedIn(principal);
         }
 
-        public Task<SignInResult> PasswordSignInAsync(ApplicationUser user, string password, bool isPersistent, bool lockoutOnFailure)
+        public async Task<SignInResult> PasswordSignInAsync(ApplicationUser user, string password, bool isPersistent, bool lockoutOnFailure)
         {
-            return _signInManager.PasswordSignInAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), password, isPersistent, lockoutOnFailure);
+            var identityUser = await _userService.ChangeTypeAsync<TUser>(user);
+            return await _signInManager.PasswordSignInAsync(identityUser as TUser, password, isPersistent, lockoutOnFailure);
         }
 
-        public Task SignInAsync(ApplicationUser user, bool isPersistent, string authenticationMethod = null)
+        public async Task SignInAsync(ApplicationUser user, bool isPersistent, string authenticationMethod = null)
         {
-            return _signInManager.SignInAsync(_mapper.ChangeType<ApplicationUser, TUser>(user), isPersistent, authenticationMethod);
+            var identityUser = await _userService.ChangeTypeAsync<TUser>(user);
+            await _signInManager.SignInAsync(identityUser as TUser, isPersistent, authenticationMethod);
         }
 
         public Task SignOutAsync()

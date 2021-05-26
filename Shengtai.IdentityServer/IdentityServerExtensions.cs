@@ -152,5 +152,13 @@ namespace Shengtai.IdentityServer
 
             return controller.View(viewName, new Models.Account.RedirectViewModel { RedirectUrl = redirectUri });
         }
+
+        public static async Task<Models.Account.ApplicationUser> ChangeTypeAsync<TUser>(this IUserService userService, Models.Account.ApplicationUser user) where TUser : Models.Account.ApplicationUser
+        {
+            if (user.GetType() == typeof(TUser))
+                return user;
+
+            return await userService.FindByIdAsync(user.Id);
+        }
     }
 }
