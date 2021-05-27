@@ -101,6 +101,13 @@ namespace Shengtai.IdentityServer
             builder.AddPwnedPasswordValidator<TUser>().AddPwnedPasswordErrorDescriber<CustomErrorDescriber>();
             #endregion
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/IdentityServer/Account/Login";
+                options.LogoutPath = "/IdentityServer/Account/Logout";
+                options.AccessDeniedPath = "/IdentityServer/Account/AccessDenied";
+            });
+
             var serverBuilder = services.AddIdentityServer(options =>
             {
                 options.Events.RaiseErrorEvents = true;

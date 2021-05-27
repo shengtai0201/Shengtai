@@ -1,0 +1,21 @@
+﻿@page
+@inject Shengtai.IdentityServer.IAppSettings AppSettings
+@model AccessDeniedModel
+@{
+	Layout = "_BlankLayout";
+	ViewBag.Title = "Access denied";
+}
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href='@Url.Content("~/")' class="h1"><b>@AppSettings.IdentityServer.ApplicationName</b></a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">@ViewData["Title"]</p>
+                <p class="text-danger">You do not have access to this resource.</p>
+            </div>
+        </div>
+    </div>
+    @await Html.PartialAsync("~/Views/Shared/_BlankLayoutScriptsPartial.cshtml")
+</body>

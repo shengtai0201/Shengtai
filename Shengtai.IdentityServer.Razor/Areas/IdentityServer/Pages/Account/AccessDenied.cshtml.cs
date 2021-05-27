@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages
+namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
 {
     public class AccessDeniedModel : PageModel
     {
