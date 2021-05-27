@@ -17,13 +17,11 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
     {
         private readonly IAppSettings _appSettings;
         private readonly IUserService _userService;
-        private readonly IIdentityServerService _identityServerService;
 
-        public RegisterConfirmationModel(IAppSettings appSettings, IUserService userService, IIdentityServerService identityServerService)
+        public RegisterConfirmationModel(IAppSettings appSettings, IUserService userService)
         {
             _appSettings = appSettings;
             _userService = userService;
-            _identityServerService = identityServerService;
         }
 
         public string Email { get; set; }
@@ -31,7 +29,7 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
         public string ClientSecret { get; set; }
         public string Scope { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(string email, string returnUrl = null)
+        public async Task<IActionResult> OnGetAsync(string email, string clientId, string clientSecret, string returnUrl = null)
         {
             if (email == null)
             {
@@ -45,11 +43,8 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
             }
 
             Email = email;
-
-            // machine to machine client(api)
-            var result = await _identityServerService.AddClientAsync(user);
-            ClientId = result.ClientId;
-            ClientSecret = result.ClientSecret;
+            ClientId = clientId;
+            ClientSecret = clientSecret;
             Scope = _appSettings.IdentityServer.Configuration.ApiScopeName;
 
             return Page();

@@ -23,13 +23,15 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
         private readonly ISignInService _signInService;
         private readonly IUserService _userService;
         private readonly IEmailService _emailService;
+        private readonly IIdentityServerService _identityServerService;
 
-        public RegisterModel(ILogger<RegisterModel> logger, ISignInService signInService, IUserService userService, IEmailService emailService)
+        public RegisterModel(ILogger<RegisterModel> logger, ISignInService signInService, IUserService userService, IEmailService emailService, IIdentityServerService identityServerService)
         {
             _logger = logger;
             _signInService = signInService;
             _userService = userService;
             _emailService = emailService;
+            _identityServerService = identityServerService;
         }
 
         [BindProperty]
@@ -90,9 +92,12 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
 
                     await _emailService.SendEmailAsync(Input.Email, "Confirm your email", $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
+                    // machine to machine client(api)
+                    var (ClientId, ClientSecret) = await _identityServerService.AddClientAsync(user);
+
                     if (_userService.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, clientId = ClientId, clientSecret = ClientSecret, returnUrl });
                     }
                     else
                     {
