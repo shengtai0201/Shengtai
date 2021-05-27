@@ -76,10 +76,21 @@ namespace Shengtai.IdentityServer.Service
             return await _userManager.GeneratePasswordResetTokenAsync(identityUser as TUser);
         }
 
-        public async Task<string> GetClaimValueAsync(ApplicationUser user, string type)
+        //public async Task<string> GetClaimValueAsync(ApplicationUser user, string type)
+        //{
+        //    var identityUser = await this.ChangeTypeAsync<TUser>(user);
+        //    var claims = await _userManager.GetClaimsAsync(identityUser as TUser);
+        //    var claim = claims.SingleOrDefault(x => x.Type == type);
+        //    if (claim != null)
+        //        return Cryptography.AES.Decrypt(claim.Value, type);
+
+        //    return null;
+        //}
+
+        public async Task<string> GetClaimValueAsync(ClaimsPrincipal principal, string type)
         {
-            var identityUser = await this.ChangeTypeAsync<TUser>(user);
-            var claims = await _userManager.GetClaimsAsync(identityUser as TUser);
+            var user = await _userManager.GetUserAsync(principal);
+            var claims = await _userManager.GetClaimsAsync(user);
             var claim = claims.SingleOrDefault(x => x.Type == type);
             if (claim != null)
                 return Cryptography.AES.Decrypt(claim.Value, type);

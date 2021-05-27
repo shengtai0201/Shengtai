@@ -24,7 +24,8 @@ namespace Shengtai.IdentityServer
         Task<IdentityResult> ResetPasswordAsync(Models.Account.ApplicationUser user, string token, string newPassword);
         Task<IdentityResult> AddToRolesAsync(Models.Account.ApplicationUser user, IEnumerable<string> roles);
         Task<IdentityResult> AddClaimAsync(Models.Account.ApplicationUser user, string type, string value);
-        Task<string> GetClaimValueAsync(Models.Account.ApplicationUser user, string type);
+        //Task<string> GetClaimValueAsync(Models.Account.ApplicationUser user, string type);
+        Task<string> GetClaimValueAsync(ClaimsPrincipal principal, string type);
         Task<string> GetUserIdAsync(string account);
     }
 }
