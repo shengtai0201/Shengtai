@@ -48,11 +48,11 @@ namespace Shengtai.WebApplication
 
                 options.User.AllowedUserNameCharacters = null;
             }).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews().AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                options.UseMemberCasing();
-            });
+            //services.AddControllersWithViews().AddNewtonsoftJson(options =>
+            //{
+            //    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            //    options.UseMemberCasing();
+            //});
 
             // Identity Server 4
             services.AddIdentityServer<IdentityServer.Models.Account.ApplicationUser, IdentityServer.Data.DatabaseStrategy, CustomMenuBuilder>(builder, appSettings.ConnectionStrings.DefaultConnection, assemblyName);

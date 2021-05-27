@@ -101,11 +101,11 @@ namespace Shengtai.IdentityServer
             builder.AddPwnedPasswordValidator<TUser>().AddPwnedPasswordErrorDescriber<CustomErrorDescriber>();
             #endregion
 
-            //services.AddControllersWithViews().AddNewtonsoftJson(options =>
-            //{
-            //    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            //    options.UseMemberCasing();
-            //});
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                options.UseMemberCasing();
+            });
 
             services.ConfigureApplicationCookie(options =>
             {
