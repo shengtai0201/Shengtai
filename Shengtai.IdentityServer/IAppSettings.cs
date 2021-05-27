@@ -38,6 +38,7 @@ namespace Shengtai.IdentityServer
                 public string ClientIdClaimType { get; set; }
                 public string ClientSecret { get; set; }
                 public string ClientSecretClaimType { get; set; }
+
                 public string Uri { get; set; }
             }
             public _Configuration Configuration { get; set; }

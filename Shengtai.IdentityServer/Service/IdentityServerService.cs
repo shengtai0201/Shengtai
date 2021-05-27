@@ -1,6 +1,8 @@
-﻿using IdentityServer4.EntityFramework.Mappers;
+﻿using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -22,9 +24,10 @@ namespace Shengtai.IdentityServer.Service
         private readonly ILogger<IdentityServerService<TUser>> _logger;
         private readonly IAppSettings _appSettings;
         private readonly IUserService _userService;
-        private readonly IdentityServer4.EntityFramework.DbContexts.ConfigurationDbContext _configurationDbContext;
+        private readonly ConfigurationDbContext _configurationDbContext;
 
-        public IdentityServerService(ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings, IUserService userService, IdentityServer4.EntityFramework.DbContexts.ConfigurationDbContext configurationDbContext)
+        public IdentityServerService(ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings, IUserService userService, 
+            ConfigurationDbContext configurationDbContext)
         {
             _logger = logger;
             _appSettings = appSettings;
@@ -46,10 +49,8 @@ namespace Shengtai.IdentityServer.Service
                     {
                         ClientId = result.ClientId,
                         ClientSecrets = { new Secret(result.ClientSecret.Sha256()) },
-                        //AllowedGrantTypes = GrantTypes.ClientCredentials,
                         AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                         AllowedScopes = { _appSettings.IdentityServer.Configuration.ApiScopeName },
-                        // todo: 以下新增, 有待測試
                         RequirePkce = true,
                         RequireConsent = false,
                         AllowOfflineAccess = true,
