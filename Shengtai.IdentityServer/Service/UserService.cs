@@ -15,7 +15,7 @@ namespace Shengtai.IdentityServer.Service
         private readonly AutoMapper.IMapper _mapper;
         private readonly UserManager<TUser> _userManager;
 
-        public UserService(AutoMapper.IMapper mapper,  UserManager<TUser> userManager)
+        public UserService(AutoMapper.IMapper mapper, UserManager<TUser> userManager)
         {
             _mapper = mapper;
             _userManager = userManager;
@@ -112,15 +112,6 @@ namespace Shengtai.IdentityServer.Service
         {
             var identityUser = await this.ChangeTypeAsync<TUser>(user);
             return await _userManager.GetUserIdAsync(identityUser as TUser);
-        }
-
-        public async Task<string> GetUserIdAsync(string account)
-        {
-            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.Account == account);
-            if (user != null)
-                return user.Id;
-
-            return null;
         }
 
         public async Task<bool> IsEmailConfirmedAsync(ApplicationUser user)

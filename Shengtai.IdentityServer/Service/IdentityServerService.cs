@@ -26,7 +26,7 @@ namespace Shengtai.IdentityServer.Service
         private readonly IUserService _userService;
         private readonly ConfigurationDbContext _configurationDbContext;
 
-        public IdentityServerService(ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings, IUserService userService, 
+        public IdentityServerService(ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings, IUserService userService,
             ConfigurationDbContext configurationDbContext)
         {
             _logger = logger;
@@ -50,7 +50,13 @@ namespace Shengtai.IdentityServer.Service
                         ClientId = result.ClientId,
                         ClientSecrets = { new Secret(result.ClientSecret.Sha256()) },
                         AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
-                        AllowedScopes = { _appSettings.IdentityServer.Configuration.ApiScopeName },
+                        AllowedScopes =
+                        {
+                            _appSettings.IdentityServer.Configuration.ApiScopeName,
+                            IdentityServer4.IdentityServerConstants.StandardScopes.OpenId,
+                            IdentityServer4.IdentityServerConstants.StandardScopes.Profile,
+                            IdentityServer4.IdentityServerConstants.StandardScopes.Email
+                        },
                         RequirePkce = true,
                         RequireConsent = false,
                         AllowOfflineAccess = true,

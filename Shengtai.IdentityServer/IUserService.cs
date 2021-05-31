@@ -26,6 +26,5 @@ namespace Shengtai.IdentityServer
         Task<IdentityResult> AddClaimAsync(Models.Account.ApplicationUser user, string type, string value);
         //Task<string> GetClaimValueAsync(Models.Account.ApplicationUser user, string type);
         Task<string> GetClaimValueAsync(ClaimsPrincipal principal, string type);
-        Task<string> GetUserIdAsync(string account);
     }
 }
