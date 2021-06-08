@@ -8,7 +8,6 @@ namespace Shengtai.IdentityServer
 {
     public interface IRoleService
     {
-        //Task<IList<string>> GetRolesAsync(int menuId);
         Task<Microsoft.AspNetCore.Identity.IdentityRole> FindByIdAsync(string roleId);
     }
 }

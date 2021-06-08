@@ -26,15 +26,18 @@ namespace Shengtai.IdentityServer.Service
             return _signInManager.GetExternalAuthenticationSchemesAsync();
         }
 
-        public bool IsSignedIn(ClaimsPrincipal principal)
+        public Task<bool> IsSignedInAsync(ClaimsPrincipal principal)
         {
-            return _signInManager.IsSignedIn(principal);
+            var result = _signInManager.IsSignedIn(principal);
+
+            return Task.FromResult(result);
         }
 
         public async Task<SignInResult> PasswordSignInAsync(ApplicationUser user, string password, bool isPersistent, bool lockoutOnFailure)
         {
             var identityUser = await _userService.ChangeTypeAsync<TUser>(user);
-            return await _signInManager.PasswordSignInAsync(identityUser as TUser, password, isPersistent, lockoutOnFailure);
+            var result = await _signInManager.PasswordSignInAsync(identityUser as TUser, password, isPersistent, lockoutOnFailure);
+            return result;
         }
 
         public async Task SignInAsync(ApplicationUser user, bool isPersistent, string authenticationMethod = null)

@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Shengtai.IdentityServer
 {
-    public interface IUserService 
+    public interface IUserService
     {
         Task<Models.Account.ApplicationUser> FindByAccountAsync(string account);
         Task<IdentityResult> CreateAsync(Models.Account.ApplicationUser user, string password);
         Task<string> GenerateEmailConfirmationTokenAsync(Models.Account.ApplicationUser user);
-        bool RequireConfirmedAccount { get; }
+        Task<bool> RequireConfirmedAccountAsync();
         Task<Models.Account.ApplicationUser> FindByIdAsync(string userId);
         Task<IdentityResult> ConfirmEmailAsync(Models.Account.ApplicationUser user, string token);
         Task<Models.Account.ApplicationUser> FindByEmailAsync(string email);
@@ -24,7 +24,6 @@ namespace Shengtai.IdentityServer
         Task<IdentityResult> ResetPasswordAsync(Models.Account.ApplicationUser user, string token, string newPassword);
         Task<IdentityResult> AddToRolesAsync(Models.Account.ApplicationUser user, IEnumerable<string> roles);
         Task<IdentityResult> AddClaimAsync(Models.Account.ApplicationUser user, string type, string value);
-        //Task<string> GetClaimValueAsync(Models.Account.ApplicationUser user, string type);
         Task<string> GetClaimValueAsync(ClaimsPrincipal principal, string type);
     }
 }

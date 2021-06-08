@@ -11,7 +11,7 @@ namespace Shengtai.IdentityServer
 {
     public interface ISignInService
     {
-        bool IsSignedIn(ClaimsPrincipal principal);
+        Task<bool> IsSignedInAsync(ClaimsPrincipal principal);
         Task<IEnumerable<AuthenticationScheme>> GetExternalAuthenticationSchemesAsync();
         Task<SignInResult> PasswordSignInAsync(Models.Account.ApplicationUser user, string password, bool isPersistent, bool lockoutOnFailure);
         Task SignInAsync(Models.Account.ApplicationUser user, bool isPersistent, string authenticationMethod = null);

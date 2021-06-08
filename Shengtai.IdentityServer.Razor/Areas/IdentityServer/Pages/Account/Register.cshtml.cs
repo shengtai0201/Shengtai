@@ -25,7 +25,8 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
         private readonly IEmailService _emailService;
         private readonly IIdentityServerService _identityServerService;
 
-        public RegisterModel(ILogger<RegisterModel> logger, ISignInService signInService, IUserService userService, IEmailService emailService, IIdentityServerService identityServerService)
+        public RegisterModel(ILogger<RegisterModel> logger, ISignInService signInService, IUserService userService, IEmailService emailService, 
+            IIdentityServerService identityServerService)
         {
             _logger = logger;
             _signInService = signInService;
@@ -95,7 +96,7 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
                     // machine to machine client(api)
                     var (ClientId, ClientSecret) = await _identityServerService.AddClientAsync(user);
 
-                    if (_userService.RequireConfirmedAccount)
+                    if (await _userService.RequireConfirmedAccountAsync())
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, clientId = ClientId, clientSecret = ClientSecret, returnUrl });
                     }

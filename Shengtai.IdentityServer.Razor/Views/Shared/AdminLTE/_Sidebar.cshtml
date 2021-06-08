@@ -8,7 +8,7 @@
 
     <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            @if (Service.IsSignedIn(User))
+            @if (await Service.IsSignedInAsync(User))
             {
                 <div class="info">
                     @Html.RouteLink("Hello " + User.Identity.Name + "!", new { action = "Index", controller = "Manage", area = "IdentityServer" })

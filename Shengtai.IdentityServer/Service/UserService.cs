@@ -21,8 +21,6 @@ namespace Shengtai.IdentityServer.Service
             _userManager = userManager;
         }
 
-        public bool RequireConfirmedAccount => _userManager.Options.SignIn.RequireConfirmedAccount;
-
         public async Task<IdentityResult> AddClaimAsync(ApplicationUser user, string type, string value)
         {
             value = Cryptography.AES.Encrypt(value, type);
@@ -76,17 +74,6 @@ namespace Shengtai.IdentityServer.Service
             return await _userManager.GeneratePasswordResetTokenAsync(identityUser as TUser);
         }
 
-        //public async Task<string> GetClaimValueAsync(ApplicationUser user, string type)
-        //{
-        //    var identityUser = await this.ChangeTypeAsync<TUser>(user);
-        //    var claims = await _userManager.GetClaimsAsync(identityUser as TUser);
-        //    var claim = claims.SingleOrDefault(x => x.Type == type);
-        //    if (claim != null)
-        //        return Cryptography.AES.Decrypt(claim.Value, type);
-
-        //    return null;
-        //}
-
         public async Task<string> GetClaimValueAsync(ClaimsPrincipal principal, string type)
         {
             var user = await _userManager.GetUserAsync(principal);
@@ -118,6 +105,12 @@ namespace Shengtai.IdentityServer.Service
         {
             var identityUser = await this.ChangeTypeAsync<TUser>(user);
             return await _userManager.IsEmailConfirmedAsync(identityUser as TUser);
+        }
+
+        public Task<bool> RequireConfirmedAccountAsync()
+        {
+            var result = _userManager.Options.SignIn.RequireConfirmedAccount;
+            return Task.FromResult(result);
         }
 
         public async Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string token, string newPassword)
