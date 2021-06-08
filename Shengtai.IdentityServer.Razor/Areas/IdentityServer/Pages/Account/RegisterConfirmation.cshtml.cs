@@ -47,6 +47,10 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
             ClientSecret = clientSecret;
             Scope = _appSettings.IdentityServer.Configuration.ApiScopeName;
 
+            // todo: 觸發點在 client
+            // todo: Register 前要加入該 callback url
+            // todo: 導到 client system's RegisterConfirmation
+
             return Page();
         }
     }

@@ -101,6 +101,12 @@ namespace Shengtai.IdentityServer.Service
             return await _userManager.GetUserIdAsync(identityUser as TUser);
         }
 
+        public async Task<string> GetUserIdAsync(ClaimsPrincipal principal)
+        {
+            var identityUser = await _userManager.GetUserAsync(principal);
+            return identityUser?.Id;
+        }
+
         public async Task<bool> IsEmailConfirmedAsync(ApplicationUser user)
         {
             var identityUser = await this.ChangeTypeAsync<TUser>(user);
