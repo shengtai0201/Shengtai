@@ -115,6 +115,9 @@ namespace Shengtai.IdentityServer
                 options.EnableTokenCleanup = true;
             }).AddAspNetIdentity<TUser>();
 
+            // Google
+
+
             // not recommended for production - you need to store your key material somewhere secure
             serverBuilder.AddDeveloperSigningCredential();
 
