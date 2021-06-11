@@ -21,9 +21,26 @@ namespace Shengtai.IdentityServer.Service
             _userService = userService;
         }
 
+        public Task<AuthenticationProperties> ConfigureExternalAuthenticationPropertiesAsync(string provider, string redirectUrl, string userId = null)
+        {
+            var result = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, userId);
+
+            return Task.FromResult(result);
+        }
+
+        public Task<SignInResult> ExternalLoginSignInAsync(string loginProvider, string providerKey, bool isPersistent, bool bypassTwoFactor)
+        {
+            return _signInManager.ExternalLoginSignInAsync(loginProvider, providerKey, isPersistent, bypassTwoFactor);
+        }
+
         public Task<IEnumerable<AuthenticationScheme>> GetExternalAuthenticationSchemesAsync()
         {
             return _signInManager.GetExternalAuthenticationSchemesAsync();
+        }
+
+        public Task<ExternalLoginInfo> GetExternalLoginInfoAsync(string expectedXsrf = null)
+        {
+            return _signInManager.GetExternalLoginInfoAsync(expectedXsrf);
         }
 
         public Task<bool> IsSignedInAsync(ClaimsPrincipal principal)

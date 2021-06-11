@@ -16,6 +16,27 @@ Shengtai.IdentityServer.Razor => Razor 類別庫(.NET 5.0)<br/>
 - [已知缺陷]
 - [待辦事項]
 ## 如何設定
+專案/滑鼠右鍵/管理使用者密碼
+{
+  "Authentication": {
+    "Google": {
+      "ClientId": "<client-id>",
+      "ClientSecret": "<client-secret>"
+    },
+    "Facebook": {
+      "AppId": "<app-id>",
+      "AppSecret": "<app-secret>"
+    },
+    "Microsoft": {
+      "ClientId": "<client-id>",
+      "ClientSecret": "<client-secret>"
+    },
+    "Twitter": {
+      "ConsumerAPIKey": "<consumer-api-key>",
+      "ConsumerSecret": "<consumer-secret>"
+    }
+  }
+}
 ## 其他注意事項
 - 參考網站之appsettings.json必須用"具有BOM的UTF-8"的編碼儲存
 - database first 語法

@@ -69,7 +69,38 @@ namespace Shengtai.IdentityServer
             }
             public _Consent Consent { get; set; }
         }
-
         _IdentityServer IdentityServer { get; }
+
+        public class _Authentication
+        {
+            public class _Google
+            {
+                public string ClientId { get; set; }
+                public string ClientSecret { get; set; }
+            }
+            public _Google Google { get; set; }
+
+            public class _Facebook
+            {
+                public string AppId { get; set; }
+                public string AppSecret { get; set; }
+            }
+            public _Facebook Facebook { get; set; }
+
+            public class _Microsoft
+            {
+                public string ClientId { get; set; }
+                public string ClientSecret { get; set; }
+            }
+            public _Microsoft Microsoft { get; set; }
+
+            public class _Twitter
+            {
+                public string ConsumerAPIKey { get; set; }
+                public string ConsumerSecret { get; set; }
+            }
+            public _Twitter Twitter { get; set; }
+        }
+        _Authentication Authentication { get; }
     }
 }

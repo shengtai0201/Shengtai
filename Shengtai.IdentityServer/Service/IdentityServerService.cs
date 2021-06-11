@@ -26,7 +26,7 @@ namespace Shengtai.IdentityServer.Service
         private readonly IUserService _userService;
         private readonly ConfigurationDbContext _configurationDbContext;
 
-        public IdentityServerService(ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings, 
+        public IdentityServerService(ILogger<IdentityServerService<TUser>> logger, IAppSettings appSettings,
             IUserService userService, ConfigurationDbContext configurationDbContext)
         {
             _logger = logger;
@@ -35,9 +35,9 @@ namespace Shengtai.IdentityServer.Service
             _configurationDbContext = configurationDbContext;
         }
 
-        public async Task<(string ClientId, string ClientSecret)> AddClientAsync(ApplicationUser user)
+        public async Task<(string ClientId, string ClientSecret)> AddClientAsync(ApplicationUser user, IEnumerable<Claim> claims = null)
         {
-            (string ClientId, string ClientSecret) result = (user.Account + "-" + Security.Membership.GeneratePassword(4, 4), Security.Membership.GeneratePassword(8, 1));
+            (string ClientId, string ClientSecret) result = (user.Email.Split('@').First() + "-" + Security.Membership.GeneratePassword(4, 4), Security.Membership.GeneratePassword(8, 1));
 
             var identityResult = await _userService.AddClaimAsync(user, _appSettings.IdentityServer.Configuration.ClientIdClaimType, result.ClientId);
             if (identityResult.Succeeded)
@@ -68,7 +68,15 @@ namespace Shengtai.IdentityServer.Service
                     try
                     {
                         var identityUser = await _userService.ChangeTypeAsync<TUser>(user);
+
                         await _userService.AddToRolesAsync(identityUser as TUser, _appSettings.IdentityServer.Roles);
+
+                        if (claims != null)
+                        {
+                            IList<string> claimTypes = new List<string> { ClaimTypes.NameIdentifier, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname, ClaimTypes.Email };
+                            var values = claims.Where(x => claimTypes.Contains(x.Type)).ToDictionary(x => x.Type, x => x.Value);
+                            await _userService.AddClaimsAsync(identityUser, values);
+                        }
 
                         await _configurationDbContext.SaveChangesAsync();
 

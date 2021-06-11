@@ -29,6 +29,20 @@ namespace Shengtai.IdentityServer.Service
             return await _userManager.AddClaimAsync(identityUser as TUser, new Claim(type, value));
         }
 
+        public async Task<IdentityResult> AddClaimsAsync(ApplicationUser user, IDictionary<string, string> values)
+        {
+            var claims = values.Select(x => new Claim(x.Key, Cryptography.AES.Encrypt(x.Value, x.Key)));
+
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.AddClaimsAsync(identityUser as TUser, claims);
+        }
+
+        public async Task<IdentityResult> AddLoginAsync(ApplicationUser user, UserLoginInfo login)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.AddLoginAsync(identityUser as TUser, login);
+        }
+
         public async Task<IdentityResult> AddToRolesAsync(ApplicationUser user, IEnumerable<string> roles)
         {
             var identityUser = await this.ChangeTypeAsync<TUser>(user);
@@ -45,6 +59,12 @@ namespace Shengtai.IdentityServer.Service
         {
             var identityUser = _mapper.Map<TUser>(user);
             return await _userManager.CreateAsync(identityUser, password);
+        }
+
+        public async Task<IdentityResult> CreateAsync(ApplicationUser user)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.CreateAsync(identityUser as TUser);
         }
 
         public async Task<ApplicationUser> FindByAccountAsync(string account)

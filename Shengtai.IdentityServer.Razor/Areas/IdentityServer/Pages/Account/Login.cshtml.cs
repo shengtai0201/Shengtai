@@ -112,6 +112,34 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
                 }
             }
 
+            // ÀA¤W²Kªá
+            foreach(var provider in providers)
+            {
+                switch (provider.AuthenticationScheme)
+                {
+                    case "Google":
+                        provider.Icon = "btn-danger";
+                        provider.Logo = "fa-google-plus";
+                        provider.Text = "Sign in using Google+";
+                        break;
+                    case "Facebook":
+                        provider.Icon = "btn-primary";
+                        provider.Logo = "fa-facebook";
+                        provider.Text = "Sign in using Facebook";
+                        break;
+                    case "Microsoft":
+                        provider.Icon = "btn-warning";
+                        provider.Logo = "fa-microsoft";
+                        provider.Text = "Sign in using Microsoft account";
+                        break;
+                    case "Twitter":
+                        provider.Icon = "btn-info";
+                        provider.Logo = "fa-twitter";
+                        provider.Text = "Sign in using Twitter";
+                        break;
+                }
+            }
+
             return new LoginViewModel
             {
                 AllowRememberLogin = _appSettings.IdentityServer.Account.AllowRememberLogin,

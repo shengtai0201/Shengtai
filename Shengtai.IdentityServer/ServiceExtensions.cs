@@ -47,7 +47,7 @@ namespace Shengtai.IdentityServer
             builder.AddDeveloperSigningCredential();
         }
 
-        public static void AddIdentityServer<TUser, TDataStrategy, TMenuBuilder>(this IServiceCollection services, IdentityBuilder builder, string connectionString, string assemblyName)
+        public static void AddIdentityServer<TUser, TDataStrategy, TMenuBuilder>(this IServiceCollection services, IdentityBuilder builder, IAppSettings appSettings, string connectionString, string assemblyName)
             where TUser : Models.Account.ApplicationUser
             where TDataStrategy : class, Data.IDataStrategy
             where TMenuBuilder : MenuBuilder
@@ -115,8 +115,52 @@ namespace Shengtai.IdentityServer
                 options.EnableTokenCleanup = true;
             }).AddAspNetIdentity<TUser>();
 
-            // Google
+            // external provider authentication
+            if (appSettings.Authentication != null)
+            {
+                var authenticationBuilder = services.AddAuthentication();
 
+                // Google
+                if (appSettings.Authentication.Google != null)
+                {
+                    authenticationBuilder = authenticationBuilder.AddGoogle(options =>
+                    {
+                        options.ClientId = appSettings.Authentication.Google.ClientId;
+                        options.ClientSecret = appSettings.Authentication.Google.ClientSecret;
+                    });
+                }
+
+                // Facebook
+                if(appSettings.Authentication.Facebook != null)
+                {
+                    authenticationBuilder = authenticationBuilder.AddFacebook(options =>
+                    {
+                        options.AppId = appSettings.Authentication.Facebook.AppId;
+                        options.AppSecret = appSettings.Authentication.Facebook.AppSecret;
+                    });
+                }
+
+                // Microsoft
+                if(appSettings.Authentication.Microsoft != null)
+                {
+                    authenticationBuilder = authenticationBuilder.AddMicrosoftAccount(options =>
+                    {
+                        options.ClientId = appSettings.Authentication.Microsoft.ClientId;
+                        options.ClientSecret = appSettings.Authentication.Microsoft.ClientSecret;
+                    });
+                }
+
+                // Twitter
+                if(appSettings.Authentication.Twitter != null)
+                {
+                    authenticationBuilder = authenticationBuilder.AddTwitter(options =>
+                    {
+                        options.ConsumerKey = appSettings.Authentication.Twitter.ConsumerAPIKey;
+                        options.ConsumerSecret = appSettings.Authentication.Twitter.ConsumerSecret;
+                        options.RetrieveUserDetails = true;
+                    });
+                }
+            }
 
             // not recommended for production - you need to store your key material somewhere secure
             serverBuilder.AddDeveloperSigningCredential();

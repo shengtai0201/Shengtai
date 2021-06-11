@@ -47,12 +47,20 @@
                 </form>
 
                 <div class="social-auth-links text-center mt-2 mb-3">
-                    <a href="#" class="btn btn-block btn-primary">
-                        <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
-                    </a>
-                    <a href="#" class="btn btn-block btn-danger">
-                        <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
-                    </a>
+                    @*<a href="#" class="btn btn-block btn-primary">
+                            <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
+                        </a>
+                        <a href="#" class="btn btn-block btn-danger">
+                            <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
+                        </a>*@
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.Input.ReturnUrl" method="post">
+                        @foreach (var provider in Model.Input.VisibleExternalProviders)
+                        {
+                            <button type="submit" class="btn btn-block @provider.Icon" name="provider" value="@provider.AuthenticationScheme" title="Log in using your @provider.DisplayName account">
+                                <i class="fab @provider.Logo mr-2"></i> @provider.Text
+                            </button>
+                        }
+                    </form>
                 </div>
 
                 <p class="mb-2">

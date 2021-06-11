@@ -97,12 +97,11 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
                     var (ClientId, ClientSecret) = await _identityServerService.AddClientAsync(user);
 
                     if (await _userService.RequireConfirmedAccountAsync())
-                    {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, clientId = ClientId, clientSecret = ClientSecret, returnUrl });
-                    }
                     else
                     {
                         await _signInService.SignInAsync(user, isPersistent: false);
+
                         return LocalRedirect(returnUrl);
                     }
                 }

@@ -26,6 +26,35 @@ namespace Shengtai.IdentityServer.Tests
             Console.WriteLine($"{x}, {y - x}");
         }
 
+        [Test]
+        public void CCC()
+        {
+            object a = null;
+            object b = "test2";
+
+            var test = a ?? b ?? "test3";
+            Console.WriteLine(test);
+        }
+
+        [Test]
+        public void DDD()
+        {
+            object a = "test1";
+            object b = null;
+
+            var test = a ?? b ?? "test3";
+            Console.WriteLine(test);
+        }
+
+        [Test]
+        public void EEE()
+        {
+            object a = "test1";
+            object b = "test2";
+
+            var test = a ?? b ?? "test3";
+            Console.WriteLine(test);
+        }
 
         //[Test]
         //public async Task GetExternalAuthenticationSchemes()

@@ -1,0 +1,57 @@
+﻿@page
+@inject Shengtai.IdentityServer.IAppSettings AppSettings
+@model ExternalLoginModel
+@{
+    Layout = "_BlankLayout";
+    ViewBag.Title = "Register";
+}
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href='@Url.Content("~/")' class="h1"><b>@AppSettings.IdentityServer.ApplicationName</b></a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">Associate your @Model.ProviderDisplayName account.</p>
+                <p id="external-login-description" class="text-info">
+                    You've successfully authenticated with <strong>@Model.ProviderDisplayName</strong>.
+                    Please enter an email address for this site below and click the Register button to finish
+                    logging in.
+                </p>
+
+                <form method="post" asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl">
+                    <div class="input-group mb-3">
+                        @Html.TextBoxFor(m => m.Input.UserName, new { @class = "form-control", placeholder = "姓名" })
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        @Html.TextBoxFor(m => m.Input.Email, new { @class = "form-control", placeholder = "電子郵件" })
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="agreeTerms" name="terms" value="agree">
+                                <label for="agreeTerms">
+                                    I agree to the <a href="#">terms</a>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block">Register</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @await Html.PartialAsync("~/Views/Shared/_BlankLayoutScriptsPartial.cshtml")
+</body>

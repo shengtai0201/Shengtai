@@ -35,6 +35,12 @@ namespace WebApplication1
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
+
+            services.AddAuthentication().AddGoogle(options =>
+            {
+                options.ClientId = "873992808281-vu5275oqumlsi54rs2tcmgeno2u4l0b7.apps.googleusercontent.com";
+                options.ClientSecret = "AIzaSyBONPFIpUcukH8ykswg1jIT3fvoESEQxoc";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

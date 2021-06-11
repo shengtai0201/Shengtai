@@ -13,7 +13,6 @@ namespace Shengtai.IdentityServer.Models.Account
     [Index(propertyNames: nameof(Account), IsUnique = true)]
     public class ApplicationUser : IdentityUser
     {
-        [Required]
         [StringLength(256)]
         public string Account { get; set; }
     }
