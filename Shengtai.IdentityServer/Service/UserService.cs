@@ -63,8 +63,8 @@ namespace Shengtai.IdentityServer.Service
 
         public async Task<IdentityResult> CreateAsync(ApplicationUser user)
         {
-            var identityUser = await this.ChangeTypeAsync<TUser>(user);
-            return await _userManager.CreateAsync(identityUser as TUser);
+            var identityUser = _mapper.Map<TUser>(user);
+            return await _userManager.CreateAsync(identityUser);
         }
 
         public async Task<ApplicationUser> FindByAccountAsync(string account)
