@@ -137,7 +137,7 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
             // read external identity from the temporary cookie
             var authenticateResult = await HttpContext.AuthenticateAsync(IdentityServer4.IdentityServerConstants.ExternalCookieAuthenticationScheme);
             if (authenticateResult?.Succeeded != true)
-                throw new Exception("External authentication error");
+                _logger.LogError("External authentication error");
 
             if (_logger.IsEnabled(LogLevel.Debug))
             {
@@ -184,12 +184,12 @@ namespace Shengtai.IdentityServer.Areas.IdentityServer.Pages.Account
                             await _signInService.SignInAsync(user, isPersistent: false, info.LoginProvider);
 
                             // retrieve return URL
-                            returnUrl = authenticateResult.Properties.Items["returnUrl"] ?? "~/";
+                            returnUrl = authenticateResult.Properties?.Items["returnUrl"] ?? "~/";
 
                             // check if external login is in the context of an OIDC request
                             var context = await _interactionService.GetAuthorizationContextAsync(returnUrl);
                             var providerUserId = info.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-                            await _eventService.RaiseAsync(new IdentityServer4.Events.UserLoginSuccessEvent(authenticateResult.Properties.Items["scheme"], providerUserId, user.Id, user.UserName, true, context?.Client.ClientId));
+                            await _eventService.RaiseAsync(new IdentityServer4.Events.UserLoginSuccessEvent(authenticateResult.Properties?.Items["scheme"], providerUserId, user.Id, user.UserName, true, context?.Client.ClientId));
 
                             if(context != null)
                             {
