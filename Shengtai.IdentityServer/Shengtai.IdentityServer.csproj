@@ -5,24 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Service\**" />
-    <EmbeddedResource Remove="Service\**" />
-    <None Remove="Service\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="ServiceKeys.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Service\IdentityServerService.cs" />
-    <Compile Include="Service\RoleService.cs" />
-    <Compile Include="Service\SignInService.cs" />
-    <Compile Include="Service\UserService.cs" />
-    <Compile Include="Service\UserSqlService.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="Dapper" Version="2.0.90" />
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.2" />
