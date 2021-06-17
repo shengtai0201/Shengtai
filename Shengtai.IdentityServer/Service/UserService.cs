@@ -43,10 +43,22 @@ namespace Shengtai.IdentityServer.Service
             return await _userManager.AddLoginAsync(identityUser as TUser, login);
         }
 
+        public async Task<IdentityResult> AddPasswordAsync(ApplicationUser user, string password)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.AddPasswordAsync(identityUser as TUser, password);
+        }
+
         public async Task<IdentityResult> AddToRolesAsync(ApplicationUser user, IEnumerable<string> roles)
         {
             var identityUser = await this.ChangeTypeAsync<TUser>(user);
             return await _userManager.AddToRolesAsync(identityUser as TUser, roles);
+        }
+
+        public async Task<IdentityResult> ChangePasswordAsync(ApplicationUser user, string currentPassword, string newPassword)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.ChangePasswordAsync(identityUser as TUser, currentPassword, newPassword);
         }
 
         public async Task<IdentityResult> ConfirmEmailAsync(ApplicationUser user, string token)
@@ -82,6 +94,12 @@ namespace Shengtai.IdentityServer.Service
             return await _userManager.FindByIdAsync(userId);
         }
 
+        public async Task<string> GenerateChangeEmailTokenAsync(ApplicationUser user, string newEmail)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.GenerateChangeEmailTokenAsync(identityUser as TUser, newEmail);
+        }
+
         public async Task<string> GenerateEmailConfirmationTokenAsync(ApplicationUser user)
         {
             var identityUser = await this.ChangeTypeAsync<TUser>(user);
@@ -105,6 +123,18 @@ namespace Shengtai.IdentityServer.Service
             return null;
         }
 
+        public async Task<string> GetEmailAsync(ApplicationUser user)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.GetEmailAsync(identityUser as TUser);
+        }
+
+        public async Task<string> GetPhoneNumberAsync(ApplicationUser user)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.GetPhoneNumberAsync(identityUser as TUser);
+        }
+
         public async Task<IList<string>> GetRolesAsync(ClaimsPrincipal principal)
         {
             var user = await _userManager.GetUserAsync(principal);
@@ -113,6 +143,11 @@ namespace Shengtai.IdentityServer.Service
                 roles = await _userManager.GetRolesAsync(user);
 
             return roles;
+        }
+
+        public async Task<ApplicationUser> GetUserAsync(ClaimsPrincipal principal)
+        {
+            return await _userManager.GetUserAsync(principal);
         }
 
         public async Task<string> GetUserIdAsync(ApplicationUser user)
@@ -125,6 +160,18 @@ namespace Shengtai.IdentityServer.Service
         {
             var identityUser = await _userManager.GetUserAsync(principal);
             return identityUser?.Id;
+        }
+
+        public async Task<string> GetUserNameAsync(ApplicationUser user)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.GetUserNameAsync(identityUser as TUser);
+        }
+
+        public async Task<bool> HasPasswordAsync(ApplicationUser user)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.HasPasswordAsync(identityUser as TUser);
         }
 
         public async Task<bool> IsEmailConfirmedAsync(ApplicationUser user)
@@ -143,6 +190,18 @@ namespace Shengtai.IdentityServer.Service
         {
             var identityUser = await this.ChangeTypeAsync<TUser>(user);
             return await _userManager.ResetPasswordAsync(identityUser as TUser, token, newPassword);
+        }
+
+        public async Task<IdentityResult> SetPhoneNumberAsync(ApplicationUser user, string phoneNumber)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.SetPhoneNumberAsync(identityUser as TUser, phoneNumber);
+        }
+
+        public async Task<IdentityResult> SetUserNameAsync(ApplicationUser user, string userName)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.SetUserNameAsync(identityUser as TUser, userName);
         }
     }
 }

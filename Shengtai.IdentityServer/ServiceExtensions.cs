@@ -165,6 +165,8 @@ namespace Shengtai.IdentityServer
             // not recommended for production - you need to store your key material somewhere secure
             serverBuilder.AddDeveloperSigningCredential();
 
+            // todo: check
+            services.AddRazorPages();
             services.AddSignalR();
         }
     }

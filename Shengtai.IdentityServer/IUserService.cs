@@ -56,8 +56,86 @@ namespace Shengtai.IdentityServer
         /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation, containing the Microsoft.AspNetCore.Identity.IdentityResult of the operation.</returns>
         Task<IdentityResult> ConfirmEmailAsync(Models.Account.ApplicationUser user, string token);
         Task<Models.Account.ApplicationUser> FindByEmailAsync(string email);
+
+        /// <summary>
+        /// Gets the email address for the specified user.
+        /// </summary>
+        /// <param name="user">The user whose email should be returned.</param>
+        /// <returns>The task object containing the results of the asynchronous operation, the email address for the specified user.</returns>
+        Task<string> GetEmailAsync(Models.Account.ApplicationUser user);
+
+        /// <summary>
+        /// Generates an email change token for the specified user.
+        /// </summary>
+        /// <param name="user">The user to generate an email change token for.</param>
+        /// <param name="newEmail">The new email address.</param>
+        /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation, an email change token.</returns>
+        Task<string> GenerateChangeEmailTokenAsync(Models.Account.ApplicationUser user, string newEmail);
+
+        /// <summary>
+        /// Gets a flag indicating whether the specified user has a password.
+        /// </summary>
+        /// <param name="user">The user to return a flag for, indicating whether they have a password or not.</param>
+        /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation, returning true if the specified user has a password otherwise false.</returns>
+        Task<bool> HasPasswordAsync(Models.Account.ApplicationUser user);
+
+        /// <summary>
+        /// Changes a user's password after confirming the specified currentPassword is correct, as an asynchronous operation.
+        /// </summary>
+        /// <param name="user">The user whose password should be set.</param>
+        /// <param name="currentPassword">The current password to validate before changing.</param>
+        /// <param name="newPassword">The new password to set for the specified user.</param>
+        /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation, containing the Microsoft.AspNetCore.Identity.IdentityResult of the operation.</returns>
+        Task<IdentityResult> ChangePasswordAsync(Models.Account.ApplicationUser user, string currentPassword, string newPassword);
+
+        /// <summary>
+        /// Adds the password to the specified user only if the user does not already have a password.
+        /// </summary>
+        /// <param name="user">The user whose password should be set.</param>
+        /// <param name="password">The password to set.</param>
+        /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation, containing the Microsoft.AspNetCore.Identity.IdentityResult of the operation.</returns>
+        Task<IdentityResult> AddPasswordAsync(Models.Account.ApplicationUser user, string password);
+
         Task<string> GetUserIdAsync(Models.Account.ApplicationUser user);
         Task<string> GetUserIdAsync(ClaimsPrincipal principal);
+
+        /// <summary>
+        /// Returns the user corresponding to the IdentityOptions.ClaimsIdentity.UserIdClaimType claim in the principal or null.
+        /// </summary>
+        /// <param name="principal">The principal which contains the user id claim.</param>
+        /// <returns>The user corresponding to the IdentityOptions.ClaimsIdentity.UserIdClaimType claim in the principal or null</returns>
+        Task<Models.Account.ApplicationUser> GetUserAsync(ClaimsPrincipal principal);
+
+        /// <summary>
+        /// Gets the user name for the specified user.
+        /// </summary>
+        /// <param name="user">The user whose name should be retrieved.</param>
+        /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation, containing the name for the specified user.</returns>
+        Task<string> GetUserNameAsync(Models.Account.ApplicationUser user);
+
+        /// <summary>
+        /// Sets the given userName for the specified user.
+        /// </summary>
+        /// <param name="user">The user whose name should be set.</param>
+        /// <param name="userName">The user name to set.</param>
+        /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation.</returns>
+        Task<IdentityResult> SetUserNameAsync(Models.Account.ApplicationUser user, string userName);
+
+        /// <summary>
+        /// Gets the telephone number, if any, for the specified user.
+        /// </summary>
+        /// <param name="user">The user whose telephone number should be retrieved.</param>
+        /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation, containing the user's telephone number, if any.</returns>
+        Task<string> GetPhoneNumberAsync(Models.Account.ApplicationUser user);
+
+        /// <summary>
+        /// Sets the phone number for the specified user.
+        /// </summary>
+        /// <param name="user">The user whose phone number to set.</param>
+        /// <param name="phoneNumber">The phone number to set.</param>
+        /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation, containing the Microsoft.AspNetCore.Identity.IdentityResult of the operation.</returns>
+        Task<IdentityResult> SetPhoneNumberAsync(Models.Account.ApplicationUser user, string phoneNumber);
+
         Task<IList<string>> GetRolesAsync(ClaimsPrincipal principal);
         Task<bool> IsEmailConfirmedAsync(Models.Account.ApplicationUser user);
         Task<string> GeneratePasswordResetTokenAsync(Models.Account.ApplicationUser user);

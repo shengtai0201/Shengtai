@@ -57,6 +57,12 @@ namespace Shengtai.IdentityServer.Service
             return result;
         }
 
+        public async Task RefreshSignInAsync(ApplicationUser user)
+        {
+            var identityUser = await _userService.ChangeTypeAsync<TUser>(user);
+            await _signInManager.RefreshSignInAsync(identityUser as TUser);
+        }
+
         public async Task SignInAsync(ApplicationUser user, bool isPersistent, string authenticationMethod = null)
         {
             var identityUser = await _userService.ChangeTypeAsync<TUser>(user);

@@ -1,0 +1,161 @@
+﻿@page
+@inject Shengtai.IdentityServer.ISignInService SignInService
+@model Shengtai.IdentityServer.Pages.Manage.IndexModel
+@{
+    Layout = "AdminLTE/_Layout";
+    ViewBag.Title = "Manage your account";
+    var hasExternalLogins = (await SignInService.GetExternalAuthenticationSchemesAsync()).Any();
+}
+@section Styles{
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.511/styles/kendo.common-bootstrap.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.511/styles/kendo.bootstrap.min.css" />
+}
+@section Scripts{
+    <script src="https://kendo.cdn.telerik.com/2021.2.511/js/kendo.all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#tabstrip").kendoTabStrip({
+                tabPosition: "left",
+                animation: { open: { effects: "fadeIn" } }
+            });
+        });
+    </script>
+    @await Html.PartialAsync("~/Views/Shared/_ValidationScriptsPartial.cshtml")
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Change your account settings</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.StatusMessage))
+                {
+                    var statusMessageClass = Model.StatusMessage.StartsWith("Error") ? "danger" : "success";
+                    <div class="alert alert-@statusMessageClass alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        @Model.StatusMessage
+                    </div>
+                }
+                <div id="tabstrip">
+                    <ul>
+                        <li class="k-state-active">Profile</li>
+                        <li>Email</li>
+                        <li>Password</li>
+                        @if (hasExternalLogins)
+                        {
+                            <li>External logins</li>
+                        }
+                        <li>Two-factor authentication</li>
+                        <li>Personal data</li>
+                    </ul>
+                    <div>
+                        @using (Html.BeginForm(FormMethod.Post))
+                        {
+                            <div class="input-group mb-3">
+                                @Html.TextBoxFor(m => m.Input.Profile.UserName, new { @class = "form-control", placeholder = "姓名" })
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <span class="fas fa-user"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                @Html.TextBoxFor(m => m.Input.Profile.PhoneNumber, new { @class = "form-control", placeholder = "手機號碼" })
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <span class="fas fa-phone"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" name="post" value="Profile">Save</button>
+                        }
+                    </div>
+                    <div>
+                        @using (Html.BeginForm(FormMethod.Post))
+                        {
+                            @if (Model.IsEmailConfirmed)
+                            {
+                                <div class="input-group mb-3">
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", disabled = "disabled" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <span class="fas fa-check"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", disabled = "disabled" })
+                                <button type="submit" class="btn btn-link" name="post" value="SendVerificationEmail">Send verification email</button>
+                            }
+                            <div class="input-group mb-3">
+                                @Html.TextBoxFor(m => m.Input.Email.NewEmail, new { @class = "form-control", placeholder = "變更電子郵件" })
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <span class="fas fa-envelope"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" name="post" value="ChangeEmail">Change email</button>
+                        }
+                    </div>
+                    <div>
+                        @using (Html.BeginForm(FormMethod.Post))
+                        {
+                            <div class="input-group mb-3">
+                                @Html.PasswordFor(m => m.Input.ChangePassword.OldPassword, new { @class = "form-control", placeholder = "原本的密碼" })
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <span class="fas fa-lock"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                @Html.PasswordFor(m => m.Input.ChangePassword.NewPassword, new { @class = "form-control", placeholder = "新密碼" })
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <span class="fas fa-lock"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                @Html.PasswordFor(m => m.Input.ChangePassword.ConfirmPassword, new { @class = "form-control", placeholder = "新密碼再確認" })
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <span class="fas fa-lock"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" name="post" value="ChangePassword">Update password</button>
+                        }
+                    </div>
+                    @if (hasExternalLogins)
+                    {
+                        <div>
+                            External logins
+                        </div>
+                    }
+                    <div>
+                        Two-factor authentication
+                    </div>
+                    <div>
+                        Personal data
+                    </div>
+
+                </div>
+            </div>
+            <div class="card-footer">
+            </div>
+        </div>
+    </div>
+</div>

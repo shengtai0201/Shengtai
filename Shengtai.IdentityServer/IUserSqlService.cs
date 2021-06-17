@@ -8,6 +8,6 @@ namespace Shengtai.IdentityServer
 {
     public interface IUserSqlService
     {
-        Task<string> GetUserIdAsync(string account);
+        Task<string> GetUserIdByClientIdAsync(string clientId);
     }
 }

@@ -44,6 +44,13 @@ namespace Shengtai.IdentityServer
         Task SignInAsync(Models.Account.ApplicationUser user, bool isPersistent, string authenticationMethod = null);
 
         /// <summary>
+        /// Signs in the specified user, whilst preserving the existing AuthenticationProperties of the current signed-in user like rememberMe, as an asynchronous operation.
+        /// </summary>
+        /// <param name="user">The user to sign-in.</param>
+        /// <returns>The task object representing the asynchronous operation.</returns>
+        Task RefreshSignInAsync(Models.Account.ApplicationUser user);
+
+        /// <summary>
         /// Signs the current user out of the application.
         /// </summary>
         Task SignOutAsync();
