@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -41,9 +43,7 @@ namespace Shengtai.IdentityServer.Pages.Manage
         }
 
         public string Email { get; set; }
-
         public bool IsEmailConfirmed { get; set; }
-
         public class EmailModel
         {
             [Required]
@@ -52,9 +52,13 @@ namespace Shengtai.IdentityServer.Pages.Manage
             public string NewEmail { get; set; }
         }
 
+        public bool HasAccount { get; set; }
         public class ChangePasswordModel
         {
-            [Required]
+            [StringLength(256)]
+            [Display(Name = "User account")]
+            public string Account { get; set; }
+
             [DataType(DataType.Password)]
             [Display(Name = "Current password")]
             public string OldPassword { get; set; }
@@ -71,10 +75,9 @@ namespace Shengtai.IdentityServer.Pages.Manage
             public string ConfirmPassword { get; set; }
         }
 
-        public class ExternalLoginsModel
-        {
-
-        }
+        public IList<UserLoginInfo> CurrentLogins { get; set; }
+        public IList<AuthenticationScheme> OtherLogins { get; set; }
+        public bool ShowRemoveButton { get; set; }
 
         public class TwoFactorAuthenticationModel
         {
@@ -91,7 +94,6 @@ namespace Shengtai.IdentityServer.Pages.Manage
             public ProfileModel Profile { get; set; }
             public EmailModel Email { get; set; }
             public ChangePasswordModel ChangePassword { get; set; }
-            public ExternalLoginsModel ExternalLogins { get; set; }
             public TwoFactorAuthenticationModel TwoFactorAuthentication { get; set; }
             public PersonalDataModel PersonalData { get; set; }
         }
@@ -102,35 +104,58 @@ namespace Shengtai.IdentityServer.Pages.Manage
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(string pageHandler = null)
         {
             var user = await _userService.GetUserAsync(User);
             if (user == null)
                 return NotFound($"Unable to load user with ID '{await _userService.GetUserIdAsync(User)}'.");
 
-            Input = new InputModel();
-            await LoadProfileAsync(user);
-            await LoadEmailAsync(user);
-            IActionResult result;
-            if ((result = await LoadChangePasswordAsync(user)) != null) return result;
+            if(pageHandler == "LinkLoginCallback")
+            {
+                var info = await _signInService.GetExternalLoginInfoAsync(user.Id);
+                if (info == null)
+                    throw new InvalidOperationException($"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");
 
+                var result = await _userService.AddLoginAsync(user, info);
+                if (!result.Succeeded)
+                {
+                    StatusMessage = "The external login was not added. External logins can only be associated with one account.";
+                    return RedirectToPage();
+                }
 
+                // Clear the existing external cookie to ensure a clean login process
+                await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-            return Page();
+                StatusMessage = "The external login was added.";
+                return RedirectToPage();
+            }
+            else
+            {
+                Input = new InputModel();
+                await LoadProfileAsync(user);
+                await LoadEmailAsync(user);
+                await LoadChangePasswordAsync(user);
+                await LoadExternalLoginsAsync(user);
+
+                return Page();
+            }
         }
 
-        public async Task<IActionResult> OnPostAsync(string post)
+        public async Task<IActionResult> OnPostAsync(string pageHandler, string loginProvider = null, string providerKey = null, string provider = null)
         {
             var user = await _userService.GetUserAsync(User);
             if (user == null)
                 return NotFound($"Unable to load user with ID '{await _userService.GetUserIdAsync(User)}'.");
 
-            return post switch
+            return pageHandler switch
             {
                 "Profile" => await PostProfileAsync(user),
                 "ChangeEmail" => await ChangeEmailAsync(user),
                 "SendVerificationEmail" => await SendVerificationEmailAsync(user),
+                "CreateAccount" => await CreateAccountAsync(user),
                 "ChangePassword" => await ChangePasswordAsync(user),
+                "RemoveLogin" => await RemoveLoginAsync(user, loginProvider, providerKey),
+                "LinkLogin" => await LinkLoginAsync(provider),
                 _ => throw new ArgumentException(),
             };
         }
@@ -159,13 +184,23 @@ namespace Shengtai.IdentityServer.Pages.Manage
             IsEmailConfirmed = await _userService.IsEmailConfirmedAsync(user);
         }
 
-        private async Task<IActionResult> LoadChangePasswordAsync(Models.Account.ApplicationUser user)
+        private async Task LoadChangePasswordAsync(Models.Account.ApplicationUser user)
         {
-            var hasPassword = await _userService.HasPasswordAsync(user);
-            if (hasPassword)
-                return null;
+            Input.ChangePassword = new ChangePasswordModel
+            {
+                Account = user.Account
+            };
 
-            return RedirectToAction("SetPassword", "Account", new { area = "IdentityServer" });
+            HasAccount = await _userService.HasAccountAsync(user);
+        }
+
+        private async Task LoadExternalLoginsAsync(Models.Account.ApplicationUser user)
+        {
+            CurrentLogins = await _userService.GetLoginsAsync(user);
+            OtherLogins = (await _signInService.GetExternalAuthenticationSchemesAsync())
+                .Where(auth => CurrentLogins.All(ul => auth.Name != ul.LoginProvider))
+                .ToList();
+            ShowRemoveButton = user.PasswordHash != null || CurrentLogins.Count > 1;
         }
 
         private async Task<IActionResult> PostProfileAsync(Models.Account.ApplicationUser user)
@@ -249,18 +284,43 @@ namespace Shengtai.IdentityServer.Pages.Manage
             return RedirectToPage();
         }
 
+        private async Task<IActionResult> CreateAccountAsync(Models.Account.ApplicationUser user)
+        {
+            if (!ModelState.IsValid)
+            {
+                await LoadChangePasswordAsync(user);
+                return Page();
+            }
+
+            var result = await _userService.AddAccountAsync(user, Input.ChangePassword.Account, Input.ChangePassword.NewPassword);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
+
+                return Page();
+            }
+
+            await _signInService.RefreshSignInAsync(user);
+            StatusMessage = "Your account has been created.";
+
+            return RedirectToPage();
+        }
+
         private async Task<IActionResult> ChangePasswordAsync(Models.Account.ApplicationUser user)
         {
             if (!ModelState.IsValid)
-                return Page();
-
-            var changePasswordResult = await _userService.ChangePasswordAsync(user, Input.ChangePassword.OldPassword, Input.ChangePassword.NewPassword);
-            if (!changePasswordResult.Succeeded)
             {
-                foreach (var error in changePasswordResult.Errors)
-                {
+                await LoadChangePasswordAsync(user);
+                return Page();
+            }
+
+            var result = await _userService.ChangePasswordAsync(user, Input.ChangePassword.OldPassword, Input.ChangePassword.NewPassword);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
                     ModelState.AddModelError(string.Empty, error.Description);
-                }
+
                 return Page();
             }
 
@@ -269,6 +329,32 @@ namespace Shengtai.IdentityServer.Pages.Manage
             StatusMessage = "Your password has been changed.";
 
             return RedirectToPage();
+        }
+
+        private async Task<IActionResult> RemoveLoginAsync(Models.Account.ApplicationUser user, string loginProvider, string providerKey)
+        {
+            var result = await _userService.RemoveLoginAsync(user, loginProvider, providerKey);
+            if (!result.Succeeded)
+            {
+                StatusMessage = "The external login was not removed.";
+                return RedirectToPage();
+            }
+
+            await _signInService.RefreshSignInAsync(user);
+            StatusMessage = "The external login was removed.";
+            return RedirectToPage();
+        }
+
+        private async Task<IActionResult> LinkLoginAsync(string provider)
+        {
+            // Clear the existing external cookie to ensure a clean login process
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
+            // Request a redirect to the external login provider to link a login for the current user
+            var redirectUrl = "Manage/Index?pageHandler=LinkLoginCallback";
+            var userId = await _userService.GetUserIdAsync(User);
+            var properties = await _signInService.ConfigureExternalAuthenticationPropertiesAsync(provider, redirectUrl, userId);
+            return new ChallengeResult(provider, properties);
         }
     }
 }

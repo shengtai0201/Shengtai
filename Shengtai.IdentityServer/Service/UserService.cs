@@ -21,6 +21,19 @@ namespace Shengtai.IdentityServer.Service
             _userManager = userManager;
         }
 
+        public async Task<IdentityResult> AddAccountAsync(ApplicationUser user, string account, string password)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            var result = await _userManager.AddPasswordAsync(identityUser as TUser, password);
+            if (result.Succeeded)
+            {
+                user.Account = account;
+                result = await _userManager.UpdateAsync(identityUser as TUser);
+            }
+
+            return result;
+        }
+
         public async Task<IdentityResult> AddClaimAsync(ApplicationUser user, string type, string value)
         {
             value = Cryptography.AES.Encrypt(value, type);
@@ -129,6 +142,12 @@ namespace Shengtai.IdentityServer.Service
             return await _userManager.GetEmailAsync(identityUser as TUser);
         }
 
+        public async Task<IList<UserLoginInfo>> GetLoginsAsync(ApplicationUser user)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.GetLoginsAsync(identityUser as TUser);
+        }
+
         public async Task<string> GetPhoneNumberAsync(ApplicationUser user)
         {
             var identityUser = await this.ChangeTypeAsync<TUser>(user);
@@ -168,6 +187,15 @@ namespace Shengtai.IdentityServer.Service
             return await _userManager.GetUserNameAsync(identityUser as TUser);
         }
 
+        public async Task<bool> HasAccountAsync(ApplicationUser user)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            var result = await _userManager.HasPasswordAsync(identityUser as TUser);
+
+            result &= !string.IsNullOrEmpty(identityUser.Account);
+            return result;
+        }
+
         public async Task<bool> HasPasswordAsync(ApplicationUser user)
         {
             var identityUser = await this.ChangeTypeAsync<TUser>(user);
@@ -178,6 +206,12 @@ namespace Shengtai.IdentityServer.Service
         {
             var identityUser = await this.ChangeTypeAsync<TUser>(user);
             return await _userManager.IsEmailConfirmedAsync(identityUser as TUser);
+        }
+
+        public async Task<IdentityResult> RemoveLoginAsync(ApplicationUser user, string loginProvider, string providerKey)
+        {
+            var identityUser = await this.ChangeTypeAsync<TUser>(user);
+            return await _userManager.RemoveLoginAsync(identityUser as TUser, loginProvider, providerKey);
         }
 
         public Task<bool> RequireConfirmedAccountAsync()

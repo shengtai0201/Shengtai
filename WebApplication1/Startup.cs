@@ -27,9 +27,7 @@ namespace WebApplication1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -39,7 +37,7 @@ namespace WebApplication1
             services.AddAuthentication().AddGoogle(options =>
             {
                 options.ClientId = "873992808281-vu5275oqumlsi54rs2tcmgeno2u4l0b7.apps.googleusercontent.com";
-                options.ClientSecret = "AIzaSyBONPFIpUcukH8ykswg1jIT3fvoESEQxoc";
+                options.ClientSecret = "Tmz8elmqsxP3PWEsJ8-8LHQ8";
             });
         }
 

@@ -79,6 +79,8 @@ namespace Shengtai.IdentityServer
         /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation, returning true if the specified user has a password otherwise false.</returns>
         Task<bool> HasPasswordAsync(Models.Account.ApplicationUser user);
 
+        Task<bool> HasAccountAsync(Models.Account.ApplicationUser user);
+
         /// <summary>
         /// Changes a user's password after confirming the specified currentPassword is correct, as an asynchronous operation.
         /// </summary>
@@ -96,6 +98,8 @@ namespace Shengtai.IdentityServer
         /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation, containing the Microsoft.AspNetCore.Identity.IdentityResult of the operation.</returns>
         Task<IdentityResult> AddPasswordAsync(Models.Account.ApplicationUser user, string password);
 
+        Task<IdentityResult> AddAccountAsync(Models.Account.ApplicationUser user, string account, string password);
+
         Task<string> GetUserIdAsync(Models.Account.ApplicationUser user);
         Task<string> GetUserIdAsync(ClaimsPrincipal principal);
 
@@ -112,6 +116,13 @@ namespace Shengtai.IdentityServer
         /// <param name="user">The user whose name should be retrieved.</param>
         /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation, containing the name for the specified user.</returns>
         Task<string> GetUserNameAsync(Models.Account.ApplicationUser user);
+
+        /// <summary>
+        /// Retrieves the associated logins for the specified.
+        /// </summary>
+        /// <param name="user">The user whose associated logins to retrieve.</param>
+        /// <returns>The System.Threading.Tasks.Task for the asynchronous operation, containing a list of Microsoft.AspNetCore.Identity.UserLoginInfo for the specified user, if any.</returns>
+        Task<IList<UserLoginInfo>> GetLoginsAsync(Models.Account.ApplicationUser user);
 
         /// <summary>
         /// Sets the given userName for the specified user.
@@ -160,5 +171,14 @@ namespace Shengtai.IdentityServer
         /// <param name="login">The external Microsoft.AspNetCore.Identity.UserLoginInfo to add to the specified user.</param>
         /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation, containing the Microsoft.AspNetCore.Identity.IdentityResult of the operation.</returns>
         Task<IdentityResult> AddLoginAsync(Models.Account.ApplicationUser user, UserLoginInfo login);
+
+        /// <summary>
+        /// Attempts to remove the provided external login information from the specified user. and returns a flag indicating whether the removal succeed or not.
+        /// </summary>
+        /// <param name="user">The user to remove the login information from.</param>
+        /// <param name="loginProvider">The login provide whose information should be removed.</param>
+        /// <param name="providerKey">The key given by the external login provider for the specified user.</param>
+        /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation, containing the Microsoft.AspNetCore.Identity.IdentityResult of the operation.</returns>
+        Task<IdentityResult> RemoveLoginAsync(Models.Account.ApplicationUser user, string loginProvider, string providerKey);
     }
 }

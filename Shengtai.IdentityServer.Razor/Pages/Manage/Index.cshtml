@@ -49,7 +49,7 @@
                     <ul>
                         <li class="k-state-active">Profile</li>
                         <li>Email</li>
-                        <li>Password</li>
+                        <li>Account</li>
                         @if (hasExternalLogins)
                         {
                             <li>External logins</li>
@@ -76,7 +76,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary" name="post" value="Profile">Save</button>
+                            <button type="submit" class="btn btn-primary" name="pageHandler" value="Profile">Save</button>
                         }
                     </div>
                     <div>
@@ -96,7 +96,7 @@
                             else
                             {
                                 @Html.TextBoxFor(m => m.Email, new { @class = "form-control", disabled = "disabled" })
-                                <button type="submit" class="btn btn-link" name="post" value="SendVerificationEmail">Send verification email</button>
+                                <button type="submit" class="btn btn-link" name="pageHandler" value="SendVerificationEmail">Send verification email</button>
                             }
                             <div class="input-group mb-3">
                                 @Html.TextBoxFor(m => m.Input.Email.NewEmail, new { @class = "form-control", placeholder = "變更電子郵件" })
@@ -106,43 +106,135 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary" name="post" value="ChangeEmail">Change email</button>
+                            <button type="submit" class="btn btn-primary" name="pageHandler" value="ChangeEmail">Change email</button>
                         }
                     </div>
                     <div>
                         @using (Html.BeginForm(FormMethod.Post))
                         {
-                            <div class="input-group mb-3">
-                                @Html.PasswordFor(m => m.Input.ChangePassword.OldPassword, new { @class = "form-control", placeholder = "原本的密碼" })
-                                <div class="input-group-append">
-                                    <div class="input-group-text">
-                                        <span class="fas fa-lock"></span>
+                            @if (Model.HasAccount)
+                            {
+                                <div class="input-group mb-3">
+                                    @Html.TextBoxFor(m => m.Input.ChangePassword.Account, new { @class = "form-control", disabled = "disabled" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <span class="fas fa-check"></span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="input-group mb-3">
-                                @Html.PasswordFor(m => m.Input.ChangePassword.NewPassword, new { @class = "form-control", placeholder = "新密碼" })
-                                <div class="input-group-append">
-                                    <div class="input-group-text">
-                                        <span class="fas fa-lock"></span>
+                                <div class="input-group mb-3">
+                                    @Html.PasswordFor(m => m.Input.ChangePassword.OldPassword, new { @class = "form-control", placeholder = "原本的密碼" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <span class="fas fa-lock"></span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="input-group mb-3">
-                                @Html.PasswordFor(m => m.Input.ChangePassword.ConfirmPassword, new { @class = "form-control", placeholder = "新密碼再確認" })
-                                <div class="input-group-append">
-                                    <div class="input-group-text">
-                                        <span class="fas fa-lock"></span>
+                                <div class="input-group mb-3">
+                                    @Html.PasswordFor(m => m.Input.ChangePassword.NewPassword, new { @class = "form-control", placeholder = "新密碼" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <span class="fas fa-lock"></span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary" name="post" value="ChangePassword">Update password</button>
+                                <div class="input-group mb-3">
+                                    @Html.PasswordFor(m => m.Input.ChangePassword.ConfirmPassword, new { @class = "form-control", placeholder = "新密碼再確認" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <span class="fas fa-lock"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary" name="pageHandler" value="ChangePassword">Update password</button>
+                            }
+                            else
+                            {
+                                <div class="input-group mb-3">
+                                    @Html.TextBoxFor(m => m.Input.ChangePassword.Account, new { @class = "form-control", placeholder = "帳號" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <span class="fas fa-user-shield"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    @Html.PasswordFor(m => m.Input.ChangePassword.NewPassword, new { @class = "form-control", placeholder = "新密碼" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <span class="fas fa-lock"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    @Html.PasswordFor(m => m.Input.ChangePassword.ConfirmPassword, new { @class = "form-control", placeholder = "新密碼再確認" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <span class="fas fa-lock"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary" name="pageHandler" value="CreateAccount">Create account</button>
+                            }
                         }
                     </div>
                     @if (hasExternalLogins)
                     {
                         <div>
-                            External logins
+                            <div class="row gx-5">
+                                <div class="col-6">
+                                    <div class="p-3 border bg-light">
+                                        <h4>Registered Logins</h4>
+                                        <table class="table">
+                                            <tbody>
+                                                @foreach (var login in Model.CurrentLogins)
+                                                {
+                                                    <tr>
+                                                        <td id="@($"login-provider-{login.LoginProvider}")">@login.ProviderDisplayName</td>
+                                                        <td>
+                                                            @if (Model.ShowRemoveButton)
+                                                            {
+                                                                @using (Html.BeginForm(FormMethod.Post))
+                                                                {
+                                                                    <div>
+                                                                        <input value="@login.LoginProvider" name="LoginProvider" type="hidden" />
+                                                                        <input value="@login.ProviderKey" name="ProviderKey" type="hidden" />
+                                                                        <button type="submit" class="btn btn-primary" title="Remove this @login.ProviderDisplayName login from your account" name="pageHandler" value="RemoveLogin">Remove</button>
+                                                                    </div>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                @: &nbsp;
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-5">
+                                    <div class="p-3 border bg-light">
+                                        <h4>Add another service to log in</h4>
+                                        <hr />
+                                        <div class="form-horizontal">
+                                            @foreach (var provider in Model.OtherLogins)
+                                            {
+                                                @using (Html.BeginForm(FormMethod.Post, new { @class = "form-horizontal" }))
+                                                {
+                                                    <div id="socialLoginList">
+                                                        <input value="@provider.Name" name="provider" type="hidden" />
+                                                        <p>
+                                                            <button id="@($"link-login-button-{provider.Name}")" type="submit" class="btn btn-primary" name="pageHandler" value="LinkLogin" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                                        </p>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     }
                     <div>
