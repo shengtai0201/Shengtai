@@ -7,11 +7,11 @@
     var hasExternalLogins = (await SignInService.GetExternalAuthenticationSchemesAsync()).Any();
 }
 @section Styles{
-    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.511/styles/kendo.common-bootstrap.min.css" />
-    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.511/styles/kendo.bootstrap.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common-bootstrap.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.bootstrap.min.css" />
 }
 @section Scripts{
-    <script src="https://kendo.cdn.telerik.com/2021.2.511/js/kendo.all.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
     <script>
         $(document).ready(function () {
             $("#tabstrip").kendoTabStrip({
@@ -54,8 +54,6 @@
                         {
                             <li>External logins</li>
                         }
-                        <li>Two-factor authentication</li>
-                        <li>Personal data</li>
                     </ul>
                     <div>
                         @using (Html.BeginForm(FormMethod.Post))
@@ -237,12 +235,6 @@
                             </div>
                         </div>
                     }
-                    <div>
-                        Two-factor authentication
-                    </div>
-                    <div>
-                        Personal data
-                    </div>
 
                 </div>
             </div>

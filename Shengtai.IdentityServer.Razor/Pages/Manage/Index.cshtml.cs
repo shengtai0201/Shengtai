@@ -79,23 +79,11 @@ namespace Shengtai.IdentityServer.Pages.Manage
         public IList<AuthenticationScheme> OtherLogins { get; set; }
         public bool ShowRemoveButton { get; set; }
 
-        public class TwoFactorAuthenticationModel
-        {
-
-        }
-
-        public class PersonalDataModel
-        {
-
-        }
-
         public class InputModel
         {
             public ProfileModel Profile { get; set; }
             public EmailModel Email { get; set; }
             public ChangePasswordModel ChangePassword { get; set; }
-            public TwoFactorAuthenticationModel TwoFactorAuthentication { get; set; }
-            public PersonalDataModel PersonalData { get; set; }
         }
 
         [TempData]

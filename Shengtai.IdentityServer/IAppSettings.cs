@@ -73,6 +73,10 @@ namespace Shengtai.IdentityServer
 
         public class _Authentication
         {
+            // todo: https://docs.microsoft.com/zh-tw/aspnet/core/security/authentication/mfa?view=aspnetcore-5.0
+            // https://github.com/passwordless-lib/fido2-net-lib
+            public bool TwoFactorAuthentication { get; set; }
+
             public class _Google
             {
                 public string ClientId { get; set; }
