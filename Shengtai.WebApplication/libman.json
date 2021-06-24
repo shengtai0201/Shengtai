@@ -47,6 +47,10 @@
       "provider": "unpkg",
       "library": "@microsoft/signalr@5.0.6",
       "destination": "wwwroot/lib/microsoft/signalr/"
+    },
+    {
+      "library": "simplebar@5.3.4",
+      "destination": "wwwroot/lib/simplebar/"
     }
   ]
 }

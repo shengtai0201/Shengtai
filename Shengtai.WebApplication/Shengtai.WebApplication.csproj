@@ -22,8 +22,4 @@
     <ProjectReference Include="..\Shengtai.IdentityServer.Razor\Shengtai.IdentityServer.Razor.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\lib\" />
-  </ItemGroup>
-
 </Project>

@@ -1,15 +1,22 @@
-.row.row-equal {
-  padding-right: ($grid-gutter-width / 4);
-  padding-left: ($grid-gutter-width / 4);
-  margin-right: ($grid-gutter-width / -2);
-  margin-left: ($grid-gutter-width / -2);
+// Row
+//
+// Rows contain your columns.
 
-  [class*="col-"] {
-    padding-right: ($grid-gutter-width / 4);
-    padding-left: ($grid-gutter-width / 4);
+@if $enable-grid-classes {
+  .row {
+    @include make-row();
+
+    > * {
+      @include make-col-ready();
+    }
   }
 }
 
-.main .container-fluid {
-  padding: 0 30px;
+
+// Columns
+//
+// Common styles for small and large grid columns
+
+@if $enable-grid-classes {
+  @include make-grid-columns();
 }

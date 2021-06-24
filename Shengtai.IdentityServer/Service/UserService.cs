@@ -82,6 +82,10 @@ namespace Shengtai.IdentityServer.Service
 
         public async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
         {
+            var any = _userManager.Users.Where(u => u.Account.ToUpper() == user.Account.ToUpper()).Any();
+            if (any)
+                return IdentityResult.Failed(new IdentityError { Code = "account", Description = "帳號重複" });
+
             var identityUser = _mapper.Map<TUser>(user);
             return await _userManager.CreateAsync(identityUser, password);
         }

@@ -1,314 +1,386 @@
-import $ from 'jquery'
-import PerfectScrollbar from 'perfect-scrollbar'
-import getStyle from './utilities/get-style'
-import toggleClasses from './toggle-classes'
-
 /**
  * --------------------------------------------------------------------------
- * CoreUI (v2.1.16): sidebar.js
+ * CoreUI (v4.0.0-rc.4): sidebar.js
  * Licensed under MIT (https://coreui.io/license)
  * --------------------------------------------------------------------------
  */
 
-const Sidebar = (($) => {
-  /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */
+import {
+  defineJQueryPlugin,
+  emulateTransitionEnd,
+  getTransitionDurationFromElement,
+  reflow,
+  typeCheckConfig
+} from './util/index'
+import Data from './dom/data'
+import EventHandler from './dom/event-handler'
+import Manipulator from './dom/manipulator'
+import BaseComponent from './base-component'
 
-  const NAME                = 'sidebar'
-  const VERSION             = '2.1.16'
-  const DATA_KEY            = 'coreui.sidebar'
-  const EVENT_KEY           = `.${DATA_KEY}`
-  const DATA_API_KEY        = '.data-api'
-  const JQUERY_NO_CONFLICT  = $.fn[NAME]
+/**
+ * ------------------------------------------------------------------------
+ * Constants
+ * ------------------------------------------------------------------------
+ */
 
-  const Default = {
-    transition : 400
+const NAME = 'sidebar'
+const DATA_KEY = 'coreui.sidebar'
+const EVENT_KEY = `.${DATA_KEY}`
+const DATA_API_KEY = '.data-api'
+
+const Default = {}
+
+const DefaultType = {}
+
+const CLASS_NAME_BACKDROP = 'sidebar-backdrop'
+const CLASS_NAME_FADE = 'fade'
+const CLASS_NAME_HIDE = 'hide'
+const CLASS_NAME_SHOW = 'show'
+const CLASS_NAME_SIDEBAR = 'sidebar'
+const CLASS_NAME_SIDEBAR_NARROW = 'sidebar-narrow'
+const CLASS_NAME_SIDEBAR_OVERLAID = 'sidebar-overlaid'
+const CLASS_NAME_SIDEBAR_NARROW_UNFOLDABLE = 'sidebar-narrow-unfoldable'
+
+const REGEXP_SIDEBAR_SELF_HIDING = /sidebar-self-hiding/
+
+const EVENT_HIDE = `hide${EVENT_KEY}`
+const EVENT_HIDDEN = `hidden${EVENT_KEY}`
+const EVENT_RESIZE = 'resize'
+const EVENT_SHOW = `show${EVENT_KEY}`
+const EVENT_SHOWN = `shown${EVENT_KEY}`
+const EVENT_CLICK_DATA_API = `click${EVENT_KEY}${DATA_API_KEY}`
+const EVENT_LOAD_DATA_API = `load${EVENT_KEY}${DATA_API_KEY}`
+
+const SELECTOR_DATA_CLOSE = '[data-coreui-close="sidebar"]'
+const SELECTOR_DATA_TOGGLE = '[data-coreui-toggle]'
+
+const SELECTOR_SIDEBAR = '.sidebar'
+
+/**
+ * ------------------------------------------------------------------------
+ * Class Definition
+ * ------------------------------------------------------------------------
+ */
+
+class Sidebar extends BaseComponent {
+  constructor(element, config) {
+    super(element)
+    this._config = this._getConfig(config)
+    this._show = this._isVisible()
+    this._mobile = this._isMobile()
+    this._overlaid = this._isOverlaid()
+    this._narrow = this._isNarrow()
+    this._unfoldable = this._isUnfoldable()
+    this._backdrop = null
+    this._addEventListeners()
+
+    // Data.set(element, DATA_KEY, this)
   }
 
-  const ClassName = {
-    ACTIVE              : 'active',
-    BRAND_MINIMIZED     : 'brand-minimized',
-    NAV_DROPDOWN_TOGGLE : 'nav-dropdown-toggle',
-    NAV_LINK_QUERIED    : 'nav-link-queried',
-    OPEN                : 'open',
-    SIDEBAR_FIXED       : 'sidebar-fixed',
-    SIDEBAR_MINIMIZED   : 'sidebar-minimized',
-    SIDEBAR_OFF_CANVAS  : 'sidebar-off-canvas'
+  // Getters
+
+  static get Default() {
+    return Default
   }
 
-  const Event = {
-    CLICK         : 'click',
-    DESTROY       : 'destroy',
-    INIT          : 'init',
-    LOAD_DATA_API : `load${EVENT_KEY}${DATA_API_KEY}`,
-    TOGGLE        : 'toggle',
-    UPDATE        : 'update'
+  static get DefaultType() {
+    return DefaultType
   }
 
-  const Selector = {
-    BODY                 : 'body',
-    BRAND_MINIMIZER      : '.brand-minimizer',
-    NAV_DROPDOWN_TOGGLE  : '.nav-dropdown-toggle',
-    NAV_DROPDOWN_ITEMS   : '.nav-dropdown-items',
-    NAV_ITEM             : '.nav-item',
-    NAV_LINK             : '.nav-link',
-    NAV_LINK_QUERIED     : '.nav-link-queried',
-    NAVIGATION_CONTAINER : '.sidebar-nav',
-    NAVIGATION           : '.sidebar-nav > .nav',
-    SIDEBAR              : '.sidebar',
-    SIDEBAR_MINIMIZER    : '.sidebar-minimizer',
-    SIDEBAR_TOGGLER      : '.sidebar-toggler',
-    SIDEBAR_SCROLL       : '.sidebar-scroll'
+  static get NAME() {
+    return NAME
   }
 
-  const ShowClassNames = [
-    'sidebar-show',
-    'sidebar-sm-show',
-    'sidebar-md-show',
-    'sidebar-lg-show',
-    'sidebar-xl-show'
-  ]
+  // Public
 
-  /**
-   * ------------------------------------------------------------------------
-   * Class Definition
-   * ------------------------------------------------------------------------
-   */
+  show() {
+    EventHandler.trigger(this._element, EVENT_SHOW)
 
-  class Sidebar {
-    constructor(element) {
-      this._element = element
-      this.mobile = false
-      this.ps = null
-      this.perfectScrollbar(Event.INIT)
-      this.setActiveLink()
-      this._breakpointTest = this._breakpointTest.bind(this)
-      this._clickOutListener = this._clickOutListener.bind(this)
-      this._removeEventListeners()
-      this._addEventListeners()
-      this._addMediaQuery()
+    if (this._element.classList.contains(CLASS_NAME_HIDE)) {
+      this._element.classList.remove(CLASS_NAME_HIDE)
     }
 
-    // Getters
-
-    static get VERSION() {
-      return VERSION
+    if (REGEXP_SIDEBAR_SELF_HIDING.test(this._element.className)) {
+      this._element.classList.add(CLASS_NAME_SHOW)
     }
 
-    // Public
+    if (this._isMobile()) {
+      this._showBackdrop()
+    }
 
-    perfectScrollbar(event) {
-      if (typeof PerfectScrollbar !== 'undefined') {
-        const classList = document.body.classList
-        if (event === Event.INIT && !classList.contains(ClassName.SIDEBAR_MINIMIZED)) {
-          this.ps = this.makeScrollbar()
+    const complete = () => {
+      if (this._isVisible() === true) {
+        this._show = true
+        if (this._isMobile() || this._isOverlaid()) {
+          this._addClickOutListener()
         }
 
-        if (event === Event.DESTROY) {
-          this.destroyScrollbar()
-        }
-
-        if (event === Event.TOGGLE) {
-          if (classList.contains(ClassName.SIDEBAR_MINIMIZED)) {
-            this.destroyScrollbar()
-          } else {
-            this.destroyScrollbar()
-            this.ps = this.makeScrollbar()
-          }
-        }
-
-        if (event === Event.UPDATE && !classList.contains(ClassName.SIDEBAR_MINIMIZED)) {
-          // ToDo: Add smooth transition
-          setTimeout(() => {
-            this.destroyScrollbar()
-            this.ps = this.makeScrollbar()
-          }, Default.transition)
-        }
+        EventHandler.trigger(this._element, EVENT_SHOWN)
       }
     }
 
-    makeScrollbar() {
-      let container = Selector.SIDEBAR_SCROLL
+    const transitionDuration = getTransitionDurationFromElement(this._element)
 
-      if (document.querySelector(container) === null) {
-        container = Selector.NAVIGATION_CONTAINER
+    EventHandler.one(this._element, 'transitionend', complete)
+    emulateTransitionEnd(this._element, transitionDuration)
+  }
 
-        if (document.querySelector(container) === null) {
-          return null
-        }
-      }
+  hide() {
+    EventHandler.trigger(this._element, EVENT_HIDE)
 
-      const ps = new PerfectScrollbar(document.querySelector(container), {
-        suppressScrollX: true
-      })
-      // ToDo: find real fix for ps rtl
-      ps.isRtl = false
-      return ps
+    if (this._element.classList.contains(CLASS_NAME_SHOW)) {
+      this._element.classList.remove(CLASS_NAME_SHOW)
+    } else {
+      this._element.classList.add(CLASS_NAME_HIDE)
     }
 
-    destroyScrollbar() {
-      if (this.ps) {
-        this.ps.destroy()
-        this.ps = null
-      }
+    if (this._isMobile()) {
+      this._removeBackdrop()
     }
 
-    setActiveLink() {
-      $(Selector.NAVIGATION).find(Selector.NAV_LINK).each((key, value) => {
-        let link = value
-        let cUrl
-
-        if (link.classList.contains(ClassName.NAV_LINK_QUERIED)) {
-          cUrl = String(window.location)
-        } else {
-          cUrl = String(window.location).split('?')[0]
+    const complete = () => {
+      if (this._isVisible() === false) {
+        this._show = false
+        if (this._isMobile() || this._isOverlaid()) {
+          this._removeClickOutListener()
         }
 
-        if (cUrl.substr(cUrl.length - 1) === '#') {
-          cUrl = cUrl.slice(0, -1)
-        }
-        if ($($(link))[0].href === cUrl) {
-          $(link).addClass(ClassName.ACTIVE).parents(Selector.NAV_DROPDOWN_ITEMS).add(link).each((key, value) => {
-            link = value
-            $(link).parent().addClass(ClassName.OPEN)
-          })
-        }
-      })
-    }
-
-    // Private
-
-    _addMediaQuery() {
-      const sm = getStyle('--breakpoint-sm')
-      if (!sm) {
-        return
-      }
-      const smVal = parseInt(sm, 10) - 1
-      const mediaQueryList = window.matchMedia(`(max-width: ${smVal}px)`)
-
-      this._breakpointTest(mediaQueryList)
-
-      mediaQueryList.addListener(this._breakpointTest)
-    }
-
-    _breakpointTest(e) {
-      this.mobile = Boolean(e.matches)
-      this._toggleClickOut()
-    }
-
-    _clickOutListener(event) {
-      if (!this._element.contains(event.target)) { // or use: event.target.closest(Selector.SIDEBAR) === null
-        event.preventDefault()
-        event.stopPropagation()
-        this._removeClickOut()
-        document.body.classList.remove('sidebar-show')
+        EventHandler.trigger(this._element, EVENT_HIDDEN)
       }
     }
 
-    _addClickOut() {
-      document.addEventListener(Event.CLICK, this._clickOutListener, true)
+    const transitionDuration = getTransitionDurationFromElement(this._element)
+
+    EventHandler.one(this._element, 'transitionend', complete)
+    emulateTransitionEnd(this._element, transitionDuration)
+  }
+
+  toggle() {
+    if (this._isVisible()) {
+      this.hide()
+      return
     }
 
-    _removeClickOut() {
-      document.removeEventListener(Event.CLICK, this._clickOutListener, true)
-    }
+    this.show()
+  }
 
-    _toggleClickOut() {
-      if (this.mobile && document.body.classList.contains('sidebar-show')) {
-        document.body.classList.remove('aside-menu-show')
-        this._addClickOut()
-      } else {
-        this._removeClickOut()
-      }
-    }
-
-    _addEventListeners() {
-      $(document).on(Event.CLICK, Selector.BRAND_MINIMIZER, (event) => {
-        event.preventDefault()
-        event.stopPropagation()
-        $(Selector.BODY).toggleClass(ClassName.BRAND_MINIMIZED)
-      })
-
-      $(document).on(Event.CLICK, Selector.NAV_DROPDOWN_TOGGLE, (event) => {
-        event.preventDefault()
-        event.stopPropagation()
-        const dropdown = event.target
-        $(dropdown).parent().toggleClass(ClassName.OPEN)
-        this.perfectScrollbar(Event.UPDATE)
-      })
-
-      $(document).on(Event.CLICK, Selector.SIDEBAR_MINIMIZER, (event) => {
-        event.preventDefault()
-        event.stopPropagation()
-        $(Selector.BODY).toggleClass(ClassName.SIDEBAR_MINIMIZED)
-        this.perfectScrollbar(Event.TOGGLE)
-      })
-
-      $(document).on(Event.CLICK, Selector.SIDEBAR_TOGGLER, (event) => {
-        event.preventDefault()
-        event.stopPropagation()
-        const toggle = event.currentTarget.dataset ? event.currentTarget.dataset.toggle : $(event.currentTarget).data('toggle')
-        toggleClasses(toggle, ShowClassNames)
-        this._toggleClickOut()
-      })
-
-      $(`${Selector.NAVIGATION} > ${Selector.NAV_ITEM} ${Selector.NAV_LINK}:not(${Selector.NAV_DROPDOWN_TOGGLE})`).on(Event.CLICK, () => {
-        this._removeClickOut()
-        document.body.classList.remove('sidebar-show')
-      })
-    }
-
-    _removeEventListeners() {
-      $(document).off(Event.CLICK, Selector.BRAND_MINIMIZER)
-      $(document).off(Event.CLICK, Selector.NAV_DROPDOWN_TOGGLE)
-      $(document).off(Event.CLICK, Selector.SIDEBAR_MINIMIZER)
-      $(document).off(Event.CLICK, Selector.SIDEBAR_TOGGLER)
-      $(`${Selector.NAVIGATION} > ${Selector.NAV_ITEM} ${Selector.NAV_LINK}:not(${Selector.NAV_DROPDOWN_TOGGLE})`).off(Event.CLICK)
-    }
-
-    // Static
-
-    static _jQueryInterface() {
-      return this.each(function () {
-        const $element = $(this)
-        let data = $element.data(DATA_KEY)
-
-        if (!data) {
-          data = new Sidebar(this)
-          $element.data(DATA_KEY, data)
-        }
-      })
+  narrow() {
+    if (!this._isMobile()) {
+      this._addClassName(CLASS_NAME_SIDEBAR_NARROW)
+      this._narrow = true
     }
   }
 
-  /**
-   * ------------------------------------------------------------------------
-   * Data Api implementation
-   * ------------------------------------------------------------------------
-   */
+  unfoldable() {
+    if (!this._isMobile()) {
+      this._addClassName(CLASS_NAME_SIDEBAR_NARROW_UNFOLDABLE)
+      this._unfoldable = true
+    }
+  }
 
-  $(window).one(Event.LOAD_DATA_API, () => {
-    const sidebar = $(Selector.SIDEBAR)
-    Sidebar._jQueryInterface.call(sidebar)
+  reset() {
+    if (!this._isMobile()) {
+      if (this._narrow) {
+        this._element.classList.remove(CLASS_NAME_SIDEBAR_NARROW)
+        this._narrow = false
+      }
+
+      if (this._unfoldable) {
+        this._element.classList.remove(CLASS_NAME_SIDEBAR_NARROW_UNFOLDABLE)
+        this._unfoldable = false
+      }
+    }
+  }
+
+  toggleNarrow() {
+    if (this._narrow) {
+      this.reset()
+      return
+    }
+
+    this.narrow()
+  }
+
+  toggleUnfoldable() {
+    if (this._unfoldable) {
+      this.reset()
+      return
+    }
+
+    this.unfoldable()
+  }
+
+  // Private
+
+  _getConfig(config) {
+    config = {
+      ...Default,
+      ...Manipulator.getDataAttributes(this._element),
+      ...(typeof config === 'object' ? config : {})
+    }
+    typeCheckConfig(NAME, config, DefaultType)
+    return config
+  }
+
+  _createShowClass() {
+    if (this._breakpoint && !this._isMobile()) {
+      return `${CLASS_NAME_SIDEBAR}-${this._breakpoint}-${CLASS_NAME_SHOW}`
+    }
+
+    return `${CLASS_NAME_SIDEBAR}-${CLASS_NAME_SHOW}`
+  }
+
+  _isMobile() {
+    return Boolean(window.getComputedStyle(this._element, null).getPropertyValue('--cui-is-mobile'))
+  }
+
+  _isNarrow() {
+    return this._element.classList.contains(CLASS_NAME_SIDEBAR_NARROW)
+  }
+
+  _isOverlaid() {
+    return this._element.classList.contains(CLASS_NAME_SIDEBAR_OVERLAID)
+  }
+
+  _isUnfoldable() {
+    return this._element.classList.contains(CLASS_NAME_SIDEBAR_NARROW_UNFOLDABLE)
+  }
+
+  _isVisible() {
+    const rect = this._element.getBoundingClientRect()
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /* or $(window).height() */
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth) /* or $(window).width() */
+    )
+  }
+
+  _addClassName(className) {
+    this._element.classList.add(className)
+  }
+
+  _removeBackdrop() {
+    if (this._backdrop) {
+      this._backdrop.parentNode.removeChild(this._backdrop)
+      this._backdrop = null
+    }
+  }
+
+  _showBackdrop() {
+    if (!this._backdrop) {
+      this._backdrop = document.createElement('div')
+      this._backdrop.className = CLASS_NAME_BACKDROP
+      this._backdrop.classList.add(CLASS_NAME_FADE)
+      document.body.appendChild(this._backdrop)
+      reflow(this._backdrop)
+      this._backdrop.classList.add(CLASS_NAME_SHOW)
+    }
+  }
+
+  _clickOutListener(event, sidebar) {
+    if (event.target.closest(SELECTOR_SIDEBAR) === null) {
+      event.preventDefault()
+      event.stopPropagation()
+      sidebar.hide()
+    }
+  }
+
+  _addClickOutListener() {
+    EventHandler.on(document, EVENT_CLICK_DATA_API, event => {
+      this._clickOutListener(event, this)
+    })
+  }
+
+  _removeClickOutListener() {
+    EventHandler.off(document, EVENT_CLICK_DATA_API)
+  }
+
+  // Sidebar navigation
+  _addEventListeners() {
+    if (this._mobile && this._show) {
+      this._addClickOutListener()
+    }
+
+    if (this._overlaid && this._show) {
+      this._addClickOutListener()
+    }
+
+    EventHandler.on(this._element, EVENT_CLICK_DATA_API, SELECTOR_DATA_TOGGLE, event => {
+      event.preventDefault()
+      const toggle = Manipulator.getDataAttribute(event.target, 'toggle')
+
+      if (toggle === 'narrow') {
+        this.toggleNarrow()
+      }
+
+      if (toggle === 'unfoldable') {
+        this.toggleUnfoldable()
+      }
+    })
+
+    EventHandler.on(this._element, EVENT_CLICK_DATA_API, SELECTOR_DATA_CLOSE, event => {
+      event.preventDefault()
+      this.hide()
+    })
+
+    EventHandler.on(window, EVENT_RESIZE, () => {
+      // eslint-disable-next-line no-console
+      console.log('resized')
+      // eslint-disable-next-line no-console
+      console.log(this._mobile)
+      // eslint-disable-next-line no-console
+      console.log(this._show)
+      if (this._isMobile() && this._isVisible()) {
+        this.hide()
+      }
+    })
+  }
+
+  // Static
+
+  static sidebarInterface(element, config) {
+    let data = Data.get(element, DATA_KEY)
+    const _config = typeof config === 'object' && config
+
+    if (!data) {
+      data = new Sidebar(element, _config)
+    }
+
+    if (typeof config === 'string') {
+      if (typeof data[config] === 'undefined') {
+        throw new TypeError(`No method named "${config}"`)
+      }
+
+      data[config]()
+    }
+  }
+
+  static jQueryInterface(config) {
+    return this.each(function () {
+      Sidebar.sidebarInterface(this, config)
+    })
+  }
+}
+
+/**
+ * ------------------------------------------------------------------------
+ * Data Api implementation
+ * ------------------------------------------------------------------------
+ */
+
+EventHandler.on(window, EVENT_LOAD_DATA_API, () => {
+  Array.from(document.querySelectorAll(SELECTOR_SIDEBAR)).forEach(element => {
+    Sidebar.sidebarInterface(element)
   })
+})
 
-  /**
-   * ------------------------------------------------------------------------
-   * jQuery
-   * ------------------------------------------------------------------------
-   */
+/**
+ * ------------------------------------------------------------------------
+ * jQuery
+ * ------------------------------------------------------------------------
+ */
 
-  $.fn[NAME] = Sidebar._jQueryInterface
-  $.fn[NAME].Constructor = Sidebar
-  $.fn[NAME].noConflict = () => {
-    $.fn[NAME] = JQUERY_NO_CONFLICT
-    return Sidebar._jQueryInterface
-  }
-
-  return Sidebar
-})($)
+defineJQueryPlugin(NAME, Sidebar)
 
 export default Sidebar

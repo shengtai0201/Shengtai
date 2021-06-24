@@ -1,395 +1,105 @@
-## v2.1.16
-- fix: Event listeners for Sidebar and AsideMenu plugins persist in jQuery instance - thanks @nesterow closes #77
+# Changelog
 
-###### Dependencies update:
-- update `core-js` to `^3.3.4`
+<!-- auto-changelog-above -->
+## [v4.0.0-alpha.4](https://github.com/coreui/coreui/compare/v4.0.0-alpha.3...v4.0.0-alpha.4)
 
-## v2.1.15
-- fix(sidebar): Selector.NAV_LINK_QUERIED must be "nav-link-queried" - thanks @expressiveco @gtruini closes #83
+> 22 March 2021
 
-###### Dependencies update:
-- update `core-js` to `^3.3.3`
-- update `regenerator-runtime` to `^0.13.3`
-- update `@babel/cli` to `^7.6.4`
-- update `@babel/core` to `^7.6.4`
-- update `@babel/plugin-proposal-object-rest-spread` to `^7.6.2`
-- update `@babel/plugin-transform-runtime` to `^7.6.2`
-- update `@babel/preset-env` to `^7.6.3`
-- update `autoprefixer` to `^9.7.0`
-- update `babel-eslint` to `^10.0.3`
-- update `babel-plugin-istanbul` to `^5.2.0`
-- update `copyfiles` to `^2.1.1`
-- update `cross-env` to `^5.2.1`
-- update `eslint` to `^6.5.1`
-- update `eslint-plugin-compat` to `^3.3.0`
-- update `node-sass` to `^4.13.0`
-- update `nodemon` to `^1.19.4`
-- update `postcss-cli` to `^6.1.3`
-- update `rimraf` to `^2.7.1`
-- update `rollup` to `^1.25.2`
-- update `rollup-plugin-babel` to `^4.3.3`
-- update `rollup-plugin-commonjs` to `^10.1.0`
-- update `rollup-plugin-node-resolve` to `^5.2.0`
-- update `semver` to `^6.3.0`
-- update `stylelint` to `^11.1.1`
-- update `stylelint-config-recommended-scss` to `^4.0.0`
-- update `stylelint-config-standard` to `^19.0.0`
-- update `stylelint-order` to `^3.1.1`
-- update `stylelint-scss` to `^3.12.0`
-- update `uglify-js` to `^3.6.4`
-   
-## v2.1.14
-###### Dependencies update:
-- chore(deps): bump lodash from 4.17.11 to 4.17.14
-- update `rollup` to `^1.15.4`
-- update `rollup-plugin-node-resolve` to `^5.0.2` 
+### Features
 
-## v2.1.12
-- fix(scss): new mobile breakpoint variables
-```scss
-// Breakpoints for mobile defaults:
-$breakpoint-mobile-up: lg !default;
-$breakpoint-mobile-down: md !default;
- ```
-usage: to shift mobile breakpoint in your template:
-1. override `_variables.scss`
-    ```scss
-    // Variable overrides
-    $breakpoint-mobile-up: md;
-    $breakpoint-mobile-down: sm;
-    ```
+- feat: allow to generate CSS Variables without callbacks [`d8ccba7`](https://github.com/coreui/coreui/commit/d8ccba78684ac3cbea15a246b6408f6f218cc6ec)
 
-2. and complementary changes in `index.html`  
-  - body: `sidebar-lg-show` -> `sidebar-md-show`
-  - mobile sidebar toggler button: `d-lg-none` -> `d-md-none`
-  - sidebar toggler button: 
-    - `d-md-down-none` -> `d-sm-down-none` 
-    - `data-toggle="sidebar-lg-show"` -> `data-toggle="sidebar-md-show"`  
+### Refactor
 
-###### Dependencies update:
-- update `autoprefixer` to `^9.6.0`
-- update `rollup` to `^1.15.1`
-- update `stylelint` to `^10.1.0`
+- refactor: move all variables to mixin [`654005e`](https://github.com/coreui/coreui/commit/654005e76f2cf2fb5464463ffdb28a67d2efb61f)
+- refactor: change `background` to `bg` [`6c32a05`](https://github.com/coreui/coreui/commit/6c32a05d759de9570bea3cc53c75d13a42efdbce)
+- refactor(Utilities): update generator [`6839124`](https://github.com/coreui/coreui/commit/68391246b2a2e003d8d4e928386c15638ed90128)
 
-## v2.1.11
-- fix(sidebar): add optional container `sidebar-scroll`. Thanks @MartijnBastiaansen
-  - fixes an issue where `sidebar-toggler` causes an error when there is no `sidebar-nav` element in it
-  - if no container is set, returns null for perfectScrollbar
+## [v4.0.0-alpha.3](https://github.com/coreui/coreui/compare/v4.0.0-alpha.2...v4.0.0-alpha.3)
 
-###### Dependencies update:
-- update `rollup` to `^1.13.1`
-- update `stylelint-scss` to `^3.8.0`
+> 19 March 2021
 
-## v2.1.10
-- chore: drop `@babel/polyfill` in favour of `core-js@3` and `regenerator-runtime`
+### Features
 
-###### Dependencies update:
-- update `@babel/polyfill` to `^7.4.4`
-- update `@babel/cli` to `^7.4.4`
-- update `@babel/core` to `^7.4.5`
-- update `@babel/plugin-proposal-object-rest-spread` to `^7.4.4`
-- update `@babel/plugin-transform-runtime` to `^7.4.4`
-- update `@babel/preset-env` to `^7.4.5`
-- update `autoprefixer` to `^9.5.1`
-- update `babel-plugin-istanbul` to `^5.1.4`
-- update `clean-css-cli` to `^4.3.0`
-- update `eslint` to `^5.16.0`
-- update `node-sass` to `^4.12.0`
-- update `nodemon` to `^1.19.1`
-- update `rollup` to `^1.13.0`
-- update `stylelint-config-recommended-scss` to `^3.3.0`
-- update `stylelint-config-standard` to `^18.3.0`
-- update `stylelint-order` to `^2.2.1`
-- update `stylelint-scss` to `^3.7.0`
-- update `uglify-js` to `^3.6.0`
-- update `eslint-plugin-compat` to `^3.1.1`
-- update `rollup-plugin-commonjs` to `^10.0.0`
-- update `rollup-plugin-node-resolve` to `^5.0.1`
-- update `semver` to `^6.1.1`
-- update `stylelint` to `^10.0.1`
-- update `stylelint-order` to `^3.0.0`
-    
-## v2.1.9
-- fix(dropdown): rtl caret spacing
-- fix(input-group): rtl append, prepend border radius and margins
-- fix(rtl): rtl float, margin and padding
-- fix(button-group): rtl margin and border-radius
-###### Dependencies update:
-- update `@babel/core` to `^7.4.0`
-- update `@babel/plugin-proposal-object-rest-spread` to `^7.4.0`
-- update `@babel/plugin-transform-runtime` to `^7.4.0`
-- update `@babel/preset-env` to `^7.4.2`
-- update `autoprefixer` to `^9.5.0`
-- update `eslint` to `^5.15.3`
-- update `rollup` to `^1.7.0`
-- update `uglify-js` to `^3.5.1`
+- feat: add RTL support [`0934ada`](https://github.com/coreui/coreui/commit/0934ada4355c90607d13b3bf19dd82252339387e)
+- feat: add RTL support to text align utilities [`a176bdc`](https://github.com/coreui/coreui/commit/a176bdcc8ce8b0202fe7af1d9a9c38a8a1be2237)
+- feat: add `--cui-body-color` to `:root` [`9c37e9a`](https://github.com/coreui/coreui/commit/9c37e9a50a71e0f718471fe60ec6e8d2c27ae3e6)
 
-## v2.1.8
-- fix(scss): `cssnano` mangles `background-position` temp fix (re: BS4 misplaced validation feedback icons)
-###### Dependencies update:
-- update `@babel/core` to `^7.3.4`
-- update `@babel/plugin-proposal-object-rest-spread` to `^7.3.4`
-- update `@babel/plugin-transform-runtime` to `^7.3.4`
-- update `@babel/preset-env` to `^7.3.4`
-- update `autoprefixer` to `^9.4.10`
-- update `eslint` to `^5.15.1`
-- update `postcss-cli` to `^6.1.2`
-- update `rollup` to `^1.6.0`
-- update `rollup-plugin-commonjs` to `^9.2.1`
-- update `rollup-plugin-node-resolve` to `^4.0.1`
-- update `stylelint-order` to `^2.1.0`
-- update `stylelint-scss` to `^3.5.4`
+### Fix
 
-## v2.1.7
-- update `bootstrap` to `^4.3.1` fixes *Class 'btn' style white-space: nowrap; has been removed creating issues with the btn with favicon* [#151](https://github.com/coreui/coreui-free-react-admin-template/issues/151) 
-###### Dependencies update:
-- update `bootstrap` to `^4.3.1` 
-- update `@babel/core` to `^7.3.3`
-- update `@babel/plugin-proposal-object-rest-spread` to `^7.3.2`
-- update `@babel/preset-env` to `^7.3.1`
-- update `autoprefixer` to `^9.4.8`
-- update `babel-plugin-istanbul` to `^5.1.1`
-- update `eslint` to `^5.14.1`
-- update `eslint-plugin-compat` to `^2.7.0`
-- update `nodemon` to `^1.18.10`
-- update `rollup` to `^1.2.2`
-- update `rollup-plugin-babel` to `^4.3.2`
-- update `rollup-plugin-node-resolve` to `^4.0.0`
-- update `stylelint` to `^9.10.1`
-- update `stylelint-scss` to `^3.5.3`
+- fix: wrong names in colors map [`eefccbf`](https://github.com/coreui/coreui/commit/eefccbfcb6e8a3d1dbc7fa406a3f498e738aabbe)
+- fix: generate proper properties and values if only `$enable-rtl` is set to `true` [`582a6f8`](https://github.com/coreui/coreui/commit/582a6f85a3117759f50f5f97bfaf805cc1185ada)
+- fix: rename wrong CSS Variables names [`c187b59`](https://github.com/coreui/coreui/commit/c187b59bc2f8c2dcf591541891b401743101c731)
+- fix: no borders [`b6da406`](https://github.com/coreui/coreui/commit/b6da40674d17503a418a05648ffc5075d63814b4)
+- fix: add missing CSS variables [`dc06098`](https://github.com/coreui/coreui/commit/dc06098f395d328f7bd99d0660654a246542ced3)
+- fix(_root.scss): add custom properties - breakpoint-* and mobile-breakpoint [`32fcd38`](https://github.com/coreui/coreui/commit/32fcd380170c45e7adc4f26a98d255fd5c62d118)
+- fix: prevent adding `active` class to `.nav-group-toggle` [`e3f247f`](https://github.com/coreui/coreui/commit/e3f247f07a935147a196ffc4ea8e5a8938752b51)
+- fix: `.compact` shouldn't overwrite `padding-left` and `padding-right` properties [`4b47c72`](https://github.com/coreui/coreui/commit/4b47c721c2bf3ac1ec1f0db8829e01e3e858309a)
+- fix(_sidebar.scss): add $variable-prefix to --is-mobile custom property [`acab8bc`](https://github.com/coreui/coreui/commit/acab8bc26c0a04f4318b90125de2541f1582b576)
+- fix: remove unused variable [`ace0c6a`](https://github.com/coreui/coreui/commit/ace0c6a8f511c694859c6e6bbb596e655951cb0e)
+- fix: add missing CSS Variable [`8f852a6`](https://github.com/coreui/coreui/commit/8f852a6431fd82d069771e6d7ed7beb875047555)
 
-## v2.1.6
-- fix: clean exit on postinstall dependency missing #25
-- chore: update `rollup-plugin-babel` to `^4.3.0`
+### Refactor
 
-## v2.1.5
-###### Dependencies update:
-- chore: update `bootstrap` to `^4.2.1`
-- chore: update `@babel/polyfill` to `^7.2.5`
-- chore: update `@babel/cli` to `^7.2.3`
-- chore: update `@babel/core` to `^7.2.2`
-- chore: update `@babel/preset-env` to `^7.2.3`
-- chore: update `autoprefixer` to `^9.4.4`
-- chore: update `eslint` to `^5.12.0`
-- chore: update `node-sass` to `^4.11.0`
-- chore: update `nodemon` to `^1.18.9`
-- chore: update `postcss-cli` to `^6.1.1`
-- chore: update `rimraf` to `^2.6.3`
-- chore: update `rollup` to `^0.68.2`
-- chore: update `rollup-plugin-babel` to `^4.2.0`
-- chore: update `stylelint-scss` to `^3.4.4`
-###### Pull Requests:
-- Re-added composer file #35
-  - Re-added composer file so new versions can be downloaded via composer
-  - Replaced relative paths in .scss files so files can be generated correctly
-  
-## v2.1.4
-- fix(scss): .sidebar .nav-link.disabled
-- chore: update `@babel/cli` to `^7.2.0`
-- chore: update `@babel/core` to `^7.2.0`
-- chore: update `@babel/plugin-external-helpers` to `^7.2.0`
-- chore: update `@babel/plugin-proposal-object-rest-spread` to `^7.2.0`
-- chore: update `@babel/plugin-proposal-throw-expressions` to `^7.2.0`
-- chore: update `@babel/plugin-transform-runtime` to `^7.2.0`
-- chore: update `@babel/preset-env` to `^7.2.0`
-- chore: update `autoprefixer` to `^9.4.2`
-- chore: update `rollup` to `^0.67.4`
-- chore: update `stylelint` to `^9.9.0`
-- chore: update `stylelint-order` to `^2.0.0`
-- chore: update `stylelint-scss` to `^3.4.1`
+- refactor: generate CSS variables for color variants instead of styles [`5cf8f7a`](https://github.com/coreui/coreui/commit/5cf8f7a6da6d3a2052447765a1e4369191ab5b4d)
+- refactor: improve buttons generator syntax [`22eff29`](https://github.com/coreui/coreui/commit/22eff298e17574b8bf26d0ef46eac2421d850190)
+- refactor: change `--cui-sidebar-occupy` to `--cui-sidebar-occupy-start` and add `--cui-sidebar-occupy-end` [`3d9c15b`](https://github.com/coreui/coreui/commit/3d9c15b262ba171f29434b0f67f09efc95f4b44a)
+- refactor: add SCSS files to generate RTL only version [`d8221f7`](https://github.com/coreui/coreui/commit/d8221f791567b63988b069021e9a1ce66ae41ca3)
+- refactor: change `.sidebar-right` to `.sidebar-end` [`e1cb24c`](https://github.com/coreui/coreui/commit/e1cb24c267635c0763e2bccd9aa093e87739eb75)
+- refactor: remove str-replace function from SVG icons [`845c82c`](https://github.com/coreui/coreui/commit/845c82c2a8b655ad15c119e642c870d505d9d87e)
+- refactor: update `.nav-group-toggle` icon [`f5047b3`](https://github.com/coreui/coreui/commit/f5047b39c879b7ff2d0bb242ad1ad6d9e4187425)
+- refactor(Progress): improve syntax [`1b22531`](https://github.com/coreui/coreui/commit/1b225310f7bae2480ba21fc7b89c5a1ea2fc2e1a)
+- refactor: update utilities generator [`b09346b`](https://github.com/coreui/coreui/commit/b09346b69c28865b27a5251c853ebb498c01f2c3)
+- refactor: change `.sidebar-nav-sm` to `.compact` [`818540b`](https://github.com/coreui/coreui/commit/818540b7396545b9a039b360c897940f81b8002d)
+- refactor: disable RTL by default [`58c153f`](https://github.com/coreui/coreui/commit/58c153ffa99c054c938ee680af518804b416d885)
+- refactor: change `--#{$variable-prefix}alert-bg` to `--#{$variable-prefix}alert-background` [`1b8f9e7`](https://github.com/coreui/coreui/commit/1b8f9e71dfc2da45b64008207d5b91f72f8c8ee3)
 
-## v2.1.3
-- chore: update `nodemon` to `1.18.7` (remove vulnerability)
+## [v4.0.0-alpha.2](https://github.com/coreui/coreui/compare/v4.0.0-alpha.1...v4.0.0-alpha.2)
 
-## v2.1.2
-- fix: devDependencies security issues (event-stream, flatmap-stream)
-- chore: dependencies update
-  - update `npm-run-all` to `^4.1.5`
-  - reinstall `nodemon`
-  ```bash
-  npm uninstall nodemon
-  npm install --save-dev nodemon
-  ```
+> 19 March 2021
 
-## v2.1.1
-- fix(sidebar): `url("data:,")` turns into `url("'data:,'")`  
-  now replaced with Base64 Encode of 1x1px Transparent gif, closes #49
-  1. `ie11` ignores `list-style:none` (ie11 rtl sidebar minimized issue)
-  2. `url("data:,")` turns into `url("'data:,'")` after minification
-  3. angular 7 cli build complains on `url("'data:,'")`
-- chore: update `@babel/cli` to `7.1.5`
-- chore: update `stylelint` to `9.8.0`
-- chore: update `stylelint-scss` to `3.4.0`
-- chore: update `shelljs` to `0.8.3`
-- chore: update `@babel/preset-env` to `7.1.6`
-- chore: update `@babel/core` to `7.1.6`
-- chore: update `eslint` to `5.9.0`
-- chore: update `rollup` to `0.67.3`
+### Features
 
-## v2.1.0
-- feat(scss): sidebar-nav-link-disabled
-- chore: update `nodemon` to `1.18.6`
+- feat(Badge): add `badge-sm` [`8afa29b`](https://github.com/coreui/coreui/commit/8afa29be9a15696fb6755b7cb9bac3f67b478838)
+- feat: add CSS Vars to border utilities [`d96aa5b`](https://github.com/coreui/coreui/commit/d96aa5bf8d89080644a0d896ed31cf8595f0db63)
+- feat: add `contrast-ratio-correction` function [`c3e2cdc`](https://github.com/coreui/coreui/commit/c3e2cdc0d084a2b8cd4a4fa1b01f4824cc4e13e6)
 
-## v2.0.26
-- fix(.sidebar-minimizer): add `cursor: pointer` 
-- feat: delegated event handlers to support turbolinks (sidebar, aside-menu)- thanks @RyanVasichko
-- chore: update `node-sass` to `4.10.0`
-- chore: update `rollup` to `0.67.0`
+### Fix
 
-## v2.0.25
-- fix(buttons.scss): remove `button { @extend .btn; }`
+- fix(carousel): switch prev/next directions in RTL [`b85ca04`](https://github.com/coreui/coreui/commit/b85ca045e057d6f5982cc0cc9de4bfbf8b252a3d)
+- fix: remove $ [`3c210f8`](https://github.com/coreui/coreui/commit/3c210f8373c500e017867e1d6a44a095c77c7a1d)
+- fix(navs): ensure button will grow in fill/justified nav [`bed8fc8`](https://github.com/coreui/coreui/commit/bed8fc8381be8f9aad7ac95727be4ab8975b4f94)
+- fix(forms): validated controls in input-group [`ac3a106`](https://github.com/coreui/coreui/commit/ac3a1069b139c12d95ca1b6ac2798e56cf01a83e)
+- fix: wrong name in border-color property [`554aa81`](https://github.com/coreui/coreui/commit/554aa819955d45a862511ea1f99803e67ebeba93)
+- fix: the wrong contrast ratio for default text colors [`b5d3fb6`](https://github.com/coreui/coreui/commit/b5d3fb65037a5e4c6c81fad7db1789aa54ca6579)
+- fix: wrong `nth-child` value [`e07c7ec`](https://github.com/coreui/coreui/commit/e07c7ec0a78a5f4dee7f8270888e2d03873256d0)
+- fix(list-group): properly set a color on list-group-items [`0bdf931`](https://github.com/coreui/coreui/commit/0bdf9315077d22022a1f35b60b830398825098ce)
+- fix(Sidebar Nav): nav-link has wrong bg color on hover [`55f4403`](https://github.com/coreui/coreui/commit/55f440350bb0c775d2b413d4e2a089067d12da75)
 
-## v2.0.24
-- fix(build): add missing `commonjs` for utilities
-- chore: add `@babel/polyfill`
-- fix(ie): add `NodeList` `forEach` polyfill 
-- fix(sidebar): add `dataset.toggle` ie10 fix  
-- fix(aside-menu): add `dataset.toggle` ie10 fix 
-- chore(build): add `rollup-plugin-commonjs`
+### Refactor
 
-## v2.0.23 
-_broken build, do not use_
+- refactor(Sidebar): change default responsive behaviour [`8f9ba8e`](https://github.com/coreui/coreui/commit/8f9ba8e2b1ebe2edf528c01364000a74856578bc)
+- refactor: update text colors [`007ec95`](https://github.com/coreui/coreui/commit/007ec958dbc4ecfd858e8ab49f65dcd51a75fdd1)
+- refactor: simplify CSS Variables [`75706ab`](https://github.com/coreui/coreui/commit/75706ab512cfaac62c80e5ba01de5b062f202a30)
+- refactor: update togglers [`238590a`](https://github.com/coreui/coreui/commit/238590ab0ec36d4dc6b98c465b8e60bc7296feca)
+- refactor(Sidebar): refactor responsive behavior [`0a02a32`](https://github.com/coreui/coreui/commit/0a02a32f8897c34c7eefe7752e31e049e848e291)
+- refactor: add contrast ratio checker [`bcc6db7`](https://github.com/coreui/coreui/commit/bcc6db7d7611ac65d7a2057172d28a4f6f48c03b)
+- refactor: add CSS Variables [`a165df0`](https://github.com/coreui/coreui/commit/a165df026d58529379a98e2a48eb08f9e0246b72)
+- refactor: add missing CSS Variables [`beee33b`](https://github.com/coreui/coreui/commit/beee33b3edc2ff5ca9ed512007bcf3cc0d1f28e8)
+- refactor: rename `_sidebarInterface` to `sidebarInterface` [`993069d`](https://github.com/coreui/coreui/commit/993069deef08f349a0e4092c36f9dfb4fa953a80)
+- refactor: add CSS Variables [`b823216`](https://github.com/coreui/coreui/commit/b823216f9e0c74fa18c2854b7eafcb3014422bf3)
 
-## v2.0.22
-- fix(buttons.scss): wrong cursor for disabled state
-- chore: update `eslint` to `5.8.0`
-- chore: update `nodemon` to `1.18.5`
-- chore: update `stylelint` to `9.7.1`
+## [v4.0.0-alpha.1](https://github.com/coreui/coreui/compare/v4.0.0-alpha.0...v4.0.0-alpha.1)
 
-## v2.0.21
-- feat(sidebar): mobile clickout behaviour 
-- chore: update `@babel/plugin-external-helpers` to `7.0.0`
-- chore: update `autoprefixer` to `9.3.1`
-- chore: update `postcss-cli` to `6.0.1`
-- chore: update `stylelint-scss` to `3.3.2`
+> 17 January 2021
 
-## v2.0.20
-- fix(layout): sidebar on mobile issue [#23](https://github.com/coreui/coreui-angular/issues/23) 
-- fix: sidebar, sidebar-minimizer `rtl` ie issues, tweaks
-- refactor(sidebar.js): ps minor cleanup
-- chore: update `autoprefixer` to `9.2.1`
+### Fix
 
-## v2.0.19
-- refactor: extract getCssCustomProperties function
-- feat: add getColor function
-- feat: sidebar set active using query string PR #21
-- chore: update `node-sass` to `4.9.4`
-- chore: update `eslint` to `5.7.0`
-- chore: update `babel-plugin-istanbul` to `5.1.0`
-- chore: update `semver` to `5.6.0`
-- chore: update `autoprefixer` to `9.2.0`
+- fix: replace `border-{left|right}` utilities with `border-{start|end}` [`ba0ee67`](https://github.com/coreui/coreui/commit/ba0ee673b181f27a136982594e8fd8765b150ffc)
+- refactor: update size of navs; fix: position of close button [`bf3f6fc`](https://github.com/coreui/coreui/commit/bf3f6fc522d61327e610a48cbeabb635e1364e32)
 
-## v2.0.18
-- feat: add deep objects merge utility
-- chore: build rollup utilities script cleanup
-- fix(rgbToHex): transparent is not a valid rgb color ie issue
+### Refactor
 
-## v2.0.17
-- fix(card): `rtl` for `card-header` icon margins
-- fix(sidebar): `rtl` for `sidebar-minimizer` icon 
-- chore: update `rollup` to `0.66.6`
-- thanks @MrDevIr
-
-## v2.0.16
-- fix(breadcrumb): `rtl` padding  
-- fix(card): `rtl` float for `card-header-actions`
-- fix(sidebar): `rtl` ps scrollbar issue temp fix/refactor
-- chore: update `rollup` to `0.66.5`
-
-## v2.0.15
-- feat(sidebar): `badge` margins for `nav-dropdown-toggle`
-- chore: update `eslint-plugin-compat` to `2.6.2`
-- chore: update `rollup` to `0.66.4`
-
-## v2.0.14
-- fix(scss): add missing `light-blue` color variable
-
-## v2.0.13
-- chore: update `@babel/core` to `7.1.2`
-- chore: update `@babel/cli` to `7.1.2`
-- chore: update `eslint` to `5.6.1`
-
-## v2.0.12
-- fix(layout) `aside` IE issue with `.main` margin on mobile
-- fix(sidebar) `rtl` IE issue with `sidebar-minimized` captions
-- fix(sidebar) `rtl` ps scrollbar issue temp fix
-
-## v2.0.11
-- fix(layout) `sidebar-fixed` IE issue with `.main` margin on mobile
-- fix(sidebar) `sidebar-toggler` issue for `rtl`
-- chore: update `babel-eslint` to `10.0.1`
-- chore: update `stylelint` to `9.6.0`
-
-## v2.0.10
-- fix(_layout.scss) `navbar-brand` top position IE issue
-- chore: update `babel-eslint` to `10.0.0`
-
-## v2.0.9
-- fix(sidebar) remove scrollbar when `sidebar-minimized`
-- refactor(sidebar) extract `makeScrollbar()` and `destroyScrollbar()`
-- chore: update `@babel/cli` to `7.1.0`
-- chore: update `@babel/core` to `7.1.0`
-- chore: update `@babel/plugin-transform-runtime` to `7.1.0`
-- chore: update `@babel/preset-env` to `7.1.0`
-- chore: update `copyfiles` to `2.1.0`
-- chore: update `eslint` to `5.6.0`
-- chore: update `rollup` to `0.66.2`
-- chore: update `stylelint-scss` to `3.3.1`
-
-## v2.0.8
-- fix(sidebar) minimizing sidebar with bottom chevron does not allow to maximize it again #404
-- fix(sidebar) show scrollbar after height change #419
-
-## v2.0.6
-- fix(sidebar) static mobile sidebar not dismissed on link click
-
-## v2.0.5
-- fix(sidebar) mobile sidebar not dismissed on link click #409
-- chore: update `bootstrap` to `4.1.3`
-- chore: update `@babel/cli` to `7.0.0`
-- chore: update `@babel/core` to `7.0.0`
-- chore: update `@babel/plugin-proposal-object-rest-spread` to `7.0.0`
-- chore: update `@babel/plugin-proposal-throw-expressions` to `7.0.0`
-- chore: update `@babel/plugin-transform-runtime` to `7.0.0`
-- chore: update `@babel/preset-env` to `7.0.0`
-- chore: update `autoprefixer` to `9.1.5`
-- chore: update `babel-eslint` to `9.0.0`
-- chore: update `babel-plugin-istanbul` to `5.0.1`
-- chore: update `clean-css-cli` to `4.2.1`
-- chore: update `eslint` to `5.5.0`
-- chore: update `eslint-plugin-compat` to `2.5.1`
-- chore: update `node-sass` to `4.9.3`
-- chore: update `nodemon` to `1.18.4`
-- chore: update `postcss-cli` to `6.0.0`
-- chore: update `rollup` to `0.65.0`
-- chore: update `rollup-plugin-babel` to `4.0.3`
-- chore: update `rollup-plugin-node-resolve` to `3.4.0`
-- chore: update `semver` to `5.5.1`
-- chore: update `stylelint` to `9.5.0`
-- chore: update `stylelint-order` to `1.0.0`
-- chore: update `stylelint-scss` to `3.3.0`
-- chore: update `uglify-js` to `3.4.9`
-
-## v2.0.4
-- **Refactor: SCSS Variables**
-- Update: @babel/cli to 7.0.0-beta.53
-- Update: @babel/core to 7.0.0-beta.53
-- Update: @babel/plugin-proposal-object-rest-spread to 7.0.0-beta.53
-- Update: @babel/plugin-proposal-throw-expressions to 7.0.0-beta.53
-- Update: @babel/plugin-transform-runtime to 7.0.0-beta.53
-- Update: @babel/preset-env to 7.0.0-beta.53
-- Update: autoprefixer to 8.6.5
-- Update: babel-eslint to 8.2.6
-- Update: bootstrap to 4.1.2
-- Update: cross-env to 5.2.0
-- Update: eslint to 5.1.0
-- Update: eslint-plugin-compat to 2.5.0
-- Update: node-sass to 4.9.2
-- Update: nodemon to 1.18.1
-- Update: postcss-cli to 5.0.1
-- Update: rollup to 0.62.0
-- Update: rollup-plugin-babel to 3.0.7
-- Update: shx to 0.3.2
-- Update: stylelint to 9.3.0
-- Update: stylelint-scss to 3.1.3
-- Update: uglify-js to 3.4.4
+- refactor: update size of navs; fix: position of close button [`bf3f6fc`](https://github.com/coreui/coreui/commit/bf3f6fc522d61327e610a48cbeabb635e1364e32)
+- refactor: redesign close button [`4d33268`](https://github.com/coreui/coreui/commit/4d33268d9031afa43ff932de4976fb872b011d00)
+- refactor: update subcomponents heights [`26f9252`](https://github.com/coreui/coreui/commit/26f9252cd9f0dbefb8ed405502560f30c1439397)
